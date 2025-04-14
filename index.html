@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mapa de Vendas RS</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+    }
+
+    #map {
+      height: 100vh;
+      width: 40%;
+    }
+
+    #info {
+      width: 60%;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 6px;
+      text-align: left;
+    }
+
+    #csv-file {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="info">
+    <h2>Detalhes da Cidade</h2>
+    <input type="file" id="csv-file" accept=".csv" />
+    <div id="dados-cidade"></div>
+  </div>
+
+  <script>
+    let dadosCSV = [];
+    let map;
+
+    function initMap() {
+      map = L.map('map').setView([-30.0346, -51.2177], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+    }
+
+    function carregarGeoJSON() {
+      fetch('municipios-RS.geojson')
+        .then(response => response.json())
+        .then(geojson => {
+          L.geoJSON(geojson, {
+            onEachFeature: function (feature, layer) {
+              const codigoIBGE = feature.properties.CD_MUN;
+              const vendasCidade = dadosCSV.filter(item => item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE);
+				
+              if (vendasCidade.length > 0) {
+                const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+                const cor = totalQnt > 0 ? 'yellow' : 'gray';
+
+                layer.setStyle({
+                  fillColor: cor,
+                  fillOpacity: 0.5,
+                  weight: 1,
+                  color: 'black'
+                });
+
+                const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
+				layer.bindPopup(`<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt}`);
+
+
+                layer.on('click', () => {
+                  mostrarTabela(codigoIBGE);
+                });
+              } else {
+                layer.setStyle({
+                  fillColor: 'gray',
+                  fillOpacity: 0.3,
+                  weight: 1,
+                  color: 'black'
+                });
+              }
+            }
+          }).addTo(map);
+        })
+        .catch(error => console.error('Erro ao carregar GeoJSON:', error));
+    }
+
+    function mostrarTabela(codigoIBGE) {
+  const vendas = dadosCSV.filter(item => item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE);
+  const container = document.getElementById('dados-cidade');
+
+  if (vendas.length === 0) {
+    container.innerHTML = '<p>Nenhuma venda para a cidade.</p>';
+    return;
+  }
+
+  // Calcular totais
+  const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFAT = vendas.reduce((soma, item) => {
+  const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.'); // remove ponto milhar, troca vírgula por ponto
+  return soma + parseFloat(valorStr);
+}, 0);
+
+  // Formatar valor em R$
+  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  let html = `
+    <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
+    <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>NOTA</th>
+          <th>PEDIDO</th>
+          <th>CLIENTE</th>
+          <th>CIDADE</th>
+          <th>DESCRIÇÃO</th>
+          <th>QNT</th>
+          <th>FATURAMENTO</th>
+          <th>DATA</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  vendas.forEach(item => {
+    html += `
+      <tr>
+        <td>${item.NOTA}</td>
+        <td>${item.PEDIDO}</td>
+        <td>${item.CLIENTE}</td>
+        <td>${item.CIDADE}</td>
+        <td>${item['DESCRIÇÃO']}</td>
+        <td>${item.QNT}</td>
+        <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        <td>${item.DATA}</td>
+      </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initMap();
+
+      document.getElementById('csv-file').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function (results) {
+            dadosCSV = results.data;
+            console.log('CSV carregado:', dadosCSV);
+            carregarGeoJSON();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
