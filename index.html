@@ -72,7 +72,7 @@
             onEachFeature: function (feature, layer) {
               const codigoIBGE = feature.properties.CD_MUN;
               const vendasCidade = dadosCSV.filter(item => item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE);
-				
+
               if (vendasCidade.length > 0) {
                 const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
                 const cor = totalQnt > 0 ? 'yellow' : 'gray';
@@ -124,7 +124,7 @@
   // Formatar valor em R$
   const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  let html = `
+  let html = 
     <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
     <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
 
@@ -141,10 +141,10 @@
           <th>DATA</th>
         </tr>
       </thead>
-      <tbody>`;
+      <tbody>;
 
   vendas.forEach(item => {
-    html += `
+    html += 
       <tr>
         <td>${item.NOTA}</td>
         <td>${item.PEDIDO}</td>
@@ -154,10 +154,10 @@
         <td>${item.QNT}</td>
         <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
         <td>${item.DATA}</td>
-      </tr>`;
+      </tr>;
   });
 
-  html += `</tbody></table>`;
+  html += </tbody></table>;
   container.innerHTML = html;
 }
 
