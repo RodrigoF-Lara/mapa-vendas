@@ -109,43 +109,47 @@ function mostrarResumoEstado() {
   `;
 }
 
-// Popular os filtros de ano e mês
 function popularFiltros() {
+  // Verifica se os dados CSV estão carregados corretamente
+  if (!dadosCSV || dadosCSV.length === 0) {
+    console.error("Dados CSV não carregados corretamente!");
+    return;
+  }
+
   const selectAno = document.getElementById('filtro-ano');
   const selectMes = document.getElementById('filtro-mes');
 
-  // Preencher os filtros de ano e mês com dados únicos do CSV
+  // Obter anos e meses únicos a partir dos dados CSV
   const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
   const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
 
-  // Limpar as opções anteriores dos filtros
-  selectAno.innerHTML = '';
-  selectMes.innerHTML = '';
-
-  // Adicionar as opções ao filtro de ano e mês
+  // Popular o filtro de ano
   selectAno.innerHTML = anos.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+  
+  // Popular o filtro de mês, incluindo a opção "Todos"
   selectMes.innerHTML = `<option value="todos">Todos</option>` + 
     meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
 
-  // Definir valores iniciais dos filtros
-  filtroAnoSelecionado = selectAno.value;
-  filtroMesSelecionado = selectMes.value;
+  // Definir valores iniciais dos filtros (se ainda não definidos)
+  if (!filtroAnoSelecionado) filtroAnoSelecionado = anos[0]; // Defina o valor inicial para o ano
+  if (!filtroMesSelecionado) filtroMesSelecionado = 'todos'; // Defina o valor inicial para o mês
 
-  // Definir o valor atual do filtro para o ano e o mês
+  // Atualizar os filtros com os valores selecionados
   selectAno.value = filtroAnoSelecionado;
   selectMes.value = filtroMesSelecionado;
 
-  // Eventos de mudança para filtros de ano e mês
+  // Escutadores de eventos para mudanças nos filtros
   selectAno.addEventListener('change', () => {
     filtroAnoSelecionado = selectAno.value;
-    reiniciarMapa();  // Chama a função para atualizar a tabela ou o mapa
+    reiniciarMapa();  // Atualizar a visualização do mapa ou tabela
   });
 
   selectMes.addEventListener('change', () => {
     filtroMesSelecionado = selectMes.value;
-    reiniciarMapa();  // Chama a função para atualizar a tabela ou o mapa
+    reiniciarMapa();  // Atualizar a visualização do mapa ou tabela
   });
 }
+
 
 
 function mostrarTabela(codigoIBGE) {
