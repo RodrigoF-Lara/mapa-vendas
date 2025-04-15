@@ -41,32 +41,21 @@ function initMap() {
   }).addTo(map);
 }
 
-// Carrega os dados do Google Sheets
+// Carrega os dados da API
 function carregarDadosAPI() {
-  const sheetId = '1a-yRMDydBgb5vrAmrl7eSktpXn7Er66-D4wUvPJc5FA'; // ID da planilha
-  const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0'; // Sua chave API
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Planilha1?key=${apiKey}`;
-
-  fetch(url)
+  // URL atualizada da planilha do Google
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/1a-yRMDydBgb5vrAmrl7eSktpXn7Er66-D4wUvPJc5FA/values/Sheet1?key=AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0')
     .then(response => response.json())
     .then(data => {
-      dadosCSV = data.values.slice(1).map(item => {
-        // Mapeia os dados conforme o formato necessário
-        return {
-          'TB_CIDADES.CODIGO_IBGE': item[0],
-          'ANO': item[1],
-          'MÊS': item[2],
-          'QNT': item[3],
-          'FATURAMENTO': item[4],
-          'DATA': item[5],
-          'NOTA': item[6],
-          'PEDIDO': item[7],
-          'CLIENTE': item[8],
-          'CIDADE': item[9],
-          'DESCRIÇÃO': item[10]
-        };
+      // Converter dados para o formato esperado
+      const rows = data.values;
+      const headers = rows[0];
+      dadosCSV = rows.slice(1).map(row => {
+        return headers.reduce((obj, header, index) => {
+          obj[header] = row[index] || '';
+          return obj;
+        }, {});
       });
-
       popularFiltros();
       carregarGeoJSON();
       mostrarResumoEstado();
@@ -142,7 +131,172 @@ function carregarGeoJSON() {
     .catch(error => console.error('Erro ao carregar GeoJSON:', error));
 }
 
-// Resto das funções...
+// Função para formatar a data corretamente
+function formatarData(data) {
+  if (!data || typeof data !== 'string') return '';
+
+  const partes = data.split('/');
+  if (partes.length === 3) {
+    const dia = partes[0].padStart(2, '0');
+    const mes = partes[1].padStart(2, '0');
+    const ano = partes[2];
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  if (data.includes('-')) {
+    const isoPartes = data.split('-');
+    if (isoPartes.length === 3) {
+      const [ano, mes, dia] = isoPartes;
+      return `${dia}/${mes}/${ano}`;
+    }
+  }
+
+  return data;
+}
+
+// Mostra o resumo do estado
+function mostrarResumoEstado() {
+  const container = document.getElementById('dados-cidade');
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  if (dadosFiltrados.length === 0) {
+    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
+    return;
+  }
+
+  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFAT = dadosFiltrados.reduce((soma, item) => {
+    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+    return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
+  }, 0);
+  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  let html = 
+    `<p><strong>📍 Total do Estado do RS</strong></p>
+    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
+    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>`;
+
+  container.innerHTML = html;
+}
+
+// Mostra a tabela de vendas de uma cidade específica
+function mostrarTabela(codigoIBGE) {
+  const vendas = dadosCSV.filter(item =>
+    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  const container = document.getElementById('dados-cidade');
+
+  if (vendas.length === 0) {
+    container.innerHTML = '<p>Nenhuma venda para a cidade nesse filtro.</p>';
+    return;
+  }
+
+  const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFAT = vendas.reduce((soma, item) => {
+    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+    return soma + parseFloat(valorStr);
+  }, 0);
+  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  // Verifica se é cidade de RC
+  const rc = cidadesRC[codigoIBGE];
+  let rcInfo = '';
+  if (rc) {
+    rcInfo = `<p><strong>🏠 RC:</strong> ${rc}</p>`;
+  }
+
+  let html = 
+    `${rcInfo}
+    <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
+    <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>NOTA</th>
+            <th>PEDIDO</th>
+            <th>CLIENTE</th>
+            <th>CIDADE</th>
+            <th>DESCRIÇÃO</th>
+            <th>QNT</th>
+            <th>FATURAMENTO</th>
+            <th>DATA</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+  vendas.forEach(item => {
+    html += 
+          `<tr>
+            <td>${item.NOTA}</td>
+            <td>${item.PEDIDO}</td>
+            <td>${item.CLIENTE}</td>
+            <td>${item.CIDADE}</td>
+            <td>${item['DESCRIÇÃO']}</td>
+            <td>${item.QNT}</td>
+            <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${formatarData(item.DATA)}</td>
+          </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
+}
+
+// Popular os filtros de ano e mês
+function popularFiltros() {
+  const selectAno = document.getElementById('filtro-ano');
+  const selectMes = document.getElementById('filtro-mes');
+
+  const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+  const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
+
+  selectAno.innerHTML = anos.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+  selectMes.innerHTML = `<option value="todos">Todos</option>` +
+    meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
+
+  filtroAnoSelecionado = selectAno.value;
+  filtroMesSelecionado = selectMes.value;
+
+  selectAno.addEventListener('change', () => {
+    filtroAnoSelecionado = selectAno.value;
+    reiniciarMapa();
+  });
+
+  selectMes.addEventListener('change', () => {
+    filtroMesSelecionado = selectMes.value;
+    reiniciarMapa();
+  });
+}
+
+// Reinicia o mapa
+function reiniciarMapa() {
+  map.eachLayer(layer => {
+    if (layer instanceof L.TileLayer) return;
+    map.removeLayer(layer);
+  });
+
+  carregarGeoJSON();
+  mostrarResumoEstado();
+}
+
+// Carrega a biblioteca Turf.js para cálculos geográficos (necessária para encontrar o centroide)
+function carregarTurfJS() {
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
+  script.onload = function() {
+    initMap();
+    carregarDadosAPI();
+  };
+  document.head.appendChild(script);
+}
 
 document.addEventListener('DOMContentLoaded', function () {
   carregarTurfJS();
