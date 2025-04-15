@@ -39,6 +39,7 @@ th, td {
   max-width: 0;
 }
 
+/* Estilo específico para mobile */
 @media (max-width: 767px) {
   table {
     display: block;
@@ -91,6 +92,7 @@ button:hover {
   min-width: 120px;
 }
 
+/* Estilo para os marcadores dos RCs */
 .rc-marker {
   background-color: #ff0000;
   border-radius: 50%;
