@@ -1,171 +1,311 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Mapa de Vendas</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mapa de Vendas RS</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+    }
+
     #map {
-      height: 600px;
+      width: 40%;
+      height: 100vh;
+    }
+
+    #info {
+      width: 60%;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+    }
+
+    table {
       width: 100%;
-      margin-bottom: 20px;
-    }
-
-    .filtros {
-      margin-bottom: 10px;
-    }
-
-    .resumo {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    .tabela-detalhes {
-      margin-top: 10px;
       border-collapse: collapse;
-      width: 100%;
+      margin-top: 10px;
     }
 
-    .tabela-detalhes th, .tabela-detalhes td {
+    table, th, td {
       border: 1px solid #ccc;
-      padding: 5px;
+    }
+
+    th, td {
+      padding: 6px;
+      text-align: left;
+    }
+
+    #csv-file, select, button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      #map {
+        width: 100%;
+        height: 50vh;
+      }
+
+      #info {
+        width: 100%;
+        height: 50vh;
+        overflow-y: auto;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="filtros">
-    <label for="filtroAno">Ano:</label>
-    <select id="filtroAno"></select>
-
-    <label for="filtroMes">Mês:</label>
-    <select id="filtroMes"></select>
+  <div id="map"></div>
+  <div id="info">
+    <h2>Detalhes da Cidade</h2>
+    <label for="filtro-ano">Ano:</label>
+    <select id="filtro-ano"></select>
+    <label for="filtro-mes">Mês:</label>
+    <select id="filtro-mes"></select>
+    <br />
+    <button onclick="mostrarResumoEstado()">🔄 Ver Resumo do Estado</button>
+    <div id="dados-cidade"></div>
   </div>
 
-  <div id="map"></div>
-
-  <div class="resumo" id="resumoEstado"></div>
-  <div id="detalhesCidade"></div>
-
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <script>
-    // Simulação de dados
-    const dados = [
-      { estado: "RS", cidade: "Porto Alegre", latitude: -30.0346, longitude: -51.2177, quantidade: 10, mes: "Janeiro", ano: 2024 },
-      { estado: "RS", cidade: "Caxias do Sul", latitude: -29.1676, longitude: -51.1794, quantidade: 5, mes: "Janeiro", ano: 2024 },
-      { estado: "RS", cidade: "Porto Alegre", latitude: -30.0346, longitude: -51.2177, quantidade: 8, mes: "Fevereiro", ano: 2024 },
-      { estado: "SP", cidade: "São Paulo", latitude: -23.5505, longitude: -46.6333, quantidade: 20, mes: "Janeiro", ano: 2024 },
-      { estado: "SP", cidade: "Campinas", latitude: -22.9099, longitude: -47.0626, quantidade: 12, mes: "Janeiro", ano: 2024 },
-      { estado: "SP", cidade: "Campinas", latitude: -22.9099, longitude: -47.0626, quantidade: 5, mes: "Fevereiro", ano: 2024 }
-    ];
+    let dadosCSV = [];
+    let map;
+    let filtroAnoSelecionado = '';
+    let filtroMesSelecionado = 'todos';
 
-    const mapa = L.map('map').setView([-23.5505, -46.6333], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(mapa);
-
-    let marcadores = [];
-
-    function agruparPorEstadoECidade(dadosFiltrados) {
-      const agrupado = {};
-
-      dadosFiltrados.forEach(item => {
-        const chave = item.estado + "-" + item.cidade;
-        if (!agrupado[chave]) {
-          agrupado[chave] = {
-            estado: item.estado,
-            cidade: item.cidade,
-            latitude: item.latitude,
-            longitude: item.longitude,
-            total: 0,
-            detalhes: []
-          };
-        }
-        agrupado[chave].total += item.quantidade;
-        agrupado[chave].detalhes.push(item);
-      });
-
-      return Object.values(agrupado);
+    function initMap() {
+      map = L.map('map').setView([-30.0346, -51.2177], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
     }
 
-    function atualizarMapa() {
-      marcadores.forEach(m => mapa.removeLayer(m));
-      marcadores = [];
+    function carregarDadosAPI() {
+      fetch('https://api.sheetbest.com/sheets/8689ec64-90ca-46cb-80bc-7bf17ecb137a')
+        .then(response => response.json())
+        .then(data => {
+          dadosCSV = data;
+          popularFiltros();
+          carregarGeoJSON();
+          mostrarResumoEstado();
+        })
+        .catch(error => console.error('Erro ao carregar dados da API:', error));
+    }
 
-      const anoSelecionado = document.getElementById("filtroAno").value;
-      const mesSelecionado = document.getElementById("filtroMes").value;
+    function carregarGeoJSON() {
+      fetch('dados-RS.geojson')
+        .then(response => response.json())
+        .then(geojson => {
+          L.geoJSON(geojson, {
+            onEachFeature: function (feature, layer) {
+              const codigoIBGE = feature.properties.CD_MUN;
+              const vendasCidade = dadosCSV.filter(item =>
+                item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+                item.ANO === filtroAnoSelecionado &&
+                (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+              );
 
-      const dadosFiltrados = dados.filter(d => 
-        (anoSelecionado === "" || d.ano == anoSelecionado) &&
-        (mesSelecionado === "" || d.mes == mesSelecionado)
+              if (vendasCidade.length > 0) {
+                const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+                const cor = totalQnt > 0 ? 'yellow' : 'gray';
+
+                layer.setStyle({
+                  fillColor: cor,
+                  fillOpacity: 0.5,
+                  weight: 1,
+                  color: 'black'
+                });
+
+                const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
+                layer.bindPopup(`<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt}`);
+
+                layer.on('click', () => {
+                  mostrarTabela(codigoIBGE);
+                });
+              } else {
+                layer.setStyle({
+                  fillColor: 'gray',
+                  fillOpacity: 0.3,
+                  weight: 1,
+                  color: 'black'
+                });
+              }
+            }
+          }).addTo(map);
+        })
+        .catch(error => console.error('Erro ao carregar GeoJSON:', error));
+    }
+
+    function formatarData(data) {
+      if (!data || typeof data !== 'string') return '';
+      const partes = data.split('/');
+      if (partes.length === 3) {
+        const dia = partes[0].padStart(2, '0');
+        const mes = partes[1].padStart(2, '0');
+        const ano = partes[2];
+        return `${dia}/${mes}/${ano}`;
+      }
+      if (data.includes('-')) {
+        const isoPartes = data.split('-');
+        if (isoPartes.length === 3) {
+          const [ano, mes, dia] = isoPartes;
+          return `${dia}/${mes}/${ano}`;
+        }
+      }
+      return data;
+    }
+
+    function mostrarResumoEstado() {
+      const container = document.getElementById('dados-cidade');
+      const dadosFiltrados = dadosCSV.filter(item =>
+        item.ANO === filtroAnoSelecionado &&
+        (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
       );
 
-      const agrupados = agruparPorEstadoECidade(dadosFiltrados);
+      if (dadosFiltrados.length === 0) {
+        container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
+        return;
+      }
 
-      agrupados.forEach(item => {
-        const marker = L.circleMarker([item.latitude, item.longitude], {
-          radius: 5 + item.total,
-          color: "blue",
-          fillColor: "lightblue",
-          fillOpacity: 0.6
-        }).addTo(mapa);
+      const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+      const totalFAT = dadosFiltrados.reduce((soma, item) => {
+        const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+        return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
+      }, 0);
+      const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-        const nomeCidade = item.cidade;
-        const totalQnt = item.total;
-
-        marker.bindPopup(`<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt}`);
-        marker.on("click", () => {
-          mostrarResumoEstado(item.estado, dadosFiltrados);
-          mostrarTabela(item.detalhes);
-        });
-
-        marcadores.push(marker);
-      });
+      container.innerHTML = `
+        <p><strong>📍 Total do Estado do RS</strong></p>
+        <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
+        <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
+      `;
     }
 
-    function mostrarResumoEstado(estado, dadosFiltrados) {
-      const totalEstado = dadosFiltrados
-        .filter(d => d.estado === estado)
-        .reduce((soma, d) => soma + d.quantidade, 0);
-      
-      document.getElementById("resumoEstado").textContent = `Total de máquinas no estado ${estado}: ${totalEstado}`;
-    }
+    function mostrarTabela(codigoIBGE) {
+      const vendas = dadosCSV.filter(item =>
+        item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+        item.ANO === filtroAnoSelecionado &&
+        (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+      );
 
-    function mostrarTabela(detalhes) {
-      let html = "<table class='tabela-detalhes'>";
-      html += "<tr><th>Cidade</th><th>Quantidade</th><th>Mês</th><th>Ano</th></tr>";
-      detalhes.forEach(d => {
-        html += `<tr><td>${d.cidade}</td><td>${d.quantidade}</td><td>${d.mes}</td><td>${d.ano}</td></tr>`;
+      const container = document.getElementById('dados-cidade');
+
+      if (vendas.length === 0) {
+        container.innerHTML = '<p>Nenhuma venda para a cidade nesse filtro.</p>';
+        return;
+      }
+
+      const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+      const totalFAT = vendas.reduce((soma, item) => {
+        const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+        return soma + parseFloat(valorStr);
+      }, 0);
+      const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      let html = `
+        <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
+        <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>NOTA</th>
+              <th>PEDIDO</th>
+              <th>CLIENTE</th>
+              <th>CIDADE</th>
+              <th>DESCRIÇÃO</th>
+              <th>QNT</th>
+              <th>FATURAMENTO</th>
+              <th>DATA</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      vendas.forEach(item => {
+        html += `
+          <tr>
+            <td>${item.NOTA}</td>
+            <td>${item.PEDIDO}</td>
+            <td>${item.CLIENTE}</td>
+            <td>${item.CIDADE}</td>
+            <td>${item['DESCRIÇÃO']}</td>
+            <td>${item.QNT}</td>
+            <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${formatarData(item.DATA)}</td>
+          </tr>
+        `;
       });
-      html += "</table>";
 
-      document.getElementById("detalhesCidade").innerHTML = html;
+      html += '</tbody></table>';
+      container.innerHTML = html;
     }
 
     function popularFiltros() {
-      const anos = [...new Set(dados.map(d => d.ano))].sort();
-      const meses = [...new Set(dados.map(d => d.mes))];
+      const selectAno = document.getElementById('filtro-ano');
+      const selectMes = document.getElementById('filtro-mes');
 
-      const selAno = document.getElementById("filtroAno");
-      const selMes = document.getElementById("filtroMes");
+      const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+      const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
 
-      selAno.innerHTML = "<option value=''>Todos</option>";
-      selMes.innerHTML = "<option value=''>Todos</option>";
+      selectAno.innerHTML = anos.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+      selectMes.innerHTML = `<option value="todos">Todos</option>` +
+        meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
 
-      anos.forEach(a => {
-        selAno.innerHTML += `<option value='${a}'>${a}</option>`;
+      filtroAnoSelecionado = selectAno.value;
+      filtroMesSelecionado = selectMes.value;
+
+      selectAno.addEventListener('change', () => {
+        filtroAnoSelecionado = selectAno.value;
+        reiniciarMapa();
       });
 
-      meses.forEach(m => {
-        selMes.innerHTML += `<option value='${m}'>${m}</option>`;
+      selectMes.addEventListener('change', () => {
+        filtroMesSelecionado = selectMes.value;
+        reiniciarMapa();
       });
-
-      selAno.addEventListener("change", atualizarMapa);
-      selMes.addEventListener("change", atualizarMapa);
     }
 
-    // Inicialização
-    popularFiltros();
-    atualizarMapa();
+    function reiniciarMapa() {
+      map.eachLayer(layer => {
+        if (layer instanceof L.TileLayer) return;
+        map.removeLayer(layer);
+      });
+      carregarGeoJSON();
+      mostrarResumoEstado();
+    }
+
+    // Inicializa
+    initMap();
+    carregarDadosAPI();
   </script>
 </body>
 </html>
