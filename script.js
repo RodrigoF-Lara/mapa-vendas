@@ -3,7 +3,6 @@ let map;
 let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
 
-// Dados das cidades dos RCs (COD_IBGE e nome do RC)
 const cidadesRC = {
   '1400100': 'NABOR',
   '1504208': 'FABRÍCIO',
@@ -25,7 +24,6 @@ const cidadesRC = {
   '5208707': 'RENNAN'
 };
 
-// Ícone personalizado para os RCs
 const rcIcon = L.divIcon({
   className: 'rc-marker',
   iconSize: [12, 20],
@@ -33,7 +31,6 @@ const rcIcon = L.divIcon({
   popupAnchor: [0, -20]
 });
 
-// Inicializa o mapa
 function initMap() {
   map = L.map('map').setView([-30.0346, -51.2177], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -41,7 +38,6 @@ function initMap() {
   }).addTo(map);
 }
 
-// Carrega os dados da API
 function carregarDadosAPI() {
   fetch('https://api.sheetbest.com/sheets/8689ec64-90ca-46cb-80bc-7bf17ecb137a')
     .then(response => response.json())
@@ -54,7 +50,6 @@ function carregarDadosAPI() {
     .catch(error => console.error('Erro ao carregar dados da API:', error));
 }
 
-// Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
   fetch('municipios-RS.geojson')
     .then(response => response.json())
@@ -68,7 +63,6 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
-          // Verifica se é uma cidade de RC
           const rc = cidadesRC[codigoIBGE];
 
           if (vendasCidade.length > 0) {
@@ -84,12 +78,10 @@ function carregarGeoJSON() {
 
             const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
             let popupContent = `<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt}`;
-
-            // Adiciona info do RC se for uma cidade de RC
+            
             if (rc) {
               popupContent += `<br><strong>RC:</strong> ${rc}`;
-
-              // Adiciona marcador no centro do município
+              
               const centroid = turf.centroid(feature).geometry.coordinates;
               L.marker([centroid[1], centroid[0]], {icon: rcIcon})
                 .bindPopup(`<strong>${nomeCidade}</strong><br><strong>RC:</strong> ${rc}`)
@@ -102,7 +94,6 @@ function carregarGeoJSON() {
               mostrarTabela(codigoIBGE);
             });
           } else if (rc) {
-            // Mostra marcador mesmo sem vendas se for cidade de RC
             const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
             const centroid = turf.centroid(feature).geometry.coordinates;
             L.marker([centroid[1], centroid[0]], {icon: rcIcon})
@@ -119,93 +110,66 @@ function carregarGeoJSON() {
         }
       }).addTo(map);
     })
-    .catch(error => console.error('Erro ao carregar GeoJSON:', error));
+    .catch(error => console.error('Erro ao carregar o GeoJSON:', error));
 }
 
-// Função para formatar a data corretamente
-function formatarData(data) {
-  if (!data || typeof data !== 'string') return '';
+function mostrarResumoEstado() {
+  let resumoHTML = '';
 
-  const partes = data.split('/');
-  if (partes.length === 3) {
-    const dia = partes[0].padStart(2, '0');
-    const mes = partes[1].padStart(2, '0');
-    const ano = partes[2];
-    return `${dia}/${mes}/${ano}`;
-  }
+  if (!filtroAnoSelecionado || !filtroMesSelecionado) {
+    resumoHTML += 'Por favor, selecione um ano e mês válidos para exibir um resumo.';
+  } else {
+    const resumo = dadosCSV.filter(item => item.ANO === filtroAnoSelecionado && 
+                                            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado));
 
-  if (data.includes('-')) {
-    const isoPartes = data.split('-');
-    if (isoPartes.length === 3) {
-      const [ano, mes, dia] = isoPartes;
-      return `${dia}/${mes}/${ano}`;
+    if (resumo.length > 0) {
+      resumoHTML += `<h3>Resumo de Vendas</h3>`;
+      resumo.forEach(item => {
+        resumoHTML += `
+          <p><strong>RC:</strong> ${item['TB_CIDADES.CODIGO_IBGE']}</p>
+          <p><strong>Quantidade:</strong> ${item.QNT}</p>
+          <p><strong>Mês:</strong> ${item.MÊS}</p>
+        `;
+      });
+    } else {
+      resumoHTML += 'Nenhum dado encontrado para esse filtro.';
     }
   }
-
-  return data;
+  document.getElementById('dados-cidade').innerHTML = resumoHTML;
 }
 
-// Mostra o resumo do estado
-function mostrarResumoEstado() {
-  const container = document.getElementById('dados-cidade');
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
+function popularFiltros() {
+  const anos = [...new Set(dadosCSV.map(item => item.ANO))];
+  const meses = [...new Set(dadosCSV.map(item => item.MÊS))];
 
-  if (dadosFiltrados.length === 0) {
-    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
-    return;
-  }
+  const filtroAno = document.getElementById('filtro-ano');
+  const filtroMes = document.getElementById('filtro-mes');
 
-  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = dadosFiltrados.reduce((soma, item) => {
-    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
-    return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
-  }, 0);
-  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  anos.forEach(ano => {
+    filtroAno.innerHTML += `<option value="${ano}">${ano}</option>`;
+  });
 
-  let html = 
-    `<p><strong>📍 Total do Estado do RS</strong></p>
-    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
-    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>`;
+  meses.forEach(mes => {
+    filtroMes.innerHTML += `<option value="${mes}">${mes}</option>`;
+  });
 
-  container.innerHTML = html;
+  filtroAno.addEventListener('change', function() {
+    filtroAnoSelecionado = this.value;
+    mostrarResumoEstado();
+  });
+
+  filtroMes.addEventListener('change', function() {
+    filtroMesSelecionado = this.value;
+    mostrarResumoEstado();
+  });
+
+  filtroAnoSelecionado = anos[0];
+  filtroMesSelecionado = 'todos';
+  filtroAno.value = filtroAnoSelecionado;
+  filtroMes.value = filtroMesSelecionado;
 }
 
-// Mostra a tabela de vendas de uma cidade específica
-function mostrarTabela(codigoIBGE) {
-  const vendas = dadosCSV.filter(item =>
-    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  const container = document.getElementById('dados-cidade');
-
-  if (vendas.length === 0) {
-    container.innerHTML = '<p>Nenhuma venda para a cidade nesse filtro.</p>';
-    return;
-  }
-
-  const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = vendas.reduce((soma, item) => {
-    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
-    return soma + parseFloat(valorStr);
-  }, 0);
-  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  // Verifica se é cidade de RC
-  const rc = cidadesRC[codigoIBGE];
-  let rcInfo = '';
-  if (rc) {
-    rcInfo = `<p><strong>🏠 RC:</strong> ${rc}</p>`;
-  }
-
-  let html = 
-    `${rcInfo}
-    <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
-    <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>`;
-
-  container.innerHTML = html;
-}
+window.onload = function() {
+  initMap();
+  carregarDadosAPI();
+};
