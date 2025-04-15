@@ -1,25 +1,4 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-#map {
-  height: 50vh;
-  width: 100%;
-}
-
-#info {
-  width: 100%;
-  padding: 10px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  height: 50vh;
-}
-
+/* Estilos para a tabela e filtros */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -45,38 +24,17 @@ th, td {
     overflow-x: auto;
     white-space: nowrap;
   }
-  
+
   th, td {
     min-width: 80px;
     max-width: none;
     white-space: normal;
     word-break: break-word;
   }
-  
+
   tbody tr:nth-child(odd) {
     background-color: #f9f9f9;
   }
-}
-
-#csv-file, select, button {
-  margin-top: 8px;
-  padding: 6px 10px;
-  font-size: 14px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-button {
-  cursor: pointer;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-button:hover {
-  background-color: #0056b3;
 }
 
 .filters-container {
@@ -89,63 +47,4 @@ button:hover {
 .filter-group {
   flex: 1;
   min-width: 120px;
-}
-
-.rc-marker {
-  background-color: #ff0000;
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  display: block;
-  position: relative;
-}
-
-.rc-marker::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid #ff0000;
-  left: 0;
-  top: 12px;
-}
-
-@media (min-width: 768px) {
-  body {
-    flex-direction: row;
-  }
-  
-  #map {
-    height: 100vh;
-    width: 40%;
-  }
-  
-  #info {
-    width: 60%;
-    height: 100vh;
-    padding: 20px;
-  }
-  
-  table {
-    font-size: 14px;
-    display: table;
-  }
-  
-  th, td {
-    padding: 6px;
-    max-width: none;
-    white-space: normal;
-  }
-  
-  #csv-file, select, button {
-    width: auto;
-    margin-top: 10px;
-    padding: 8px 12px;
-  }
-  
-  .filters-container {
-    flex-wrap: nowrap;
-  }
 }
