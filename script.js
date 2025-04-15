@@ -43,9 +43,19 @@ function initMap() {
 
 // Carrega os dados da API
 function carregarDadosAPI() {
-  fetch('https://sheets.googleapis.com/v4/spreadsheets/1a-yRMDydBgb5vrAmrl7eSktpXn7Er66-D4wUvPJc5FA/values/Sheet1?key=AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0')
-    .then(response => response.json())
+  // Atualize a URL para usar o nome correto da aba "Página1"
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/1a-yRMDydBgb5vrAmrl7eSktpXn7Er66-D4wUvPJc5FA/values/Página1?key=AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then(data => {
+      if (!data.values || data.values.length === 0) {
+        throw new Error("Nenhum dado encontrado na planilha.");
+      }
+
       const rows = data.values;
       const headers = rows[0];
       dadosCSV = rows.slice(1).map(row => {
@@ -61,6 +71,8 @@ function carregarDadosAPI() {
     })
     .catch(error => console.error('Erro ao carregar dados da API:', error));
 }
+
+
 
 // Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
