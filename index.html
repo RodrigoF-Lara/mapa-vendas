@@ -44,7 +44,30 @@
     th, td {
       padding: 4px;
       text-align: left;
-      word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 0;
+    }
+
+    /* Estilo específico para mobile */
+    @media (max-width: 767px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      th, td {
+        min-width: 80px; /* Largura mínima para cada célula */
+        max-width: none;
+        white-space: normal;
+        word-break: break-word;
+      }
+      
+      /* Estilo para linhas alternadas para melhor legibilidade */
+      tbody tr:nth-child(odd) {
+        background-color: #f9f9f9;
+      }
     }
 
     #csv-file, select, button {
@@ -98,10 +121,13 @@
       
       table {
         font-size: 14px;
+        display: table;
       }
       
       th, td {
         padding: 6px;
+        max-width: none;
+        white-space: normal;
       }
       
       #csv-file, select, button {
@@ -163,7 +189,7 @@
 
     // Carrega o GeoJSON com os limites dos municípios
     function carregarGeoJSON() {
-      fetch('municipios-RS.geojson')
+      fetch('dados-RS.geojson')
         .then(response => response.json())
         .then(geojson => {
           L.geoJSON(geojson, {
@@ -285,36 +311,37 @@
         <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
         <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
 
-        <table>
-          <thead>
-            <tr>
-              <th>NOTA</th>
-              <th>PEDIDO</th>
-              <th>CLIENTE</th>
-              <th>CIDADE</th>
-              <th>DESCRIÇÃO</th>
-              <th>QNT</th>
-              <th>FATURAMENTO</th>
-              <th>DATA</th>
-            </tr>
-          </thead>
-          <tbody>`;
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>NOTA</th>
+                <th>PEDIDO</th>
+                <th>CLIENTE</th>
+                <th>CIDADE</th>
+                <th>DESCRIÇÃO</th>
+                <th>QNT</th>
+                <th>FATURAMENTO</th>
+                <th>DATA</th>
+              </tr>
+            </thead>
+            <tbody>`;
 
       vendas.forEach(item => {
         html += `
-          <tr>
-            <td>${item.NOTA}</td>
-            <td>${item.PEDIDO}</td>
-            <td>${item.CLIENTE}</td>
-            <td>${item.CIDADE}</td>
-            <td>${item['DESCRIÇÃO']}</td>
-            <td>${item.QNT}</td>
-            <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${formatarData(item.DATA)}</td>
-          </tr>`;
+              <tr>
+                <td>${item.NOTA}</td>
+                <td>${item.PEDIDO}</td>
+                <td>${item.CLIENTE}</td>
+                <td>${item.CIDADE}</td>
+                <td>${item['DESCRIÇÃO']}</td>
+                <td>${item.QNT}</td>
+                <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td>${formatarData(item.DATA)}</td>
+              </tr>`;
       });
 
-      html += `</tbody></table>`;
+      html += `</tbody></table></div>`;
       container.innerHTML = html;
     }
 
