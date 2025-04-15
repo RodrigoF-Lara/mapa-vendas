@@ -240,7 +240,7 @@
 
     // Carrega o GeoJSON com os limites dos municípios
     function carregarGeoJSON() {
-      fetch('dados-RS.geojson')
+      fetch('municipios-RS.geojson')
         .then(response => response.json())
         .then(geojson => {
           L.geoJSON(geojson, {
