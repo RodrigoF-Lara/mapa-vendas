@@ -109,21 +109,44 @@ function mostrarResumoEstado() {
   `;
 }
 
+// Popular os filtros de ano e mês
 function popularFiltros() {
-  const anos = [...new Set(dadosCSV.map(item => item.ANO))];
-  anos.sort();
+  const selectAno = document.getElementById('filtro-ano');
+  const selectMes = document.getElementById('filtro-mes');
 
-  const anoSelect = document.getElementById('filtro-ano');
-  anos.forEach(ano => {
-    const option = document.createElement('option');
-    option.value = ano;
-    option.textContent = ano;
-    anoSelect.appendChild(option);
+  // Preencher os filtros de ano e mês com dados únicos do CSV
+  const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+  const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
+
+  // Limpar as opções anteriores dos filtros
+  selectAno.innerHTML = '';
+  selectMes.innerHTML = '';
+
+  // Adicionar as opções ao filtro de ano e mês
+  selectAno.innerHTML = anos.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+  selectMes.innerHTML = `<option value="todos">Todos</option>` + 
+    meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
+
+  // Definir valores iniciais dos filtros
+  filtroAnoSelecionado = selectAno.value;
+  filtroMesSelecionado = selectMes.value;
+
+  // Definir o valor atual do filtro para o ano e o mês
+  selectAno.value = filtroAnoSelecionado;
+  selectMes.value = filtroMesSelecionado;
+
+  // Eventos de mudança para filtros de ano e mês
+  selectAno.addEventListener('change', () => {
+    filtroAnoSelecionado = selectAno.value;
+    reiniciarMapa();  // Chama a função para atualizar a tabela ou o mapa
   });
 
-  filtroAnoSelecionado = anos[anos.length - 1];
-  filtroMesSelecionado = 'todos';
+  selectMes.addEventListener('change', () => {
+    filtroMesSelecionado = selectMes.value;
+    reiniciarMapa();  // Chama a função para atualizar a tabela ou o mapa
+  });
 }
+
 
 function mostrarTabela(codigoIBGE) {
   const vendasCidade = dadosCSV.filter(item =>
