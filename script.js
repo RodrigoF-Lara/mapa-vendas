@@ -89,3 +89,70 @@ function formatarData(data) {
   if (partes.length === 3) {
     const dia = partes[0].padStart(2, '0');
     const mes = partes[1].padStart(2, '0');
+    return `${dia}/${mes}/${partes[2]}`;
+  }
+  return '';
+}
+
+function mostrarResumoEstado() {
+  const dadosEstado = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+  const totalVendas = dadosEstado.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalClientes = new Set(dadosEstado.map(item => item['TB_CLIENTES.NOME'])).size;
+
+  document.getElementById('dados-cidade').innerHTML = `
+    <h3>Resumo do Estado - Ano: ${filtroAnoSelecionado}, Mês: ${filtroMesSelecionado}</h3>
+    <p><strong>Total de Vendas:</strong> ${totalVendas.toFixed(0)}</p>
+    <p><strong>Total de Clientes:</strong> ${totalClientes}</p>
+  `;
+}
+
+function popularFiltros() {
+  const anos = [...new Set(dadosCSV.map(item => item.ANO))];
+  anos.sort();
+
+  const anoSelect = document.getElementById('filtro-ano');
+  anos.forEach(ano => {
+    const option = document.createElement('option');
+    option.value = ano;
+    option.textContent = ano;
+    anoSelect.appendChild(option);
+  });
+
+  filtroAnoSelecionado = anos[anos.length - 1];
+  filtroMesSelecionado = 'todos';
+}
+
+function mostrarTabela(codigoIBGE) {
+  const vendasCidade = dadosCSV.filter(item =>
+    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  const tabela = document.createElement('table');
+  tabela.innerHTML = `
+    <thead>
+      <tr><th>Data</th><th>Produto</th><th>Cliente</th><th>Qnt</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      ${vendasCidade.map(venda => `
+        <tr>
+          <td>${formatarData(venda.DATA)}</td>
+          <td>${venda['TB_PRODUTOS.NOME']}</td>
+          <td>${venda['TB_CLIENTES.NOME']}</td>
+          <td>${venda.QNT}</td>
+          <td>${venda.VALOR_TOTAL}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+  `;
+  document.getElementById('dados-cidade').appendChild(tabela);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  initMap();
+  carregarDadosAPI();
+});
