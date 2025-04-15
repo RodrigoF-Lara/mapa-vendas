@@ -101,7 +101,7 @@
 
     // Carrega o GeoJSON com os limites dos municípios
     function carregarGeoJSON() {
-      fetch('municipios-RS.geojson')
+      fetch('dados-RS.geojson')
         .then(response => response.json())
         .then(geojson => {
           L.geoJSON(geojson, {
@@ -125,7 +125,7 @@
                 });
 
                 const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
-                layer.bindPopup(`<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt}`);
+                layer.bindPopup(<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt});
 
                 layer.on('click', () => {
                   mostrarTabela(codigoIBGE);
@@ -153,7 +153,7 @@ function formatarData(data) {
     const dia = partes[0].padStart(2, '0');
     const mes = partes[1].padStart(2, '0');
     const ano = partes[2];
-    return `${dia}/${mes}/${ano}`;
+    return ${dia}/${mes}/${ano};
   }
 
   // Tenta verificar se é um formato de data tipo ISO (ex: 2024-03-01)
@@ -161,7 +161,7 @@ function formatarData(data) {
     const isoPartes = data.split('-');
     if (isoPartes.length === 3) {
       const [ano, mes, dia] = isoPartes;
-      return `${dia}/${mes}/${ano}`;
+      return ${dia}/${mes}/${ano};
     }
   }
 
@@ -188,11 +188,11 @@ function formatarData(data) {
       }, 0);
       const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-      let html = `
+      let html = 
         <p><strong>📍 Total do Estado do RS</strong></p>
         <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
         <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
-      `;
+      ;
 
       container.innerHTML = html;
     }
@@ -219,7 +219,7 @@ function formatarData(data) {
       }, 0);
       const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-      let html = `
+      let html = 
         <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
         <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
 
@@ -236,10 +236,10 @@ function formatarData(data) {
               <th>DATA</th>
             </tr>
           </thead>
-          <tbody>`;
+          <tbody>;
 
       vendas.forEach(item => {
-        html += `
+        html += 
           <tr>
             <td>${item.NOTA}</td>
             <td>${item.PEDIDO}</td>
@@ -249,10 +249,10 @@ function formatarData(data) {
             <td>${item.QNT}</td>
             <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
             <td>${formatarData(item.DATA)}</td>
-          </tr>`;
+          </tr>;
       });
 
-      html += `</tbody></table>`;
+      html += </tbody></table>;
       container.innerHTML = html;
     }
 
@@ -264,9 +264,9 @@ function formatarData(data) {
       const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
       const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
 
-      selectAno.innerHTML = anos.map(ano => `<option value="${ano}">${ano}</option>`).join('');
-      selectMes.innerHTML = `<option value="todos">Todos</option>` +
-        meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
+      selectAno.innerHTML = anos.map(ano => <option value="${ano}">${ano}</option>).join('');
+      selectMes.innerHTML = <option value="todos">Todos</option> +
+        meses.map(mes => <option value="${mes}">${mes}</option>).join('');
 
       filtroAnoSelecionado = selectAno.value;
       filtroMesSelecionado = selectMes.value;
