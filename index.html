@@ -21,26 +21,32 @@
         <div>
             <canvas id="monthly-sales-chart" width="400" height="200"></canvas> <!-- Canvas para o gráfico -->
         </div>
+    <div class="container">
+        <h1>Relatório de Vendas</h1>
         
-        <div id="map"></div>
-        <div id="info">
-            <h2>Detalhes da Cidade</h2>
-            <div class="filters-container">
-                <div class="filter-group">
-                    <label for="filtro-ano">Ano:</label>
-                    <select id="filtro-ano"></select>
-                </div>
-                <div class="filter-group">
-                    <label for="filtro-mes">Mês:</label>
-                    <select id="filtro-mes"></select>
-                </div>
-            </div>
-            <button onclick="mostrarResumoEstado()">🔄 Ver Resumo do Estado</button>
-            <div id="dados-cidade"></div>
+        <div id="summary">
+            <p><strong>Número de Máquinas Vendidas:</strong> <span id="num-machines">0</span></p>
+            <p><strong>Faturamento Total:</strong> R$ <span id="total-revenue">0.00</span></p>
+            <p><strong>Número de Cidades com Vendas:</strong> <span id="num-cities">0</span></p>
         </div>
+  <div id="map"></div>
+  <div id="info">
+    <h2>Detalhes da Cidade</h2>
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="filtro-ano">Ano:</label>
+        <select id="filtro-ano"></select>
+      </div>
+      <div class="filter-group">
+        <label for="filtro-mes">Mês:</label>
+        <select id="filtro-mes"></select>
+      </div>
     </div>
+    <button onclick="mostrarResumoEstado()">🔄 Ver Resumo do Estado</button>
+    <div id="dados-cidade"></div>
+  </div>
 
-    <!-- Inclusão do script.js -->
-    <script src="script.js"></script>
+  <!-- Inclusão do script.js -->
+  <script src="script.js"></script>
 </body>
 </html>
