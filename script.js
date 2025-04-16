@@ -44,7 +44,7 @@ function initMap() {
 // Carrega os dados da Google Sheets API
 function carregarDadosAPI() {
   const sheetId = '1-4LH1BuLfP0SaGilqVCtndy7pa3xBN1y';
-  const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
+  const apiKey = 'AIzaSyBH25Rjd5da4SkKBLqbh04ZW59G9qRLirs';
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
   
   fetch(url)
