@@ -3,151 +3,42 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f4f9;
 }
 
-#map {
-  height: 50vh;
-  width: 100%;
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-#info {
-  width: 100%;
-  padding: 10px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  height: 50vh;
+h1 {
+  text-align: center;
+  color: #333;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 12px;
-}
-
-table, th, td {
-  border: 1px solid #ccc;
-}
-
-th, td {
-  padding: 4px;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 0;
-}
-
-/* Estilo específico para mobile */
-@media (max-width: 767px) {
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-  
-  th, td {
-    min-width: 80px;
-    max-width: none;
-    white-space: normal;
-    word-break: break-word;
-  }
-  
-  tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
-  }
-}
-
-#csv-file, select, button {
-  margin-top: 8px;
-  padding: 6px 10px;
-  font-size: 14px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-button {
-  cursor: pointer;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.filters-container {
+.filters {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-.filter-group {
-  flex: 1;
-  min-width: 120px;
+select {
+  padding: 10px;
+  font-size: 16px;
+  margin: 5px;
 }
 
-/* Estilo para os marcadores dos RCs */
-.rc-marker {
-  background-color: #ff0000;
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  display: block;
-  position: relative;
+#mapa {
+  margin-top: 30px;
 }
 
-.rc-marker::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid #ff0000;
-  left: 0;
-  top: 12px;
-}
-
-@media (min-width: 768px) {
-  body {
-    flex-direction: row;
-  }
-  
-  #map {
-    height: 100vh;
-    width: 40%;
-  }
-  
-  #info {
-    width: 60%;
-    height: 100vh;
-    padding: 20px;
-  }
-  
-  table {
-    font-size: 14px;
-    display: table;
-  }
-  
-  th, td {
-    padding: 6px;
-    max-width: none;
-    white-space: normal;
-  }
-  
-  #csv-file, select, button {
-    width: auto;
-    margin-top: 10px;
-    padding: 8px 12px;
-  }
-  
-  .filters-container {
-    flex-wrap: nowrap;
-  }
+canvas {
+  max-width: 100%;
 }
