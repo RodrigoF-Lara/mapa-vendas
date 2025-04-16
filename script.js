@@ -300,75 +300,7 @@ function reiniciarMapa() {
   mostrarResumoEstado();
 }
 
-function displayData(data) {
-    let totalMachines = 0;
-    let totalRevenue = 0;
-    let cities = new Set();  // Para contar cidades únicas
 
-    let monthlySales = {};  // Objeto para armazenar vendas mensais
-
-    // Processa os dados
-    data.forEach((row) => {
-        if (row['Máquinas']) {
-            totalMachines += parseInt(row['Máquinas']);
-        }
-        if (row['Faturamento']) {
-            totalRevenue += parseFloat(row['Faturamento']);
-        }
-        if (row['Cidade']) {
-            cities.add(row['Cidade']);  // Adiciona cidade ao Set para evitar duplicados
-        }
-
-        // Calculando as vendas por mês
-        if (row['Data']) {
-            let date = new Date(row['Data']);
-            let month = date.getMonth();  // 0-11 para os meses
-            let year = date.getFullYear();
-            let monthYear = `${month + 1}-${year}`; // Ex: "3-2025" para março de 2025
-
-            if (!monthlySales[monthYear]) {
-                monthlySales[monthYear] = 0;
-            }
-            monthlySales[monthYear] += parseInt(row['Máquinas']);
-        }
-    });
-
-    // Exibindo os dados
-    document.getElementById('num-machines').innerText = totalMachines;
-    document.getElementById('total-revenue').innerText = totalRevenue.toFixed(2);
-    document.getElementById('num-cities').innerText = cities.size;  // Mostra o número de cidades únicas
-
-    // Agora criaremos o gráfico com as vendas mensais
-    drawMonthlySalesChart(monthlySales);
-}
-
-function drawMonthlySalesChart(monthlySales) {
-    let months = Object.keys(monthlySales);
-    let sales = months.map(month => monthlySales[month]);
-
-    // Usaremos Chart.js para criar o gráfico
-    const ctx = document.getElementById('monthly-sales-chart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: months, // Meses
-            datasets: [{
-                label: 'Vendas de Máquinas por Mês',
-                data: sales, // Dados de vendas por mês
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
 
 // Carrega a biblioteca Turf.js para cálculos geográficos (necessária para encontrar o centroide)
 function carregarTurfJS() {
