@@ -17,7 +17,7 @@ const cidadesRC = {
   '4104808': 'ISRAEL',
   '4209003': 'WILIAN',
   '4301602': 'GUSTAVO',
-  '4304705': 'LEANDROoooo',
+  '4304705': 'LEANDRA',
   '5003702': 'GRAZIAN',
   '5102637': 'RODRIGO',
   '5105259': 'JOAO',
@@ -43,8 +43,8 @@ function initMap() {
 
 // Carrega os dados da Google Sheets API
 function carregarDadosAPI() {
-  const sheetId = '1-4LH1BuLfP0SaGilqVCtndy7pa3xBN1y';
-  const apiKey = 'AIzaSyBH25Rjd5da4SkKBLqbh04ZW59G9qRLirs';
+  const sheetId = '1YnrX7_3VMxqgejAXp_-tbuI_fLbyQO5S';
+  const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
   
   fetch(url)
