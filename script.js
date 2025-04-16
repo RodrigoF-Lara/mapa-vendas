@@ -283,6 +283,7 @@ function popularFiltros() {
   });
 }
 
+
 // Reinicia o mapa
 function reiniciarMapa() {
   map.eachLayer(layer => {
