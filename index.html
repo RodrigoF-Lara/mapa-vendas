@@ -1,34 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Incluindo Chart.js -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendas por Região</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
-  <div id="map"></div>
-  <div id="info">
-    <h2>Detalhes da Cidade</h2>
-    <div class="filters-container">
-      <div class="filter-group">
-        <label for="filtro-ano">Ano:</label>
-        <select id="filtro-ano"></select>
-      </div>
-      <div class="filter-group">
-        <label for="filtro-mes">Mês:</label>
-        <select id="filtro-mes"></select>
-      </div>
-    </div>
-    <button onclick="mostrarResumoEstado()">🔄 Ver Resumo do Estado</button>
-    <div id="dados-cidade"></div>
+  <div class="container">
+    <h1>Vendas por Região</h1>
 
-    <!-- Adicionando o gráfico -->
-    <canvas id="grafico-vendas" width="400" height="200"></canvas>
+    <div class="filters">
+      <label for="ano">Ano:</label>
+      <select id="ano" onchange="carregarDadosAPI()">
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+      </select>
+
+      <label for="mes">Mês:</label>
+      <select id="mes" onchange="carregarDadosAPI()">
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4">Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+
+    <div id="grafico-container">
+      <canvas id="grafico-vendas"></canvas>
+    </div>
+
+    <div id="mapa" style="height: 400px;"></div>
+
   </div>
 
   <script src="script.js"></script>
