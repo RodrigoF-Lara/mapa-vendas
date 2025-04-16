@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendas por Região</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Incluindo Chart.js -->
 </head>
 <body>
+    <div class="container">
+        <h1>Relatório de Vendas</h1>
+        
+        <div id="summary">
+            <p><strong>Número de Máquinas Vendidas:</strong> <span id="num-machines">0</span></p>
+            <p><strong>Faturamento Total:</strong> R$ <span id="total-revenue">0.00</span></p>
+            <p><strong>Número de Cidades com Vendas:</strong> <span id="num-cities">0</span></p>
+        </div>
+
+        <!-- Gráfico de Vendas por Mês -->
+        <div>
+            <canvas id="monthly-sales-chart" width="400" height="200"></canvas> <!-- Canvas para o gráfico -->
+        </div>
     <div class="container">
         <h1>Relatório de Vendas</h1>
         
