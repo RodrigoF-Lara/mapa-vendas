@@ -163,8 +163,6 @@ function formatarData(data) {
 // Mostra o resumo do estado
 function mostrarResumoEstado() {
   const container = document.getElementById('dados-cidade');
-  
-  // Filtra os dados conforme o ano e mês selecionados
   const dadosFiltrados = dadosCSV.filter(item =>
     item.ANO === filtroAnoSelecionado &&
     (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
@@ -180,16 +178,12 @@ function mostrarResumoEstado() {
     const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
     return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
   }, 0);
-  
-  const totalCidadesComVendas = [...new Set(dadosFiltrados.map(item => item['TB_CIDADES.CODIGO_IBGE']))].length;  // Contagem das cidades distintas com vendas
-
   const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   let html = `
     <p><strong>📍 Total do Estado do RS</strong></p>
     <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
     <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
-    <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p> <!-- Número de cidades -->
   `;
 
   container.innerHTML = html;
@@ -299,8 +293,6 @@ function reiniciarMapa() {
   carregarGeoJSON();
   mostrarResumoEstado();
 }
-
-
 
 // Carrega a biblioteca Turf.js para cálculos geográficos (necessária para encontrar o centroide)
 function carregarTurfJS() {
