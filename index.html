@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendas por Região</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>Relatório de Vendas</h1>
+        
+        <div id="summary">
+            <p><strong>Número de Máquinas Vendidas:</strong> <span id="num-machines">0</span></p>
+            <p><strong>Faturamento Total:</strong> R$ <span id="total-revenue">0.00</span></p>
+            <p><strong>Número de Cidades com Vendas:</strong> <span id="num-cities">0</span></p>
+        </div>
   <div id="map"></div>
   <div id="info">
     <h2>Detalhes da Cidade!!!</h2>
