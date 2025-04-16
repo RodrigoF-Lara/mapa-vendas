@@ -45,7 +45,7 @@ function initMap() {
 function carregarDadosAPI() {
   const sheetId = '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA';
   const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Página1A1:Z1000?key=${apiKey}`;
   
   fetch(url)
     .then(response => response.json())
