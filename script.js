@@ -136,47 +136,11 @@ function carregarGeoJSON() {
             layer.on('click', () => {
               mostrarTabela(codigoIBGE);
             });
-          } else if (rc) {
-            const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
-            const centroid = turf.centroid(feature).geometry.coordinates;
-            L.marker([centroid[1], centroid[0]], {icon: rcIcon})
-              .bindPopup(`<strong>${nomeCidade}</strong><br><strong>RC:</strong> ${rc}`)
-              .addTo(map);
-          } else {
-            layer.setStyle({
-              fillColor: 'gray',
-              fillOpacity: 0.3,
-              weight: 1,
-              color: 'black'
-            });
           }
         }
       }).addTo(map);
     })
     .catch(error => console.error('Erro ao carregar GeoJSON:', error));
-}
-
-// Função para formatar a data corretamente
-function formatarData(data) {
-  if (!data || typeof data !== 'string') return '';
-
-  const partes = data.split('/');
-  if (partes.length === 3) {
-    const dia = partes[0].padStart(2, '0');
-    const mes = partes[1].padStart(2, '0');
-    const ano = partes[2];
-    return `${dia}/${mes}/${ano}`;
-  }
-
-  if (data.includes('-')) {
-    const isoPartes = data.split('-');
-    if (isoPartes.length === 3) {
-      const [ano, mes, dia] = isoPartes;
-      return `${dia}/${mes}/${ano}`;
-    }
-  }
-
-  return data;
 }
 
 // Mostra o resumo do estado
