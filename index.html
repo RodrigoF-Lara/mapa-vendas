@@ -4,10 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+  <!-- CSS Externo -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Bibliotecas JS Externas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf/turf.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- Adicionando Plotly -->
+
 </head>
 <body>
   <div id="map"></div>
@@ -27,7 +34,13 @@
     <div id="dados-cidade"></div>
   </div>
 
-  <!-- Inclusão do script.js -->
+  <!-- Adicionando containers para os gráficos -->
+  <div id="graficos-container">
+    <div id="grafico-vendas-municipio"></div>
+    <div id="grafico-mensal"></div>
+  </div>
+
+  <!-- JS Interno -->
   <script src="script.js"></script>
 </body>
 </html>
