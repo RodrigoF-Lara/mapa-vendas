@@ -13,34 +13,34 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf/turf.min.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- Adicionando Plotly -->
-
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="info">
-    <h2>Detalhes da Cidade</h2>
-    <div class="filters-container">
-      <div class="filter-group">
-        <label for="filtro-ano">Ano:</label>
-        <select id="filtro-ano"></select>
+  <div class="main-container">
+    <div id="map"></div>
+    <div id="info">
+      <h2>Detalhes da Cidade</h2>
+      <div class="filters-container">
+        <div class="filter-group">
+          <label for="filtro-ano">Ano:</label>
+          <select id="filtro-ano"></select>
+        </div>
+        <div class="filter-group">
+          <label for="filtro-mes">Mês:</label>
+          <select id="filtro-mes"></select>
+        </div>
       </div>
-      <div class="filter-group">
-        <label for="filtro-mes">Mês:</label>
-        <select id="filtro-mes"></select>
-      </div>
+      <button onclick="mostrarResumoEstado()">🔄 Ver Resumo do Estado</button>
+      <div id="dados-cidade"></div>
     </div>
-    <button onclick="mostrarResumoEstado()">🔄 Ver Resumo do Estado</button>
-    <div id="dados-cidade"></div>
   </div>
 
-  <!-- Adicionando containers para os gráficos -->
+  <!-- Container para os gráficos abaixo do mapa -->
   <div id="graficos-container">
     <div id="grafico-vendas-municipio"></div>
     <div id="grafico-mensal"></div>
   </div>
 
-  <!-- JS Interno -->
   <script src="script.js"></script>
 </body>
 </html>
