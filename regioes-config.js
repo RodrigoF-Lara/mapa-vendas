@@ -15,7 +15,7 @@ const configuracoesRegioes = {
     id: 'rs_norte',
     nome: 'RS Norte',
     planilhaId: '1zxsWdSrPsPV6zqvNk0cv8zUosvntcZPGBMT9oLiB21s',
-    geojsonPath: 'municipios-RS NORTE.geojson', // Sintaxe corrigida
+    geojsonPath: 'municipios-RS Norte.geojson', // Sintaxe corrigida
     view: [-28.5000, -53.0000],
     zoom: 6,
     cidadesRC: {
