@@ -26,6 +26,7 @@ function initMap() {
 }
 
 function carregarRegiao(regiaoId) {
+  console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
   
   regiaoAtual = configuracoesRegioes[regiaoId];
@@ -80,12 +81,14 @@ function carregarDadosAPI() {
 // Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
    if (!regiaoAtual) return;
+  // Codifique o caminho do arquivo para lidar com espaços
+  const caminhoCodificado = encodeURI(regiaoAtual.geojsonPath);
   
-  fetch(regiaoAtual.geojsonPath)
+  fetch(caminhoCodificado)
     .then(response => response.json())
     .then(geojson => {
-      // Primeiro cria todos os marcadores dos RCs
-      Object.entries(cidadesRC).forEach(([codigoIBGE, rc]) => {
+      // Use os RCs específicos da região
+      Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
           const centroid = turf.centroid(feature).geometry.coordinates;
