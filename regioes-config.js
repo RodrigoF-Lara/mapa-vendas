@@ -7,10 +7,10 @@ const configuracoesRegioes = {
     view: [-30.0346, -51.2177],
     zoom: 10,
     cidadesRC: {
-      '4301602': 'GUSTAVO'
-      
+      '4301602': 'GUSTAVO'      
     }
   },
+  
   'rs_norte': {
     id: 'rs_norte',
     nome: 'RS Norte',
@@ -22,6 +22,7 @@ const configuracoesRegioes = {
         '4304705': 'LEANDRO'
     }
   },
+  
   'sc': {
     id: 'sc',
     nome: 'SC',
@@ -30,8 +31,10 @@ const configuracoesRegioes = {
     view: [-27.2423, -50.2189],
     zoom: 10,
     cidadesRC: {
-        '4304705': 'LEANDRO'
+      '4209003': 'LEONARDO'
+    }
     },
+  
     'pr': {
     id: 'pr',
     nome: 'PR',
@@ -40,8 +43,10 @@ const configuracoesRegioes = {
     view: [-24.7935, -50.0000],
     zoom: 10,
     cidadesRC: {
-        '4304705': 'LEANDRO'
+        '4104808': 'ISRAEL'
+        }
     },
+  
        'sp': {
     id: 'sp',
     nome: 'SP',
@@ -50,8 +55,10 @@ const configuracoesRegioes = {
     view: [-22.1500, -48.0000],
     zoom: 10,
     cidadesRC: {
-        '4304705': 'LEANDRO'
+        '3529005': 'ANDRE'
+      }
     },
+  
   'ms': {
     id: 'ms',
     nome: 'MS',
