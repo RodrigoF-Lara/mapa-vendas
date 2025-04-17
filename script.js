@@ -113,6 +113,23 @@ function carregarGeoJSON() {
         }
       });
 
+      const rcIconPulsante = L.divIcon({
+  className: 'rc-marker-pulsante',
+  iconSize: [16, 16],
+  iconAnchor: [8, 16],
+  popupAnchor: [0, -16],
+});
+
+Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
+    const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
+    if (feature) {
+        const centroid = turf.centroid(feature).geometry.coordinates;
+        L.marker([centroid[1], centroid[0]], { icon: rcIconPulsante })
+            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
+            .addTo(map);
+    }
+});
+
       // Processa os polígonos com estilo dinâmico
       L.geoJSON(geojson, {
         style: function(feature) {
