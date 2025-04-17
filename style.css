@@ -165,15 +165,13 @@ th {
   box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
 }
 
-.rc-marker::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-top: 10px solid #e74c3c;
-  left: 0;
-  top: 14px;
+.rc-marker {
+  background-color: #e74c3c;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  position: relative;
+  z-index: 1000; /* Garante que fique acima dos polígonos */
 }
+  
 }
