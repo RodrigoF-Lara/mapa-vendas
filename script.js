@@ -15,8 +15,7 @@ const rcIcon = L.divIcon({
 // Inicializa o mapa
 function initMap() {
   const config = regiaoAtual || {
-    view: [-30.0346, -51.2177],
-    zoom: 6
+    zoom: 8
   };
   
   map = L.map('map').setView(config.view, config.zoom);
