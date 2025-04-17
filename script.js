@@ -15,7 +15,8 @@ const rcIcon = L.divIcon({
 // Inicializa o mapa
 function initMap() {
   const config = regiaoAtual || {
-    zoom: 8
+    view: [-30.0346, -51.2177],
+    zoom: 6
   };
   
   map = L.map('map').setView(config.view, config.zoom);
@@ -25,8 +26,7 @@ function initMap() {
 }
 
 function carregarRegiao(regiaoId) {
-  console.log('Região selecionada:', regiaoId);
-  console.log('Configurações da região:', configuracoesRegioes[regiaoId]);
+  console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
   
   regiaoAtual = configuracoesRegioes[regiaoId];
