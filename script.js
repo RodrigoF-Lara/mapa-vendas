@@ -83,40 +83,35 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
+          // SEMPRE MOSTRA OS PINS DOS RCs (modificado)
           const rc = cidadesRC[codigoIBGE];
+          if (rc) {
+            const centroid = turf.centroid(feature).geometry.coordinates;
+            L.marker([centroid[1], centroid[0]], {icon: rcIcon})
+              .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
+              .addTo(map);
+          }
 
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            const cor = totalQnt > 0 ? 'yellow' : 'gray';
-
             layer.setStyle({
-              fillColor: cor,
+              fillColor: totalQnt > 0 ? 'yellow' : 'gray',
               fillOpacity: 0.5,
               weight: 1,
               color: 'black'
             });
 
-            const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
-            let popupContent = `<strong>${nomeCidade}</strong><br>Total QNT: ${totalQnt}`;
-            
-            if (rc) {
-              popupContent += `<br><strong>RC:</strong> ${rc}`;
-              const centroid = turf.centroid(feature).geometry.coordinates;
-              L.marker([centroid[1], centroid[0]], {icon: rcIcon})
-                .bindPopup(`<strong>${nomeCidade}</strong><br><strong>RC:</strong> ${rc}`)
-                .addTo(map);
-            }
+            layer.bindPopup(`
+              <strong>${feature.properties.NM_MUN}</strong><br>
+              Quantidade: ${totalQnt}
+              ${rc ? `<br><strong>RC:</strong> ${rc}` : ''}
+            `);
 
-            layer.bindPopup(popupContent);
-            layer.on('click', () => {
+            // FILTRAR GRÁFICO AO CLICAR (novo)
+            layer.on('click', function() {
               mostrarTabela(codigoIBGE);
+              filtrarGraficoPorCidade(codigoIBGE);
             });
-          } else if (rc) {
-            const nomeCidade = feature.properties.NM_MUN || 'Cidade desconhecida';
-            const centroid = turf.centroid(feature).geometry.coordinates;
-            L.marker([centroid[1], centroid[0]], {icon: rcIcon})
-              .bindPopup(`<strong>${nomeCidade}</strong><br><strong>RC:</strong> ${rc}`)
-              .addTo(map);
           } else {
             layer.setStyle({
               fillColor: 'gray',
@@ -129,6 +124,38 @@ function carregarGeoJSON() {
       }).addTo(map);
     })
     .catch(error => console.error('Erro ao carregar GeoJSON:', error));
+}
+
+// NOVA FUNÇÃO PARA FILTRAR GRÁFICO
+function filtrarGraficoPorCidade(codigoIBGE) {
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+    item.ANO === filtroAnoSelecionado
+  );
+
+  const meses = Array(12).fill(0);
+  dadosFiltrados.forEach(item => {
+    const mes = parseInt(item.MÊS) - 1;
+    if (mes >= 0 && mes < 12) {
+      meses[mes] += parseFloat(item.QNT || 0);
+    }
+  });
+
+  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
+  const cidadeNome = Object.entries(cidadesRC).find(([cod]) => cod === codigoIBGE)?.[1] || 
+                    document.querySelector(`[data-codigo="${codigoIBGE}"]`)?.innerText || 
+                    'Cidade Selecionada';
+
+  Plotly.newPlot('grafico-mensal', [{
+    x: nomesMeses,
+    y: meses,
+    type: 'bar',
+    marker: { color: '#4CAF50' }
+  }], {
+    title: `Vendas Mensais - ${cidadeNome}`,
+    xaxis: { title: 'Mês' },
+    yaxis: { title: 'Quantidade' }
+  });
 }
 
 function formatarData(data) {
@@ -183,6 +210,8 @@ function mostrarResumoEstado() {
   `;
 
   container.innerHTML = html;
+  // Resetar gráfico para mostrar todos os dados
+  gerarGraficoMensal(); 
 }
 
 function mostrarTabela(codigoIBGE) {
