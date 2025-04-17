@@ -155,15 +155,15 @@ th {
     min-width: 45%;
   }
   /* Adicione isto ao final do seu CSS */
-.rc-marker {
-  background-color: #e74c3c;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  display: block;
-  position: relative;
-  box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
-}
+//.rc-marker {
+// background-color: #e74c3c;
+//  border-radius: 50%;
+//  width: 34px;
+//  height: 34px;
+//  display: block;
+//  position: relative;
+//  box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
+//}
 
 .rc-marker::after {
   content: '';
