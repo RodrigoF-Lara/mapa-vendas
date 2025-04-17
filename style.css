@@ -17,13 +17,13 @@ body {
 /* Mapa garantido (60% da tela) */
 .map-wrapper {
   width: 60%;
-  height: 100vh;
+  height: 50vh;
   background: #e9ecef;
 }
 
 #map {
-  height: 50%;
-  width: 50%;
+  height: 100%;
+  width: 100%;
 }
 
 /* Painel direito (40% da tela) */
