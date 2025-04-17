@@ -128,10 +128,10 @@ th {
   top: 0;
 }
 
-//@media (max-width: 768px) {
-//  .app-container {
-//    flex-direction: column;
-//  }
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
   
   .map-wrapper, .panel-wrapper {
     width: 100%;
