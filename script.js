@@ -35,15 +35,40 @@ const rcIcon = L.divIcon({
 
 // Inicializa o mapa
 function initMap() {
-  map = L.map('map').setView([-30.0346, -51.2177], 6);
+  const config = regiaoAtual || {
+    view: [-30.0346, -51.2177],
+    zoom: 6
+  };
+  
+  map = L.map('map').setView(config.view, config.zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+    attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 }
 
+function carregarRegiao(regiaoId) {
+  if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
+  
+  regiaoAtual = configuracoesRegioes[regiaoId];
+  
+  // Destruir o mapa existente
+  if (map) {
+    map.remove();
+  }
+  
+  // Reiniciar variáveis
+  dadosCSV = [];
+  filtroAnoSelecionado = '';
+  filtroMesSelecionado = 'todos';
+  
+  // Criar novo mapa
+  initMap();
+  carregarDadosAPI();
+}
+
 // Carrega os dados da Google Sheets API
-function carregarDadosAPI() {
-  const sheetId = '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA';
+ if (!regiaoAtual) return;  
+  const sheetId = regiaoAtual.planilhaId;
   const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
   
@@ -71,7 +96,9 @@ function carregarDadosAPI() {
 
 // Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
-  fetch('municipios-RS.geojson')
+   if (!regiaoAtual) return;
+  
+  fetch(regiaoAtual.geojsonPath)
     .then(response => response.json())
     .then(geojson => {
       // Primeiro cria todos os marcadores dos RCs
