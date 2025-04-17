@@ -26,7 +26,8 @@ function initMap() {
 }
 
 function carregarRegiao(regiaoId) {
-  console.log('Carregando região:', regiaoId);
+  console.log('Região selecionada:', regiaoId);
+  console.log('Configurações da região:', configuracoesRegioes[regiaoId]);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
   
   regiaoAtual = configuracoesRegioes[regiaoId];
