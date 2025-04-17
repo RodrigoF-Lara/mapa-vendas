@@ -17,7 +17,7 @@ body {
 /* Mapa garantido (60% da tela) */
 .map-wrapper {
   width: 60%;
-  height: 50vh;
+  height: 100vh;
   background: #e9ecef;
 }
 
@@ -129,10 +129,10 @@ th {
 }
 
 /* Responsividade */
-@media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
+//@media (max-width: 768px) {
+//  .app-container {
+//    flex-direction: column;
+//  }
   
   .map-wrapper, .panel-wrapper {
     width: 100%;
@@ -158,8 +158,8 @@ th {
 .rc-marker {
   background-color: #e74c3c;
   border-radius: 50%;
-  width: 14px;
-  height: 14px;
+  width: 34px;
+  height: 34px;
   display: block;
   position: relative;
   box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
