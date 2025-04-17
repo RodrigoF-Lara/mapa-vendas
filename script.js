@@ -42,7 +42,7 @@ function initMap() {
 }
 
 // Carrega os dados da Google Sheets API
-function carregarDadosAPI() {
+function DadosAPI() {
   const sheetId = '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA';
   const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
@@ -74,6 +74,18 @@ function carregarGeoJSON() {
   fetch('municipios-RS.geojson')
     .then(response => response.json())
     .then(geojson => {
+      // Primeiro cria todos os marcadores dos RCs
+      Object.entries(cidadesRC).forEach(([codigoIBGE, rc]) => {
+        const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
+        if (feature) {
+          const centroid = turf.centroid(feature).geometry.coordinates;
+          L.marker([centroid[1], centroid[0]], {icon: rcIcon})
+            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
+            .addTo(map);
+        }
+      });
+
+      // Depois processa os polígonos normalmente
       L.geoJSON(geojson, {
         onEachFeature: function (feature, layer) {
           const codigoIBGE = feature.properties.CD_MUN;
@@ -82,15 +94,6 @@ function carregarGeoJSON() {
             item.ANO === filtroAnoSelecionado &&
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
-
-          // SEMPRE MOSTRA OS PINS DOS RCs (modificado)
-          const rc = cidadesRC[codigoIBGE];
-          if (rc) {
-            const centroid = turf.centroid(feature).geometry.coordinates;
-            L.marker([centroid[1], centroid[0]], {icon: rcIcon})
-              .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
-              .addTo(map);
-          }
 
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
@@ -104,10 +107,9 @@ function carregarGeoJSON() {
             layer.bindPopup(`
               <strong>${feature.properties.NM_MUN}</strong><br>
               Quantidade: ${totalQnt}
-              ${rc ? `<br><strong>RC:</strong> ${rc}` : ''}
+              ${cidadesRC[codigoIBGE] ? `<br><strong>RC:</strong> ${cidadesRC[codigoIBGE]}` : ''}
             `);
 
-            // FILTRAR GRÁFICO AO CLICAR (novo)
             layer.on('click', function() {
               mostrarTabela(codigoIBGE);
               filtrarGraficoPorCidade(codigoIBGE);
