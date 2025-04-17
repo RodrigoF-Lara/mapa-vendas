@@ -22,6 +22,36 @@ const configuracoesRegioes = {
         '4304705': 'LEANDRO'
     }
   },
+  'sc': {
+    id: 'sc',
+    nome: 'SC',
+    planilhaId: '1aWYSIjBBS6q6TaLlDETakqz_QUQrg3dR8nVwKYQlyHY',
+    geojsonPath: 'municipios-SC.geojson', // Sintaxe corrigida
+    view: [-27.2423, -50.2189],
+    zoom: 10,
+    cidadesRC: {
+        '4304705': 'LEANDRO'
+    },
+    'pr': {
+    id: 'pr',
+    nome: 'PR',
+    planilhaId: '1_DlY-t96oZ5HMctUv40MjZSFPQNBkr0XmGglUQ5kBn0',
+    geojsonPath: 'municipios-PR.geojson', // Sintaxe corrigida
+    view: [-24.7935, -50.0000],
+    zoom: 10,
+    cidadesRC: {
+        '4304705': 'LEANDRO'
+    },
+       'sp': {
+    id: 'sp',
+    nome: 'SP',
+    planilhaId: '1iIyNSJSvZO53txewSIdgulgOQr9LkKVlKC4jYdleH1U',
+    geojsonPath: 'municipios-SP.geojson', // Sintaxe corrigida
+    view: [-22.1500, -48.0000],
+    zoom: 10,
+    cidadesRC: {
+        '4304705': 'LEANDRO'
+    },
   'ms': {
     id: 'ms',
     nome: 'MS',
