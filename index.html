@@ -11,38 +11,38 @@
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <div class="main-grid">
-    <!-- Mapa ocupa a esquerda -->
-    <div class="map-section">
+  <div class="dashboard">
+    <!-- Mapa reduzido para 55% -->
+    <div class="map-area">
       <div id="map"></div>
     </div>
     
-    <!-- Painel direito dividido em 3 partes -->
-    <div class="panel-section">
-      <!-- Filtros no topo -->
-      <div class="filters-card">
+    <!-- Painel direito expandido para 45% -->
+    <div class="panel-area">
+      <!-- Filtros em linha única -->
+      <div class="filters-header">
         <h2>Filtros</h2>
-        <div class="filter-row">
-          <div class="filter-group">
+        <div class="filters-row">
+          <div class="filter-box">
             <label for="filtro-ano">Ano:</label>
             <select id="filtro-ano"></select>
           </div>
-          <div class="filter-group">
+          <div class="filter-box">
             <label for="filtro-mes">Mês:</label>
             <select id="filtro-mes"></select>
           </div>
+          <button onclick="mostrarResumoEstado()">Atualizar</button>
         </div>
-        <button onclick="mostrarResumoEstado()">Atualizar Dados</button>
       </div>
       
-      <!-- Tabela no meio -->
-      <div class="data-card">
+      <!-- Tabela com mais espaço -->
+      <div class="data-display">
         <div id="dados-cidade"></div>
       </div>
       
-      <!-- Gráfico na parte inferior -->
-      <div class="chart-card">
-        <h3>Vendas por Mês</h3>
+      <!-- Gráfico compacto mas legível -->
+      <div class="chart-container">
+        <h3>Vendas Mensais</h3>
         <div id="grafico-mensal"></div>
       </div>
     </div>
