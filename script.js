@@ -80,27 +80,50 @@ function carregarDadosAPI() {
 // [Cole aqui todo o restante do seu script.js original]
 // Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
-   if (!regiaoAtual) return;
-  // Codifique o caminho do arquivo para lidar com espaços
-  const caminhoCodificado = encodeURI(regiaoAtual.geojsonPath);
+  if (!regiaoAtual) {
+    console.error('Nenhuma região selecionada');
+    return;
+  }
+
+  // Codifica o caminho para lidar com espaços e caracteres especiais
+  const caminhoGeoJSON = encodeURI(regiaoAtual.geojsonPath);
   
-  fetch(caminhoCodificado)
-    .then(response => response.json())
+  fetch(caminhoGeoJSON)
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return response.json();
+    })
     .then(geojson => {
-      // Use os RCs específicos da região
+      console.log('GeoJSON carregado:', geojson);
+
+      // Primeiro cria todos os marcadores dos RCs ESPECÍFICOS DA REGIÃO
       Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
+          // Verifica se o Turf.js está carregado
+          if (!turf) {
+            console.error('Turf.js não está carregado');
+            return;
+          }
+          
           const centroid = turf.centroid(feature).geometry.coordinates;
-          L.marker([centroid[1], centroid[0]], {icon: rcIcon})
+          L.marker([centroid[1], centroid[0]], { icon: rcIcon })
             .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
             .addTo(map);
         }
       });
 
-      // Depois processa os polígonos normalmente
+      // Processa os polígonos com estilo dinâmico
       L.geoJSON(geojson, {
-        onEachFeature: function (feature, layer) {
+        style: function(feature) {
+          return {
+            fillColor: 'gray',
+            fillOpacity: 0.3,
+            weight: 1,
+            color: 'black'
+          };
+        },
+        onEachFeature: function(feature, layer) {
           const codigoIBGE = feature.properties.CD_MUN;
           const vendasCidade = dadosCSV.filter(item =>
             item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
@@ -110,35 +133,48 @@ function carregarGeoJSON() {
 
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            
             layer.setStyle({
-              fillColor: totalQnt > 0 ? 'yellow' : 'gray',
-              fillOpacity: 0.5,
-              weight: 1,
-              color: 'black'
+              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
+              fillOpacity: 0.7
             });
 
-            layer.bindPopup(`
-              <strong>${feature.properties.NM_MUN}</strong><br>
-              Quantidade: ${totalQnt}
-              ${cidadesRC[codigoIBGE] ? `<br><strong>RC:</strong> ${cidadesRC[codigoIBGE]}` : ''}
-            `);
+            const popupContent = `
+              <div class="map-popup">
+                <h4>${feature.properties.NM_MUN}</h4>
+                <p>Quantidade: ${totalQnt}</p>
+                ${regiaoAtual.cidadesRC[codigoIBGE] ? `<p>RC: ${regiaoAtual.cidadesRC[codigoIBGE]}</p>` : ''}
+              </div>`;
+            
+            layer.bindPopup(popupContent);
 
             layer.on('click', function() {
               mostrarTabela(codigoIBGE);
               filtrarGraficoPorCidade(codigoIBGE);
             });
-          } else {
-            layer.setStyle({
-              fillColor: 'gray',
-              fillOpacity: 0.3,
+          }
+
+          // Hover effects
+          layer.on('mouseover', function() {
+            this.setStyle({
+              weight: 3,
+              color: '#666'
+            });
+          });
+          
+          layer.on('mouseout', function() {
+            this.setStyle({
               weight: 1,
               color: 'black'
             });
-          }
+          });
         }
       }).addTo(map);
     })
-    .catch(error => console.error('Erro ao carregar GeoJSON:', error));
+    .catch(error => {
+      console.error('Falha ao carregar GeoJSON:', error);
+      console.error('Caminho tentado:', regiaoAtual.geojsonPath);
+    });
 }
 
 // NOVA FUNÇÃO PARA FILTRAR GRÁFICO
