@@ -96,7 +96,7 @@ function carregarGeoJSON() {
     .then(geojson => {
       console.log('GeoJSON carregado:', geojson);
 
-      // Primeiro cria todos os marcadores dos RCs ESPECÍFICOS DA REGIÃO
+      // Criação dos marcadores dos RCs ESPECÍFICOS DA REGIÃO
       Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
@@ -113,31 +113,17 @@ function carregarGeoJSON() {
         }
       });
 
-      const rcIconPulsante = L.divIcon({
-  className: 'rc-marker-pulsante',
-  iconSize: [16, 16],
-  iconAnchor: [8, 16],
-  popupAnchor: [0, -16],
-});
-
-Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
-    const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
-    if (feature) {
-        const centroid = turf.centroid(feature).geometry.coordinates;
-        L.marker([centroid[1], centroid[0]], { icon: rcIconPulsante })
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
-            .addTo(map);
-    }
-});
-
-      // Processa os polígonos com estilo dinâmico
+      // Pintar as cidades onde os RCs moram (opção 1)
       L.geoJSON(geojson, {
         style: function(feature) {
+          const codigoIBGE = feature.properties.CD_MUN;
+          const destaqueRC = regiaoAtual.cidadesRC[codigoIBGE];
+
           return {
-            fillColor: 'gray',
-            fillOpacity: 0.3,
+            fillColor: destaqueRC ? '#FF6347' : 'gray', // Cor vermelha para cidade com RC
+            fillOpacity: 0.6,
             weight: 1,
-            color: 'black'
+            color: destaqueRC ? '#FF4500' : 'black', // Cor de borda mais forte para cidades com RC
           };
         },
         onEachFeature: function(feature, layer) {
