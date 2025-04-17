@@ -1,0 +1,11 @@
+/* Mapa */
+.map-wrapper {
+  width: 60%;
+  height: 100vh;
+  background: #e9ecef;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
