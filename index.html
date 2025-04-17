@@ -11,23 +11,23 @@
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <div class="dashboard">
-    <!-- Mapa reduzido para 55% -->
-    <div class="map-area">
+  <div class="app-container">
+    <!-- Mapa garantido na esquerda -->
+    <div class="map-wrapper">
       <div id="map"></div>
     </div>
     
-    <!-- Painel direito expandido para 45% -->
-    <div class="panel-area">
-      <!-- Filtros em linha única -->
-      <div class="filters-header">
+    <!-- Painel direito com nova hierarquia -->
+    <div class="panel-wrapper">
+      <!-- Filtros compactos -->
+      <div class="filter-card">
         <h2>Filtros</h2>
-        <div class="filters-row">
-          <div class="filter-box">
+        <div class="filter-controls">
+          <div>
             <label for="filtro-ano">Ano:</label>
             <select id="filtro-ano"></select>
           </div>
-          <div class="filter-box">
+          <div>
             <label for="filtro-mes">Mês:</label>
             <select id="filtro-mes"></select>
           </div>
@@ -35,15 +35,15 @@
         </div>
       </div>
       
-      <!-- Tabela com mais espaço -->
-      <div class="data-display">
-        <div id="dados-cidade"></div>
-      </div>
-      
-      <!-- Gráfico compacto mas legível -->
-      <div class="chart-container">
+      <!-- Gráfico agora acima da tabela -->
+      <div class="chart-card">
         <h3>Vendas Mensais</h3>
         <div id="grafico-mensal"></div>
+      </div>
+      
+      <!-- Tabela com scroll -->
+      <div class="data-card">
+        <div id="dados-cidade"></div>
       </div>
     </div>
   </div>
