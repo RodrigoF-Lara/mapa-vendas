@@ -120,10 +120,10 @@ function carregarGeoJSON() {
           const destaqueRC = regiaoAtual.cidadesRC[codigoIBGE];
 
           return {
-            fillColor: destaqueRC ? '#FF6347' : 'gray', // Cor vermelha para cidade com RC
-            fillOpacity: 0.6,
-            weight: 1,
-            color: destaqueRC ? '#FF4500' : 'black', // Cor de borda mais forte para cidades com RC
+            fillColor: (destaqueRC ? '#ffeb3b' : '#9e9e9e'), // Cor amarela para cidade com vendas, cinza caso contrário
+            fillOpacity: 0.7,
+            weight: destaqueRC ? 5 : 1,  // Linha grossa (5px) nas cidades com RC, e mais fina (1px) para outras cidades
+            color: destaqueRC ? '#FF6347' : 'black',  // Linha vermelha (para as cidades com RC), preta para outras
           };
         },
         onEachFeature: function(feature, layer) {
@@ -137,10 +137,12 @@ function carregarGeoJSON() {
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             
-            // Aplica o estilo após a criação do polígono, garantindo que a cor seja atualizada corretamente
+            // A cidade com RC ainda terá borda vermelha grossa, mas a cor de preenchimento permanece amarela para vendas
             layer.setStyle({
-              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
-              fillOpacity: 0.7
+              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e', // Amarelo para cidades com vendas, cinza caso contrário
+              fillOpacity: 0.7,
+              weight: regiaoAtual.cidadesRC[codigoIBGE] ? 5 : 1,  // Borda grossa se tiver RC
+              color: regiaoAtual.cidadesRC[codigoIBGE] ? '#FF6347' : 'black',  // Borda vermelha para cidades com RC
             });
 
             const popupContent = `
@@ -161,15 +163,15 @@ function carregarGeoJSON() {
           // Hover effects
           layer.on('mouseover', function() {
             this.setStyle({
-              weight: 3,
+              weight: 6,  // Aumenta a borda ao passar o mouse
               color: '#666'
             });
           });
           
           layer.on('mouseout', function() {
             this.setStyle({
-              weight: 1,
-              color: 'black'
+              weight: regiaoAtual.cidadesRC[codigoIBGE] ? 5 : 1,  // Restaura a borda original
+              color: regiaoAtual.cidadesRC[codigoIBGE] ? '#FF6347' : 'black',
             });
           });
         }
