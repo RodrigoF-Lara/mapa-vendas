@@ -7,8 +7,8 @@ const configuracoesRegioes = {
     view: [-30.0346, -51.2177],
     zoom: 6,
     cidadesRC: {
-      '1400100': 'NABOR',
-      '1504208': 'FABRÍCIO'
+      '4301602': 'GUSTAVO'
+      
     }
   },
   'rs_norte': {
@@ -18,6 +18,8 @@ const configuracoesRegioes = {
     geojsonPath: 'municipios-RS NORTE.geojson', // Sintaxe corrigida
     view: [-28.5000, -53.0000],
     zoom: 6,
-    cidadesRC: {}
+    cidadesRC: {
+        '4304705': 'LEANDRO'
+    }
   }
 };
