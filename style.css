@@ -150,4 +150,26 @@ button:hover {
   .filters-container {
     flex-wrap: nowrap;
   }
+  * Adicione APENAS estas novas regras no final: */
+#grafico-container {
+  padding: 15px;
+  background: #f9f9f9;
+  border-top: 1px solid #ddd;
+}
+
+#grafico-container h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+#grafico-mensal {
+  width: 100%;
+  height: 300px;
+}
+
+@media (min-width: 768px) {
+  #grafico-container {
+    padding: 20px;
+  }
+
 }
