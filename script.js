@@ -137,6 +137,7 @@ function carregarGeoJSON() {
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             
+            // Aplica o estilo após a criação do polígono, garantindo que a cor seja atualizada corretamente
             layer.setStyle({
               fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
               fillOpacity: 0.7
