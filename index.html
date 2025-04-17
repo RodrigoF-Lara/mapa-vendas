@@ -1,72 +1,102 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="style.css" />
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="regioes-config.js"></script>
-</head>
-<body>
-
-  <div class="regiao-selector">
-  <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
-    <option value="">Selecione a Região</option>
-    <option value="rs_sul">RS Sul</option>
-    <option value="rs_norte">RS Norte</option>
-    <option value="sc">SC</option>
-    <option value="pr">PR</option>
-    <option value="sp">SP</option>
-    <option value="ms">MS</option>
-    <!-- Adicione as outras 19 regiões aqui -->
-  </select>
-</div>
+// Função para carregar a região e mostrar o mapa correspondente
+function carregarRegiao(regiaoId) {
+  console.log('Carregando região:', regiaoId);
+  if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
   
-  <div class="app-container">
-    <!-- Mapa garantido na esquerda -->
-    <div class="map-wrapper">
-      <div id="map"></div>
-    </div>
+  regiaoAtual = configuracoesRegioes[regiaoId];
+  
+  // Alterar o ID da div do mapa para a região selecionada
+  const mapElement = document.querySelector('#map');
+  mapElement.id = `map-${regiaoId}`; // Atualiza o ID da div do mapa para algo como map-rs_sul
+  
+  // Destruir o mapa existente e reiniciar
+  if (map) {
+    map.remove();
+  }
+  
+  // Inicializar o novo mapa
+  initMap();
+  carregarDadosAPI();
+}
+
+// Função para inicializar o mapa
+function initMap() {
+  const config = regiaoAtual || {
+    view: [-30.0346, -51.2177], // Coordenadas de visualização padrão
+    zoom: 6
+  };
+  
+  map = L.map('map').setView(config.view, config.zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+}
+
+// Função para capturar o mapa e gerar o PDF
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const regioes = Object.keys(configuracoesRegioes);
+
+  // Função para capturar o mapa de cada região como imagem
+  function capturarMapa(regiaoId) {
+    return new Promise((resolve, reject) => {
+      // A div do mapa de cada região tem um id no formato 'map-{regiaoId}'
+      const mapElement = document.querySelector(`#map-${regiaoId}`);
+      html2canvas(mapElement).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        resolve(imgData);
+      }).catch(reject);
+    });
+  }
+
+  // Itera sobre as regiões
+  regioes.forEach((regiaoId, index) => {
+    const regiao = configuracoesRegioes[regiaoId];
     
-    <!-- Painel direito com nova hierarquia -->
-    <div class="panel-wrapper">
-      <!-- Filtros compactos -->
-      <div class="filter-card">
-        <h2>Filtros</h2>
-        <div class="filter-controls">
-          <div>
-            <label for="filtro-ano">Ano:</label>
-            <select id="filtro-ano"></select>
-          </div>
-          <div>
-            <label for="filtro-mes">Mês:</label>
-            <select id="filtro-mes"></select>
-          </div>
-          <button onclick="mostrarResumoEstado()">Atualizar</button>
-        </div>
-      </div>
-      
-      <!-- Gráfico agora acima da tabela -->
-      <div class="chart-card">
-        <h3>Vendas Mensais</h3>
-        <div id="grafico-mensal"></div>
-      </div>
-      
-      <!-- Tabela com scroll -->
-      <div class="data-card">
-        <div id="dados-cidade"></div>
-      </div>
-    </div>
-  </div>
-<button id="gerar-pdf">Gerar PDF</button>
-<script src="script.js"></script>
-</body>
-</html>
+    // Adiciona uma nova página para cada região
+    if (index > 0) doc.addPage();
+    
+    // Título da região
+    doc.setFontSize(16);
+    doc.text(`Dados da Região: ${regiao.nome}`, 20, 20);
+
+    // Captura a imagem do mapa da região
+    capturarMapa(regiaoId).then(imgData => {
+      // Adiciona a imagem do mapa correspondente à região
+      doc.addImage(imgData, 'PNG', 20, 30, 180, 100); // Ajuste a posição e o tamanho conforme necessário
+
+      // Dados das cidades com RC
+      let yPosition = 140;
+      doc.setFontSize(12);
+      doc.text('Cidades com RC:', 20, yPosition);
+
+      Object.entries(regiao.cidadesRC).forEach(([codigoIBGE, rc], i) => {
+        yPosition += 10;
+        doc.text(`${i + 1}. Código IBGE: ${codigoIBGE} - RC: ${rc}`, 20, yPosition);
+      });
+
+      // Adiciona a tabela de vendas
+      yPosition += 15;
+      doc.text('Vendas:', 20, yPosition);
+      yPosition += 10;
+
+      // Exemplo de dados de vendas (isso deve vir da sua variável `dadosCSV` ou API)
+      const vendasCidade = dadosCSV.filter(item => item['TB_CIDADES.CODIGO_IBGE'] === regiao.cidadesRC[regiaoId]);
+      vendasCidade.forEach((venda, i) => {
+        yPosition += 10;
+        doc.text(`Venda ${i + 1}: ${venda['NOTA']} - Quantidade: ${venda.QNT} - Faturamento: ${venda.FATURAMENTO}`, 20, yPosition);
+      });
+
+    }).catch(error => {
+      console.error('Erro ao capturar o mapa:', error);
+    });
+  });
+
+  // Salva o PDF com o mapa e os dados
+  doc.save('dados_regioes_com_mapas.pdf');
+}
+
+// Adiciona um ouvinte de evento para o botão de geração do PDF
+document.getElementById('gerar-pdf').addEventListener('click', gerarPDF);
