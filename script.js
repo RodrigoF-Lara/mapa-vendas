@@ -287,10 +287,16 @@ function popularFiltros() {
   const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
   const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
 
-  selectAno.innerHTML = anos.map(ano => `<option value="${ano}">${ano}</option>`).join('');
+  // Obter ano atual
+  const anoAtual = new Date().getFullYear().toString();
+
+  selectAno.innerHTML = anos.map(ano => 
+    `<option value="${ano}" ${ano === anoAtual ? 'selected' : ''}>${ano}</option>`
+  ).join('');
   selectMes.innerHTML = `<option value="todos">Todos</option>` +
     meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
 
+  // Atualizar variáveis globais com os valores selecionados
   filtroAnoSelecionado = selectAno.value;
   filtroMesSelecionado = selectMes.value;
 
