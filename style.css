@@ -4,17 +4,17 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   height: 100vh;
   overflow: hidden;
-  background: #f0f2f5;
+  background: #f5f7fa;
 }
 
-.main-grid {
-  display: grid;
-  grid-template-columns: 60% 40%;
+.dashboard {
+  display: flex;
   height: 100vh;
 }
 
-/* Seção do Mapa */
-.map-section {
+/* Mapa reduzido para 55% */
+.map-area {
+  width: 55%;
   background: #e9ecef;
 }
 
@@ -23,154 +23,125 @@ body {
   width: 100%;
 }
 
-/* Seção do Painel Direito */
-.panel-section {
+/* Painel direito expandido */
+.panel-area {
+  width: 45%;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
   background: white;
-  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
 }
 
-/* Cartão de Filtros */
-.filters-card {
-  padding: 15px;
+/* Cabeçalho com filtros compactos */
+.filters-header {
+  padding: 12px 15px;
   background: #2c3e50;
   color: white;
 }
 
-.filters-card h2 {
-  margin: 0 0 15px 0;
-  font-size: 1.2rem;
+.filters-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
 }
 
-.filter-row {
+.filters-row {
   display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 10px;
+  align-items: flex-end;
 }
 
-.filter-group {
+.filter-box {
   flex: 1;
 }
 
-.filter-group label {
+.filter-box label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  margin-bottom: 3px;
 }
 
-.filter-group select {
+.filter-box select {
   width: 100%;
-  padding: 8px;
-  border-radius: 4px;
+  padding: 6px;
+  font-size: 0.9rem;
+  border-radius: 3px;
   border: 1px solid #ddd;
-  background: white;
 }
 
 button {
-  width: 100%;
-  padding: 10px;
+  padding: 6px 12px;
   background: #3498db;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+  white-space: nowrap;
+  margin-bottom: 3px;
 }
 
 button:hover {
   background: #2980b9;
 }
 
-/* Cartão de Dados */
-.data-card {
+/* Área de dados expandida */
+.data-display {
   flex: 1;
   padding: 15px;
   overflow-y: auto;
-  border-bottom: 1px solid #eee;
+  min-height: 40%;
 }
 
-/* Cartão do Gráfico */
-.chart-card {
+/* Gráfico compacto mas funcional */
+.chart-container {
   height: 30%;
-  min-height: 250px;
-  padding: 15px;
+  min-height: 200px;
+  padding: 10px 15px;
   border-top: 1px solid #eee;
 }
 
-.chart-card h3 {
-  margin: 0 0 10px 0;
-  font-size: 1.1rem;
+.chart-container h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
   color: #2c3e50;
 }
 
 #grafico-mensal {
-  height: calc(100% - 30px);
+  height: calc(100% - 25px);
   width: 100%;
 }
 
-/* Estilos para tabela */
+/* Melhorias na tabela */
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 th, td {
-  padding: 8px 12px;
+  padding: 6px 8px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
 }
 
 th {
   background-color: #f8f9fa;
   font-weight: 600;
+  position: sticky;
+  top: 0;
 }
 
 /* Responsividade */
 @media (max-width: 1200px) {
-  .main-grid {
-    grid-template-columns: 50% 50%;
-  }
+  .map-area { width: 50%; }
+  .panel-area { width: 50%; }
 }
 
-@media (max-width: 992px) {
-  .main-grid {
-    grid-template-columns: 100%;
-    grid-template-rows: 50vh auto;
-  }
-  
-  .panel-section {
-    height: auto;
-  }
-  
-  .chart-card {
-    height: 300px;
-  }
-}
-
-/* Marcadores do mapa */
-.rc-marker {
-  background-color: #e74c3c;
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  display: block;
-  position: relative;
-}
-
-.rc-marker::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid #e74c3c;
-  left: 0;
-  top: 12px;
+@media (max-width: 768px) {
+  .dashboard { flex-direction: column; }
+  .map-area, .panel-area { width: 100%; height: auto; }
+  .map-area { height: 50vh; }
+  .panel-area { height: 50vh; }
+  .filters-row { flex-wrap: wrap; }
+  .filter-box { min-width: 45%; }
 }
