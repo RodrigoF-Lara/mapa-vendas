@@ -292,9 +292,12 @@ function popularFiltros() {
   // Obter ano atual
   const anoAtual = new Date().getFullYear().toString();
 
+  / Preencher as opções de ano e definir o ano atual como selecionado
   selectAno.innerHTML = anos.map(ano => 
     `<option value="${ano}" ${ano === anoAtual ? 'selected' : ''}>${ano}</option>`
   ).join('');
+
+  // Preencher as opções de mês
   selectMes.innerHTML = `<option value="todos">Todos</option>` +
     meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
 
