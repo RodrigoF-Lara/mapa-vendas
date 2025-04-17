@@ -11,6 +11,16 @@
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
+
+  <div class="regiao-selector">
+  <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
+    <option value="">Selecione a Região</option>
+    <option value="rs_sul">RS Sul</option>
+    <option value="rs_norte">RS Norte</option>
+    <!-- Adicione as outras 19 regiões aqui -->
+  </select>
+</div>
+  
   <div class="app-container">
     <!-- Mapa garantido na esquerda -->
     <div class="map-wrapper">
