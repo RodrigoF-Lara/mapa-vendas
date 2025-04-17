@@ -21,5 +21,16 @@ const configuracoesRegioes = {
     cidadesRC: {
         '4304705': 'LEANDRO'
     }
+  },
+  'ms': {
+    id: 'ms',
+    nome: 'MS',
+    planilhaId: '1UCqKvj-R5QRhRaHo6bsLGhWRiLvlw2txPQsPeHG1-rE',
+    geojsonPath: 'municipios-MS.geojson', // Sintaxe corrigida
+    view: [-20.4697, -54.6201],
+    zoom: 6,
+    cidadesRC: {
+        '5003702': 'GRAZIAN'
+    }
   }
 };
