@@ -17,7 +17,7 @@ const cidadesRC = {
   '4104808': 'ISRAEL',
   '4209003': 'WILIAN',
   '4301602': 'GUSTAVO',
-  '4304705': 'LEANDRA',
+  '4304705': 'LEANDRO',
   '5003702': 'GRAZIAN',
   '5102637': 'RODRIGO',
   '5105259': 'JOAO',
