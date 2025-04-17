@@ -180,7 +180,7 @@ function carregarGeoJSON() {
     });
 }
 
-// Função para gerar o PDF com os mapas
+// Função para capturar o mapa e gerar o PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -190,7 +190,7 @@ function gerarPDF() {
   // Função para capturar o mapa de cada região como imagem
   function capturarMapa(regiaoId) {
     return new Promise((resolve, reject) => {
-      // Captura o mapa da região correspondente
+      // A div do mapa de cada região tem um id no formato 'map-{regiaoId}'
       const mapElement = document.querySelector(`#map-${regiaoId}`);
       html2canvas(mapElement).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
