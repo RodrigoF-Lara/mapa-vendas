@@ -122,7 +122,7 @@ function carregarGeoJSON() {
           return {
             fillColor: (destaqueRC ? '#ffeb3b' : '#9e9e9e'), // Cor amarela para cidade com vendas, cinza caso contrário
             fillOpacity: 0.7,
-            weight: destaqueRC ? 9 : 1,  // Linha grossa (5px) nas cidades com RC, e mais fina (1px) para outras cidades
+            weight: destaqueRC ? 15 : 1,  // Linha grossa (5px) nas cidades com RC, e mais fina (1px) para outras cidades
             color: destaqueRC ? '#FF6347' : 'black',  // Linha vermelha (para as cidades com RC), preta para outras
           };
         },
