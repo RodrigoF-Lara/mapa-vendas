@@ -1,39 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- Adicionado para gráficos -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendas e Mapa</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="main-container">
-    <div id="map"></div>
-    <div id="info">
-      <h2>Detalhes</h2>
-      <div class="filters-container">
-        <div class="filter-group">
-          <label for="filtro-ano">Ano:</label>
-          <select id="filtro-ano"></select>
-        </div>
-        <div class="filter-group">
-          <label for="filtro-mes">Mês:</label>
-          <select id="filtro-mes"></select>
-        </div>
+  <div id="map"></div>
+  <div id="info">
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="filtro-ano">Ano</label>
+        <select id="filtro-ano">
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+        </select>
       </div>
-      <button onclick="mostrarResumoEstado()">🔄 Ver Resumo</button>
-      <div id="dados-cidade"></div>
+      <div class="filter-group">
+        <label for="filtro-mes">Mês</label>
+        <select id="filtro-mes">
+          <option value="todos">Todos</option>
+          <option value="01">Janeiro</option>
+          <option value="02">Fevereiro</option>
+          <option value="03">Março</option>
+          <!-- Adicione os outros meses -->
+        </select>
+      </div>
     </div>
-  </div>
-
-  <!-- Novo container para o gráfico -->
-  <div id="grafico-container">
-    <h3>Máquinas Vendidas por Mês</h3>
-    <div id="grafico-mensal"></div>
+    <div id="dados-cidade"></div>
+    <canvas id="grafico-maquinas" width="400" height="200"></canvas>
   </div>
 
   <script src="script.js"></script>
