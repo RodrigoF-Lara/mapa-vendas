@@ -426,3 +426,71 @@ function gerarGraficoMensal() {
 }
 
 initApp();
+
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const regioes = Object.keys(configuracoesRegioes);
+
+  // Função para capturar o mapa de cada região como imagem
+  function capturarMapa(regiaoId) {
+    return new Promise((resolve, reject) => {
+      // Captura o mapa da região correspondente
+      const mapElement = document.querySelector(`#map-${regiaoId}`);
+      html2canvas(mapElement).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        resolve(imgData);
+      }).catch(reject);
+    });
+  }
+
+  // Itera sobre as regiões
+  regioes.forEach((regiaoId, index) => {
+    const regiao = configuracoesRegioes[regiaoId];
+    
+    // Adiciona uma nova página para cada região
+    if (index > 0) doc.addPage();
+    
+    // Título da região
+    doc.setFontSize(16);
+    doc.text(`Dados da Região: ${regiao.nome}`, 20, 20);
+
+    // Captura a imagem do mapa da região
+    capturarMapa(regiaoId).then(imgData => {
+      // Adiciona a imagem do mapa correspondente à região
+      doc.addImage(imgData, 'PNG', 20, 30, 180, 100); // Ajuste a posição e o tamanho conforme necessário
+
+      // Dados das cidades com RC
+      let yPosition = 140;
+      doc.setFontSize(12);
+      doc.text('Cidades com RC:', 20, yPosition);
+
+      Object.entries(regiao.cidadesRC).forEach(([codigoIBGE, rc], i) => {
+        yPosition += 10;
+        doc.text(`${i + 1}. Código IBGE: ${codigoIBGE} - RC: ${rc}`, 20, yPosition);
+      });
+
+      // Adiciona a tabela de vendas
+      yPosition += 15;
+      doc.text('Vendas:', 20, yPosition);
+      yPosition += 10;
+
+      // Exemplo de dados de vendas (isso deve vir da sua variável `dadosCSV` ou API)
+      const vendasCidade = dadosCSV.filter(item => item['TB_CIDADES.CODIGO_IBGE'] === regiao.cidadesRC[regiaoId]);
+      vendasCidade.forEach((venda, i) => {
+        yPosition += 10;
+        doc.text(`Venda ${i + 1}: ${venda['NOTA']} - Quantidade: ${venda.QNT} - Faturamento: ${venda.FATURAMENTO}`, 20, yPosition);
+      });
+
+    }).catch(error => {
+      console.error('Erro ao capturar o mapa:', error);
+    });
+  });
+
+  // Salva o PDF com o mapa e os dados
+  doc.save('dados_regioes_com_mapas.pdf');
+}
+
+// Adiciona um ouvinte de evento para o botão de geração do PDF
+document.getElementById('gerar-pdf').addEventListener('click', gerarPDF);
