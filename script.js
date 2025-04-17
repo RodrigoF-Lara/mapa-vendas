@@ -2,28 +2,7 @@ let dadosCSV = [];
 let map;
 let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
-
-// Dados das cidades dos RCs (COD_IBGE e nome do RC)
-const cidadesRC = {
-  '1400100': 'NABOR',
-  '1504208': 'FABRÍCIO',
-  '1505502': 'FABRÍCIO',
-  '1721000': 'GABRIEL',
-  '2101400': 'CLAUDEMIR',
-  '2800308': 'ESCOURA',
-  '2919553': 'PENINHA',
-  '3170206': 'RENAN',
-  '3529005': 'ANDRE',
-  '4104808': 'ISRAEL',
-  '4209003': 'WILIAN',
-  '4301602': 'GUSTAVO',
-  '4304705': 'LEANDRO',
-  '5003702': 'GRAZIAN',
-  '5102637': 'RODRIGO',
-  '5105259': 'JOAO',
-  '5107040': 'GLESON',
-  '5208707': 'RENNAN'
-};
+let regiaoAtual = null;
 
 // Ícone personalizado para os RCs
 const rcIcon = L.divIcon({
@@ -67,7 +46,9 @@ function carregarRegiao(regiaoId) {
 }
 
 // Carrega os dados da Google Sheets API
- if (!regiaoAtual) return;  
+function carregarDadosAPI() {
+  if (!regiaoAtual) return;
+  
   const sheetId = regiaoAtual.planilhaId;
   const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
@@ -86,7 +67,7 @@ function carregarRegiao(regiaoId) {
         popularFiltros();
         carregarGeoJSON();
         mostrarResumoEstado();
-        gerarGraficoMensal(); // Nova linha adicionada
+        gerarGraficoMensal();
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -94,6 +75,8 @@ function carregarRegiao(regiaoId) {
     .catch(error => console.error('Erro ao carregar dados da API:', error));
 }
 
+// Restante do script.js mantido igual...
+// [Cole aqui todo o restante do seu script.js original]
 // Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
    if (!regiaoAtual) return;
