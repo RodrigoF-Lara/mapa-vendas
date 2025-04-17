@@ -8,14 +8,17 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!-- Adicionado para gráficos -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <div class="main-container">
-    <div id="map"></div>
-    <div id="info">
-      <h2>Detalhes</h2>
-      <div class="filters-container">
+  <div class="dashboard-container">
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+    
+    <div class="panel-container">
+      <div class="filters-panel">
+        <h2>Filtros</h2>
         <div class="filter-group">
           <label for="filtro-ano">Ano:</label>
           <select id="filtro-ano"></select>
@@ -24,16 +27,18 @@
           <label for="filtro-mes">Mês:</label>
           <select id="filtro-mes"></select>
         </div>
+        <button onclick="mostrarResumoEstado()">Atualizar Dados</button>
       </div>
-      <button onclick="mostrarResumoEstado()">🔄 Ver Resumo</button>
-      <div id="dados-cidade"></div>
+      
+      <div class="data-panel">
+        <div id="dados-cidade" class="data-content"></div>
+      </div>
+      
+      <div class="chart-panel">
+        <h3>Vendas Mensais</h3>
+        <div id="grafico-mensal"></div>
+      </div>
     </div>
-  </div>
-
-  <!-- Novo container para o gráfico -->
-  <div id="grafico-container">
-    <h3>Máquinas Vendidas por Mês</h3>
-    <div id="grafico-mensal"></div>
   </div>
 
   <script src="script.js"></script>
