@@ -1,20 +1,20 @@
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f5f7fa;
-  color: #333;
-}
-
-.dashboard-container {
-  display: flex;
+  font-family: 'Segoe UI', Arial, sans-serif;
   height: 100vh;
   overflow: hidden;
+  background: #f0f2f5;
 }
 
-.map-container {
-  flex: 1;
-  min-width: 60%;
+.main-grid {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  height: 100vh;
+}
+
+/* Seção do Mapa */
+.map-section {
   background: #e9ecef;
 }
 
@@ -23,34 +23,43 @@ body {
   width: 100%;
 }
 
-.panel-container {
-  width: 40%;
-  min-width: 400px;
+/* Seção do Painel Direito */
+.panel-section {
   display: flex;
   flex-direction: column;
-  background: #fff;
+  height: 100vh;
+  overflow: hidden;
+  background: white;
   box-shadow: -2px 0 10px rgba(0,0,0,0.1);
 }
 
-.filters-panel {
+/* Cartão de Filtros */
+.filters-card {
   padding: 15px;
   background: #2c3e50;
   color: white;
 }
 
-.filters-panel h2 {
+.filters-card h2 {
   margin: 0 0 15px 0;
   font-size: 1.2rem;
 }
 
+.filter-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
 .filter-group {
-  margin-bottom: 12px;
+  flex: 1;
 }
 
 .filter-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .filter-group select {
@@ -70,7 +79,6 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-  margin-top: 10px;
   transition: background 0.3s;
 }
 
@@ -78,24 +86,23 @@ button:hover {
   background: #2980b9;
 }
 
-.data-panel {
+/* Cartão de Dados */
+.data-card {
   flex: 1;
-  overflow-y: auto;
   padding: 15px;
+  overflow-y: auto;
   border-bottom: 1px solid #eee;
 }
 
-.data-content {
-  height: 100%;
-}
-
-.chart-panel {
-  height: 300px;
+/* Cartão do Gráfico */
+.chart-card {
+  height: 30%;
+  min-height: 250px;
   padding: 15px;
   border-top: 1px solid #eee;
 }
 
-.chart-panel h3 {
+.chart-card h3 {
   margin: 0 0 10px 0;
   font-size: 1.1rem;
   color: #2c3e50;
@@ -106,11 +113,11 @@ button:hover {
   width: 100%;
 }
 
-/* Estilos para a tabela */
+/* Estilos para tabela */
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 th, td {
@@ -124,23 +131,25 @@ th {
   font-weight: 600;
 }
 
-tr:hover {
-  background-color: #f5f5f5;
+/* Responsividade */
+@media (max-width: 1200px) {
+  .main-grid {
+    grid-template-columns: 50% 50%;
+  }
 }
 
-/* Responsividade */
-@media (max-width: 1024px) {
-  .dashboard-container {
-    flex-direction: column;
+@media (max-width: 992px) {
+  .main-grid {
+    grid-template-columns: 100%;
+    grid-template-rows: 50vh auto;
   }
   
-  .map-container, .panel-container {
-    width: 100%;
-    min-width: 100%;
+  .panel-section {
+    height: auto;
   }
   
-  .panel-container {
-    height: 50vh;
+  .chart-card {
+    height: 300px;
   }
 }
 
