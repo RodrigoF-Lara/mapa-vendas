@@ -176,4 +176,21 @@ th {
   left: 0;
   top: 14px;
 }
+  .regiao-selector {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#filtro-regiao {
+  padding: 6px 12px;
+  min-width: 200px;
+  font-size: 14px;
+}
 }
