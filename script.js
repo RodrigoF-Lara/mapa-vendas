@@ -374,14 +374,14 @@ function reiniciarMapa() {
   mostrarResumoEstado();
 }
 
-function carregarTurfJS() {
-  const script = document.createElement('script');
-  script.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
-  script.onload = function() {
+function initApp() {
+  const turfScript = document.createElement('script');
+  turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
+  turfScript.onload = function() {
     initMap();
     carregarDadosAPI();
   };
-  document.head.appendChild(script);
+  document.head.appendChild(turfScript);
 }
 
 // ============= NOVAS FUNÇÕES PARA O GRÁFICO =============
@@ -419,6 +419,4 @@ function gerarGraficoMensal() {
   Plotly.newPlot('grafico-mensal', [trace], layout);
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  carregarTurfJS();
-});
+initApp();
