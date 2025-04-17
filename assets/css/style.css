@@ -1,0 +1,43 @@
+/* Estilos gerais */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f7fa;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Filtros */
+.filter-card {
+  padding: 12px 15px;
+  background: #2c3e50;
+  color: white;
+}
+
+.filter-card h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+button {
+  padding: 6px 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
