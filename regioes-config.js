@@ -38,7 +38,7 @@ const configuracoesRegioes = {
     'pr': {
     id: 'pr',
     nome: 'PR',
-    planilhaId: '1_DlY-t96oZ5HMctUv40MjZSFPQNBkr0XmGglUQ5kBn0',
+    planilhaId: '1iIyNSJSvZO53txewSIdgulgOQr9LkKVlKC4jYdleH1U',
     geojsonPath: 'municipios-PR.geojson', // Sintaxe corrigida
     view: [-24.7935, -50.0000],
     zoom: 7,
