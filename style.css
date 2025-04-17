@@ -16,7 +16,7 @@ body {
 
 /* Mapa garantido (60% da tela) */
 .map-wrapper {
-  width: 60%;
+  width: 100%;
   height: 100vh;
   background: #e9ecef;
 }
