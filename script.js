@@ -7,7 +7,7 @@ let regiaoAtual = null;
 // Ícone personalizado para os RCs
 const rcIcon = L.divIcon({
   className: 'rc-marker',
-  iconSize: [12, 20],
+  iconSize: [32, 20],
   iconAnchor: [6, 20],
   popupAnchor: [0, -20]
 });
