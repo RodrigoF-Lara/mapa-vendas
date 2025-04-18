@@ -1,4 +1,3 @@
-// Main functions, initialization, and configuration
 let dadosCSV = [];
 let map;
 let filtroAnoSelecionado = '';
@@ -13,19 +12,23 @@ const rcIcon = L.divIcon({
   popupAnchor: [0, -20]
 });
 
-// Inicializa o mapa
+// Função para inicializar o mapa
 function initMap() {
   const config = regiaoAtual || {
-    view: [-30.0346, -51.2177],
-    zoom: 6
+    view: [-30.0346, -51.2177],  // Posição padrão do mapa
+    zoom: 6  // Zoom padrão
   };
   
+  // Criação do mapa com a visão e o zoom definidos
   map = L.map('map').setView(config.view, config.zoom);
+  
+  // Adiciona o layer de tiles do OpenStreetMap
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 }
 
+// Função para carregar as regiões selecionadas
 function carregarRegiao(regiaoId) {
   console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
@@ -37,12 +40,12 @@ function carregarRegiao(regiaoId) {
     map.remove();
   }
   
-  // Reiniciar variáveis
+  // Reiniciar as variáveis
   dadosCSV = [];
   filtroAnoSelecionado = '';
   filtroMesSelecionado = 'todos';
   
-  // Criar novo mapa
+  // Criar novo mapa com as configurações da região
   initMap();
-  carregarDadosAPI();
+  carregarDadosAPI();  // Carregar os dados da API do Google Sheets
 }
