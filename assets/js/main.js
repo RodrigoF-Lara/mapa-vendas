@@ -2,7 +2,7 @@ import { carregarDadosAPI } from './api.js';
 import { initMap, addTileLayer, addMarkersToMap } from './map.js';
 import { gerarGraficoMensal } from './chart.js';
 import { mostrarTabela } from './table.js';
-import { gerarPDF } from './pdf.js';
+//import { gerarPDF } from './pdf.js';
 
 let dadosCSV = [];
 let regiaoAtual = null;
