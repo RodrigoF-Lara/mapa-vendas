@@ -15,7 +15,7 @@ function carregarGeoJSON() {
     .then(geojson => {
       console.log('GeoJSON carregado:', geojson);
 
-      // Criação dos marcadores no mapa
+      // Criar marcadores no mapa
       Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
@@ -26,7 +26,7 @@ function carregarGeoJSON() {
         }
       });
 
-      // Adiciona o estilo para o mapa e os limites
+      // Adicionar limites no mapa
       L.geoJSON(geojson, {
         style: function(feature) {
           return {
