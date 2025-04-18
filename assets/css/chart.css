@@ -1,4 +1,4 @@
-/* Gráfico */
+/* Gráfico acima da tabela (30% do painel) */
 .chart-card {
   height: 30%;
   min-height: 220px;
@@ -10,4 +10,9 @@
   margin: 0 0 8px 0;
   font-size: 1rem;
   color: #2c3e50;
+}
+
+#grafico-mensal {
+  height: calc(100% - 25px);
+  width: 100%;
 }
