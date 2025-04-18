@@ -69,3 +69,25 @@ button {
   cursor: pointer;
   white-space: nowrap;
 }
+/* Estilo do marcador RC (funciona em desktop e mobile) */
+.rc-marker {
+  background-color: #e74c3c;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: block;
+  position: relative;
+  box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
+}
+
+.rc-marker::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid #e74c3c;
+  left: 0;
+  top: 14px;
+}
