@@ -1,25 +1,5 @@
 import { carregarDadosAPI } from './api.js';
-import { initMap, addTileLayer } from './map.js';
-
-// Inicializar o mapa com parâmetros necessários
-function carregarRegiao(regiaoId) {
-  if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
-
-  regiaoAtual = configuracoesRegioes[regiaoId];
-
-  // Destruir o mapa existente antes de criar um novo
-  if (map) {
-    map.remove();
-  }
-
-  // Inicializar o mapa com os parâmetros corretos
-  map = initMap('map', regiaoAtual.view, regiaoAtual.zoom);
-  addTileLayer(map);
-
-  // Carregar os dados da API para a região
-  carregarDadosAPI(regiaoAtual.planilhaId, 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0');
-}
-import { carregarGeoJSON } from './map.js';
+import { initMap, addTileLayer, carregarGeoJSON } from './map.js';
 
 // Função para carregar dados e exibir no mapa
 function carregarDadosNoMapa() {
@@ -42,16 +22,18 @@ function carregarDadosNoMapa() {
   carregarGeoJSON(map, geojsonPath, cidadesRC, rcIcon);
 }
 
-// Atualizar a função carregarRegiao para incluir o carregamento de dados no mapa
+// Função para carregar a região e inicializar o mapa
 function carregarRegiao(regiaoId) {
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
 
   regiaoAtual = configuracoesRegioes[regiaoId];
 
+  // Remover o mapa existente antes de criar um novo
   if (map) {
     map.remove();
   }
 
+  // Inicializar o mapa com os parâmetros corretos
   map = initMap('map', regiaoAtual.view, regiaoAtual.zoom);
   addTileLayer(map);
 
