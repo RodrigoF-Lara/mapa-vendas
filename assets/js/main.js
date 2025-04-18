@@ -1,45 +1,64 @@
-import { carregarDadosAPI } from './api.js';
-import { initMap, addTileLayer, carregarGeoJSON } from './map.js';
+// Função para carregar o GeoJSON com os limites dos municípios
+function carregarGeoJSON() {
+  fetch('data/geojson/municipios-RS Sul.geojson')
+    .then(response => response.json())
+    .then(geojson => {
+      // Primeiro cria todos os marcadores dos RCs
+      Object.entries(cidadesRC).forEach(([codigoIBGE, rc]) => {
+        const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
+        if (feature) {
+          const centroid = turf.centroid(feature).geometry.coordinates;
+          L.marker([centroid[1], centroid[0]], {icon: rcIcon})
+            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
+            .addTo(map);
+        }
+      });
 
-// Função para carregar dados e exibir no mapa
-function carregarDadosNoMapa() {
-  if (!regiaoAtual) {
-    console.error('Nenhuma região selecionada.');
-    return;
-  }
+      // Depois processa os polígonos normalmente
+      L.geoJSON(geojson, {
+        onEachFeature: function (feature, layer) {
+          const codigoIBGE = feature.properties.CD_MUN;
+          const vendasCidade = dadosCSV.filter(item =>
+            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+            item.ANO === filtroAnoSelecionado &&
+            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+          );
 
-  // Configurar o caminho do GeoJSON e carregar no mapa
-  const geojsonPath = regiaoAtual.geojsonPath;
-  const cidadesRC = regiaoAtual.cidadesRC;
+          if (vendasCidade.length > 0) {
+            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            layer.setStyle({
+              fillColor: totalQnt > 0 ? 'yellow' : 'gray',
+              fillOpacity: 0.5,
+              weight: 1,
+              color: 'black'
+            });
 
-  const rcIcon = L.divIcon({
-    className: 'rc-marker',
-    iconSize: [32, 20],
-    iconAnchor: [6, 20],
-    popupAnchor: [0, -20],
-  });
+            layer.bindPopup(`
+              <strong>${feature.properties.NM_MUN}</strong><br>
+              Quantidade: ${totalQnt}
+              ${cidadesRC[codigoIBGE] ? `<br><strong>RC:</strong> ${cidadesRC[codigoIBGE]}` : ''}
+            `);
 
-  carregarGeoJSON(map, geojsonPath, cidadesRC, rcIcon);
+            layer.on('click', function() {
+              mostrarTabela(codigoIBGE);
+              filtrarGraficoPorCidade(codigoIBGE);
+            });
+          } else {
+            layer.setStyle({
+              fillColor: 'gray',
+              fillOpacity: 0.3,
+              weight: 1,
+              color: 'black'
+            });
+          }
+        }
+      }).addTo(map);
+    })
+    .catch(error => console.error('Erro ao carregar GeoJSON:', error));
 }
 
-// Função para carregar a região e inicializar o mapa
-function carregarRegiao(regiaoId) {
-  if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
-
-  regiaoAtual = configuracoesRegioes[regiaoId];
-
-  // Remover o mapa existente antes de criar um novo
-  if (map) {
-    map.remove();
-  }
-
-  // Inicializar o mapa com os parâmetros corretos
-  map = initMap('map', regiaoAtual.view, regiaoAtual.zoom);
-  addTileLayer(map);
-
-  // Após inicializar o mapa, carregar os dados nele
-  carregarDadosAPI(regiaoAtual.planilhaId, 'SUA_CHAVE_DE_API_AQUI', dados => {
-    dadosCSV = dados; // Atualizar a variável global com os dados carregados
-    carregarDadosNoMapa();
-  });
-}
+// Carregar e inicializar
+document.addEventListener('DOMContentLoaded', function () {
+  initMap();
+  carregarDadosAPI();
+});
