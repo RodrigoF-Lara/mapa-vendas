@@ -1,3 +1,4 @@
+// Table-related functions (for showing data in tabular format)
 function mostrarTabela(codigoIBGE) {
   const vendas = dadosCSV.filter(item =>
     item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
@@ -19,7 +20,7 @@ function mostrarTabela(codigoIBGE) {
   }, 0);
   const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  const rc = cidadesRC[codigoIBGE];
+  const rc = regiaoAtual.cidadesRC[codigoIBGE];
   let rcInfo = '';
   if (rc) {
     rcInfo = `<p><strong>🏠 RC:</strong> ${rc}</p>`;
