@@ -1,27 +1,26 @@
-export function carregarDadosAPI(sheetId, apiKey, callback) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
+let dadosCSV = [];
 
+// Carrega os dados da Google Sheets API
+function carregarDadosAPI() {
+  const sheetId = '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA';
+  const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
+  
   fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Erro ao carregar dados da API: ${response.status}`);
-      }
-      return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
       if (data.values) {
         const headers = data.values[0];
-        const dadosCSV = data.values.slice(1).map(row => {
+        dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
             obj[header] = row[index] || '';
             return obj;
           }, {});
         });
-
-        // Executar a função de callback com os dados processados
-        if (callback) {
-          callback(dadosCSV);
-        }
+        popularFiltros();
+        carregarGeoJSON();
+        mostrarResumoEstado();
+        gerarGraficoMensal();
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
