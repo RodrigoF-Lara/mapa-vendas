@@ -1,34 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapa de Vendas</title>
-  <!-- Estilo do Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
-  <style>
-    #map {
-      width: 100%;
-      height: 500px;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Mapa de Vendas RS</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/chart.css" />
+  <link rel="stylesheet" href="assets/css/map.css" />
+  <link rel="stylesheet" href="assets/css/table.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <h1>Mapa de Vendas</h1>
+  <div class="app-container">
+    <!-- Mapa garantido na esquerda -->
+    <div class="map-wrapper">
+      <div id="map"></div>
+    </div>
+    
+    <!-- Painel direito com nova hierarquia -->
+    <div class="panel-wrapper">
+      <!-- Filtros compactos -->
+      <div class="filter-card">
+        <h2>Filtros</h2>
+        <div class="filter-controls">
+          <div>
+            <label for="filtro-ano">Ano:</label>
+            <select id="filtro-ano"></select>
+          </div>
+          <div>
+            <label for="filtro-mes">Mês:</label>
+            <select id="filtro-mes"></select>
+          </div>
+          <button onclick="mostrarResumoEstado()">Atualizar</button>
+        </div>
+      </div>
+      
+      <!-- Gráfico agora acima da tabela -->
+      <div class="chart-card">
+        <h3>Vendas Mensais</h3>
+        <div id="grafico-mensal"></div>
+      </div>
+      
+      <!-- Tabela com scroll -->
+      <div class="data-card">
+        <div id="dados-cidade"></div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Div para o mapa -->
-  <div id="map"></div>
-
-  <!-- Botão de exemplo -->
-  <button id="gerar-pdf">Gerar PDF</button>
-
-  <!-- Scripts necessários -->
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@turf/turf/turf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <!-- Scripts do projeto -->
-  <script type="module" src="assets/js/main.js"></script>
+  <!-- Incluir o arquivo JavaScript -->
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
