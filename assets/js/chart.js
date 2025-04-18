@@ -1,29 +1,31 @@
-// chart.js
-export function gerarGraficoMensal(dadosCSV, filtroAnoSelecionado, filtroMesSelecionado) {
-  const meses = Array(12).fill(0).map((_, i) => i + 1);
-  const vendasPorMes = Array(12).fill(0);
+// NOVA FUNÇÃO PARA FILTRAR GRÁFICO
+function filtrarGraficoPorCidade(codigoIBGE) {
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+    item.ANO === filtroAnoSelecionado
+  );
 
-  dadosCSV.filter(item => item.ANO === filtroAnoSelecionado && (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado))
-    .forEach(item => {
-      const mes = parseInt(item.MÊS) - 1;
-      if (mes >= 0 && mes < 12) {
-        vendasPorMes[mes] += parseFloat(item.QNT || 0);
-      }
-    });
+  const meses = Array(12).fill(0);
+  dadosFiltrados.forEach(item => {
+    const mes = parseInt(item.MÊS) - 1;
+    if (mes >= 0 && mes < 12) {
+      meses[mes] += parseFloat(item.QNT || 0);
+    }
+  });
 
   const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
-  const trace = {
+  const cidadeNome = Object.entries(cidadesRC).find(([cod]) => cod === codigoIBGE)?.[1] || 
+                    document.querySelector(`[data-codigo="${codigoIBGE}"]`)?.innerText || 
+                    'Cidade Selecionada';
+
+  Plotly.newPlot('grafico-mensal', [{
     x: nomesMeses,
-    y: vendasPorMes,
+    y: meses,
     type: 'bar',
     marker: { color: '#4CAF50' }
-  };
-
-  const layout = {
-    title: `Máquinas Vendidas em ${filtroAnoSelecionado}`,
+  }], {
+    title: `Vendas Mensais - ${cidadeNome}`,
     xaxis: { title: 'Mês' },
     yaxis: { title: 'Quantidade' }
-  };
-
-  Plotly.newPlot('grafico-mensal', [trace], layout);
+  });
 }
