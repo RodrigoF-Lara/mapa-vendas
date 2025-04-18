@@ -1,7 +1,7 @@
-// API-related functions
+// Função para carregar os dados da API do Google Sheets
 function carregarDadosAPI() {
   if (!regiaoAtual) return;
-  
+
   const sheetId = regiaoAtual.planilhaId;
   const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:Z1000?key=${apiKey}`;
@@ -17,10 +17,10 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros();
-        carregarGeoJSON();
-        mostrarResumoEstado();
-        gerarGraficoMensal();
+        popularFiltros();      // Função para popular os filtros com dados
+        carregarGeoJSON();     // Função para carregar os limites dos municípios no mapa
+        mostrarResumoEstado(); // Função para mostrar um resumo dos dados
+        gerarGraficoMensal();  // Função para gerar gráfico mensal de vendas
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
