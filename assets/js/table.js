@@ -1,5 +1,4 @@
-// table.js
-export function mostrarTabela(dadosCSV, codigoIBGE, filtroAnoSelecionado, filtroMesSelecionado) {
+function mostrarTabela(codigoIBGE) {
   const vendas = dadosCSV.filter(item =>
     item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
     item.ANO === filtroAnoSelecionado &&
@@ -14,12 +13,23 @@ export function mostrarTabela(dadosCSV, codigoIBGE, filtroAnoSelecionado, filtro
   }
 
   const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = vendas.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
+  const totalFAT = vendas.reduce((soma, item) => {
+    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+    return soma + parseFloat(valorStr);
+  }, 0);
   const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+  const rc = cidadesRC[codigoIBGE];
+  let rcInfo = '';
+  if (rc) {
+    rcInfo = `<p><strong>🏠 RC:</strong> ${rc}</p>`;
+  }
+
   let html = `
+    ${rcInfo}
     <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
     <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
+
     <div class="table-container">
       <table>
         <thead>
@@ -46,7 +56,7 @@ export function mostrarTabela(dadosCSV, codigoIBGE, filtroAnoSelecionado, filtro
             <td>${item['DESCRIÇÃO']}</td>
             <td>${item.QNT}</td>
             <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${item.DATA}</td>
+            <td>${formatarData(item.DATA)}</td>
           </tr>`;
   });
 
