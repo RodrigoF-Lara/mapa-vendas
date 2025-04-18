@@ -1,64 +1,48 @@
-// Função para carregar o GeoJSON com os limites dos municípios
-function carregarGeoJSON() {
-  fetch('data/geojson/municipios-RS Sul.geojson')
-    .then(response => response.json())
-    .then(geojson => {
-      // Primeiro cria todos os marcadores dos RCs
-      Object.entries(cidadesRC).forEach(([codigoIBGE, rc]) => {
-        const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
-        if (feature) {
-          const centroid = turf.centroid(feature).geometry.coordinates;
-          L.marker([centroid[1], centroid[0]], {icon: rcIcon})
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
-            .addTo(map);
-        }
-      });
+// Main functions, initialization, and configuration
+let dadosCSV = [];
+let map;
+let filtroAnoSelecionado = '';
+let filtroMesSelecionado = 'todos';
+let regiaoAtual = null;
 
-      // Depois processa os polígonos normalmente
-      L.geoJSON(geojson, {
-        onEachFeature: function (feature, layer) {
-          const codigoIBGE = feature.properties.CD_MUN;
-          const vendasCidade = dadosCSV.filter(item =>
-            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-            item.ANO === filtroAnoSelecionado &&
-            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-          );
+// Ícone personalizado para os RCs
+const rcIcon = L.divIcon({
+  className: 'rc-marker',
+  iconSize: [32, 20],
+  iconAnchor: [6, 20],
+  popupAnchor: [0, -20]
+});
 
-          if (vendasCidade.length > 0) {
-            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            layer.setStyle({
-              fillColor: totalQnt > 0 ? 'yellow' : 'gray',
-              fillOpacity: 0.5,
-              weight: 1,
-              color: 'black'
-            });
-
-            layer.bindPopup(`
-              <strong>${feature.properties.NM_MUN}</strong><br>
-              Quantidade: ${totalQnt}
-              ${cidadesRC[codigoIBGE] ? `<br><strong>RC:</strong> ${cidadesRC[codigoIBGE]}` : ''}
-            `);
-
-            layer.on('click', function() {
-              mostrarTabela(codigoIBGE);
-              filtrarGraficoPorCidade(codigoIBGE);
-            });
-          } else {
-            layer.setStyle({
-              fillColor: 'gray',
-              fillOpacity: 0.3,
-              weight: 1,
-              color: 'black'
-            });
-          }
-        }
-      }).addTo(map);
-    })
-    .catch(error => console.error('Erro ao carregar GeoJSON:', error));
+// Inicializa o mapa
+function initMap() {
+  const config = regiaoAtual || {
+    view: [-30.0346, -51.2177],
+    zoom: 6
+  };
+  
+  map = L.map('map').setView(config.view, config.zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
 }
 
-// Carregar e inicializar
-document.addEventListener('DOMContentLoaded', function () {
+function carregarRegiao(regiaoId) {
+  console.log('Carregando região:', regiaoId);
+  if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
+  
+  regiaoAtual = configuracoesRegioes[regiaoId];
+  
+  // Destruir o mapa existente
+  if (map) {
+    map.remove();
+  }
+  
+  // Reiniciar variáveis
+  dadosCSV = [];
+  filtroAnoSelecionado = '';
+  filtroMesSelecionado = 'todos';
+  
+  // Criar novo mapa
   initMap();
   carregarDadosAPI();
-});
+}
