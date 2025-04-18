@@ -1,4 +1,4 @@
-// Map-related functions
+// Função para carregar o GeoJSON e mostrar os limites dos municípios no mapa
 function carregarGeoJSON() {
   if (!regiaoAtual) {
     console.error('Nenhuma região selecionada');
@@ -15,6 +15,7 @@ function carregarGeoJSON() {
     .then(geojson => {
       console.log('GeoJSON carregado:', geojson);
 
+      // Criação dos marcadores no mapa
       Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
@@ -25,6 +26,7 @@ function carregarGeoJSON() {
         }
       });
 
+      // Adiciona o estilo para o mapa e os limites
       L.geoJSON(geojson, {
         style: function(feature) {
           return {
