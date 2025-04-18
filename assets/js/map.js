@@ -70,4 +70,9 @@ function carregarGeoJSON() {
       console.error('Falha ao carregar GeoJSON:', error);
       console.error('Caminho tentado:', regiaoAtual.geojsonPath);
     });
+  #map {
+  height: 100%;  /* Garante que o mapa ocupe toda a altura da div */
+  width: 100%;   /* Garante que o mapa ocupe toda a largura da div */
+}
+
 }
