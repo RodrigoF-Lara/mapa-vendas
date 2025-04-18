@@ -4,7 +4,7 @@ let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
-// Ícone personalizado para os RCs
+// Ícone personalizado para os RCs (Responsáveis de Cidades)
 const rcIcon = L.divIcon({
   className: 'rc-marker',
   iconSize: [32, 20],
@@ -14,28 +14,29 @@ const rcIcon = L.divIcon({
 
 // Função para inicializar o mapa
 function initMap() {
+  // Configuração inicial de visualização do mapa (padrão)
   const config = regiaoAtual || {
-    view: [-30.0346, -51.2177],  // Posição padrão do mapa
-    zoom: 6  // Zoom padrão
+    view: [-30.0346, -51.2177],  // Posição padrão para o estado de RS
+    zoom: 6  // Zoom inicial
   };
-  
-  // Criação do mapa com a visão e o zoom definidos
+
+  // Inicializa o mapa com a visão e zoom definidos
   map = L.map('map').setView(config.view, config.zoom);
-  
+
   // Adiciona o layer de tiles do OpenStreetMap
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 }
 
-// Função para carregar as regiões selecionadas
+// Função para carregar a região selecionada
 function carregarRegiao(regiaoId) {
   console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
   
   regiaoAtual = configuracoesRegioes[regiaoId];
   
-  // Destruir o mapa existente
+  // Destruir o mapa existente antes de criar um novo
   if (map) {
     map.remove();
   }
