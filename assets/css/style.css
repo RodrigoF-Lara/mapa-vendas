@@ -69,3 +69,7 @@ button {
   cursor: pointer;
   white-space: nowrap;
 }
+#map {
+  height: 100%;  /* Garante que o mapa ocupe toda a altura da div */
+  width: 100%;   /* Garante que o mapa ocupe toda a largura da div */
+}
