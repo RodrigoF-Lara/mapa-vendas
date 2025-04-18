@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Mapa de Vendas RS</title>
-  
+
   <!-- Link para os novos arquivos CSS -->
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="stylesheet" href="assets/css/map.css" />
@@ -19,6 +19,7 @@
 </head>
 <body>
 
+  <!-- Selector de região -->
   <div class="regiao-selector">
     <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
       <option value="">Selecione a Região</option>
@@ -32,14 +33,14 @@
   </div>
   
   <div class="app-container">
-    <!-- Mapa garantido na esquerda -->
+    <!-- Mapa -->
     <div class="map-wrapper">
       <div id="map"></div>
     </div>
     
-    <!-- Painel direito com nova hierarquia -->
+    <!-- Painel direito com filtros e dados -->
     <div class="panel-wrapper">
-      <!-- Filtros compactos -->
+      <!-- Filtros -->
       <div class="filter-card">
         <h2>Filtros</h2>
         <div class="filter-controls">
@@ -55,13 +56,13 @@
         </div>
       </div>
       
-      <!-- Gráfico agora acima da tabela -->
+      <!-- Gráfico -->
       <div class="chart-card">
         <h3>Vendas Mensais</h3>
         <div id="grafico-mensal"></div>
       </div>
       
-      <!-- Tabela com scroll -->
+      <!-- Dados da cidade -->
       <div class="data-card">
         <div id="dados-cidade"></div>
       </div>
