@@ -14,7 +14,6 @@ const rcIcon = L.divIcon({
 
 // Função para inicializar o mapa
 function initMap() {
-  // Configuração inicial de visualização do mapa (padrão)
   const config = regiaoAtual || {
     view: [-30.0346, -51.2177],  // Posição padrão para o estado de RS
     zoom: 6  // Zoom inicial
