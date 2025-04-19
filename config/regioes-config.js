@@ -25,7 +25,7 @@ const configuracoesRegioes = {
      },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
-  };
+  },
   
   'sc': {
     id: 'sc',
@@ -39,7 +39,7 @@ const configuracoesRegioes = {
     },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
-  };
+  },
   
   'pr': {
     id: 'pr',
@@ -53,7 +53,7 @@ const configuracoesRegioes = {
      },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
-  };
+  },
   
   'sp': {
     id: 'sp',
