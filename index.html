@@ -64,6 +64,33 @@
     </div>
   </div>
 
+   <!-- Novo botão e label para exibir a coordenada da visão -->
+      <button id="exibirViewBtn" onclick="exibirViewMapa()">Exibir Visão do Mapa</button>
+      <label id="viewLabel">Visão do Mapa: </label>
+    </div>
+  </div>
+  
+
 <script src="assets/js/script.js"></script>
+  <script>
+
+    // Inicializa o mapa automaticamente quando a página for carregada
+    window.onload = function() {
+      initMap();  // Chama a função para inicializar o mapa
+    };
+
+    // Função para exibir a visão do mapa
+    function exibirViewMapa() {
+      const bounds = map.getBounds();  // Pega os limites atuais do mapa
+      
+      const sw = bounds.getSouthWest();  // Pega o canto inferior esquerdo
+      const ne = bounds.getNorthEast();  // Pega o canto superior direito
+      
+      // Exibe as coordenadas no label
+      const view = `View: [${sw.lat}, ${sw.lng}, ${ne.lat}, ${ne.lng}]`;
+      document.getElementById('viewLabel').innerText = `Visão do Mapa: ${view}`;
+    }
+  </script>
+  
 </body>
 </html>
