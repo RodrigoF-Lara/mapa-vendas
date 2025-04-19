@@ -6,7 +6,7 @@ let regiaoAtual = null;
 
 
 const rcIcon = L.icon({
-    iconUrl: 'data/rc/marcador_Jeison.svg',
+    iconUrl: regiaoAtual.marcadorIcone,
     iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
     iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
     popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
@@ -116,7 +116,7 @@ function carregarGeoJSON() {
           
           const centroid = turf.centroid(feature).geometry.coordinates;
           L.marker([centroid[1], centroid[0]], { icon: rcIcon })
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}<br><br><img src="data/rc/Jeison.PNG" alt="Imagem do local de vendas" width="200" />`)
+            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}<br><br><img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />`)
             .addTo(map);
         }
       });
