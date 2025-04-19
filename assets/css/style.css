@@ -1,8 +1,9 @@
-/* Reduzindo a altura do mapa para garantir que o botão apareça abaixo */
+/* Definindo a altura do mapa para garantir que o botão apareça abaixo */
 #map {
   height: 60vh;  /* 60% da altura da tela para o mapa */
   width: 100%;
   margin-bottom: 20px;  /* Espaço entre o mapa e o botão */
+  position: relative; /* Para possibilitar o posicionamento do botão dentro do mapa */
 }
 
 /* Estilo do contêiner do botão e label */
@@ -11,10 +12,13 @@
   padding: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centraliza o botão e o label */
-  width: 100%;
-  justify-content: center;
-  position: relative;
+  align-items: flex-start;
+  width: 100%; /* Garantir que ocupe toda a largura disponível */
+  justify-content: flex-start;
+  position: absolute; /* Posicionamento absoluto dentro do mapa */
+  left: 10px;  /* Afastamento da esquerda */
+  bottom: 10px; /* Afastamento da parte inferior do mapa */
+  z-index: 10;  /* Garantir que o botão fique acima do mapa */
 }
 
 /* Estilo do botão de "Exibir Visão do Mapa" */
@@ -40,4 +44,30 @@
   margin-top: 10px; /* Espaçamento superior */
   font-size: 16px; /* Tamanho do texto */
   color: #333; /* Cor do texto */
+}
+
+/* Estilo para o painel de filtros */
+.panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px;
+}
+
+/* Estilo para o painel de gráficos e dados */
+.chart-card, .data-card {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Estilo para os filtros */
+.filter-card {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Tamanho do gráfico */
+#grafico-mensal {
+  width: 100%;
+  height: 250px;
 }
