@@ -9,7 +9,7 @@ const configuracoesRegioes = {
     cidadesRC: {
       '4301602': 'GUSTAVO'      
     },
-    imagem: 'data/rc/Jeison.PNG',
+    imagem: 'mapa-vendas/data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
   },
   
