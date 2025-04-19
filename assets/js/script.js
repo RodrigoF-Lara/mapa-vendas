@@ -4,13 +4,21 @@ let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
-// Ícone personalizado para os RCs
+
 const rcIcon = L.icon({
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34]
+    iconUrl: 'data/rc/marcador_Jeison.svg',
+    iconSize: [25, 41], // Tamanho do ícone (ajuste conforme necessário)
+    iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
+    popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
 });
+
+// Ícone personalizado para os RCs   ---- icone azul que funciona
+//const rcIcon = L.icon({
+//    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+//   iconSize: [25, 41],
+//    iconAnchor: [12, 41],
+//    popupAnchor: [1, -34]
+//});
 
 // Inicializa o mapa
 function initMap() {
