@@ -6,7 +6,7 @@ let regiaoAtual = null;
 
 // Inicializa o ícone do marcador
 const rcIcon = L.icon({
-  iconUrl: 'data/rc/marcador_Jeison.svg',
+  iconUrl: 'data/rc/marcador_Jeison.svg', // Ícone do RC
   iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
   iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
   popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
@@ -98,14 +98,15 @@ function carregarGeoJSON() {
           const centroid = turf.centroid(feature).geometry.coordinates;
           const icone = L.icon({
             iconUrl: regiaoAtual.marcadorIcone,
-            iconSize: [32, 32]
+            iconSize: [32, 32] // Tamanho do ícone do RC
           });
 
-          // Exibe o marcador, mas sem imagem nem nome do RC no popup
+          // Exibe o marcador com a imagem do RC
           const popupContent = `
             <strong>${feature.properties.NM_MUN}</strong><br>
             <strong>📦 Quantidade Vendida:</strong> ${0}<br>
             <strong>💰 Faturamento:</strong> ${0}<br><br>
+            <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
           `;
           
           L.marker([centroid[1], centroid[0]], { icon: icone })
@@ -162,6 +163,7 @@ function carregarGeoJSON() {
                 <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
               `;
               layer.bindPopup(popupContent).openPopup();
+              mostrarTabela(codigoIBGE); // Chama a função para mostrar a tabela de vendas da cidade
             });
           }
         }
