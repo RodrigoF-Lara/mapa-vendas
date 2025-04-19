@@ -65,8 +65,8 @@ const configuracoesRegioes = {
     cidadesRC: {
         '3529005': 'ANDRE'
     },
-    imagem: 'data/rc/Jeison.PNG',
-    marcadorIcone: 'data/rc/marcador_Jeison.svg'
+    imagem: 'data/rc/Andre.PNG',
+    marcadorIcone: 'data/rc/marcador_Andre.svg'
   },
   
   'ms': {
