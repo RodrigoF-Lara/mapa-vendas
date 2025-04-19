@@ -1,15 +1,26 @@
-let dadosCSV = [];
-let map;
-let filtroAnoSelecionado = '';
-let filtroMesSelecionado = 'todos';
-let regiaoAtual = null;
+// Verificação de variáveis já declaradas
+if (typeof dadosCSV === 'undefined') {
+  var dadosCSV = [];
+}
+if (typeof map === 'undefined') {
+  var map;
+}
+if (typeof filtroAnoSelecionado === 'undefined') {
+  var filtroAnoSelecionado = '';
+}
+if (typeof filtroMesSelecionado === 'undefined') {
+  var filtroMesSelecionado = 'todos';
+}
+if (typeof regiaoAtual === 'undefined') {
+  var regiaoAtual = null;
+}
 
 // Inicializa o ícone do marcador
 const rcIcon = L.icon({
-  iconUrl: 'data/rc/marcador_Jeison.svg', // Ícone do RC
-  iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
-  iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
-  popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
+  iconUrl: 'data/rc/marcador_Jeison.svg',
+  iconSize: [35, 51],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34]
 });
 
 // Inicializa o mapa
@@ -33,15 +44,13 @@ function carregarRegiao(regiaoId) {
   regiaoAtual = configuracoesRegioes[regiaoId];
   
   if (map) {
-    map.remove(); // Destruir o mapa existente
+    map.remove();
   }
   
-  // Reiniciar variáveis
   dadosCSV = [];
   filtroAnoSelecionado = '';
   filtroMesSelecionado = 'todos';
   
-  // Criar novo mapa
   initMap();
   carregarDadosAPI();
 }
@@ -58,7 +67,7 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
-        console.log('Dados da API:', data.values); // Verifique os dados carregados
+        console.log('Dados da API:', data.values);
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -66,10 +75,10 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros(); // Chama para popular os filtros de ano e mês
-        carregarGeoJSON(); // Agora carrega os marcadores e geojson
-        gerarGraficoMensal(); // Gera o gráfico mensal
-        mostrarResumoEstado(); // Mostra o resumo inicial
+        popularFiltros();
+        carregarGeoJSON();
+        gerarGraficoMensal();
+        mostrarResumoEstado();
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -98,15 +107,17 @@ function carregarGeoJSON() {
           const centroid = turf.centroid(feature).geometry.coordinates;
           const icone = L.icon({
             iconUrl: regiaoAtual.marcadorIcone,
-            iconSize: [32, 32] // Tamanho do ícone do RC
+            iconSize: [32, 32]
           });
 
-          // Exibe o marcador com a imagem do RC
+          // Popup com verificação segura da imagem
           const popupContent = ` 
             <strong>${feature.properties.NM_MUN}</strong><br>
             <strong>📦 Quantidade Vendida:</strong> ${0}<br>
             <strong>💰 Faturamento:</strong> ${0}<br><br>
-            <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+            ${regiaoAtual && regiaoAtual.imagem ? 
+              `<img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />` : 
+              ''}
           `;
           
           L.marker([centroid[1], centroid[0]], { icon: icone })
@@ -128,14 +139,14 @@ function carregarGeoJSON() {
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             return {
-              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e', // Pintar com cor diferente se houver vendas
+              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
               fillOpacity: 0.7,
               weight: 1,
               color: 'black'
             };
           } else {
             return {
-              fillColor: '#ffffff', // Sem vendas, sem cor
+              fillColor: '#ffffff',
               fillOpacity: 0.3,
               weight: 1,
               color: 'black'
@@ -150,7 +161,6 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
-          // Exibe o popup de vendas ao clicar nas cidades
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
@@ -163,7 +173,7 @@ function carregarGeoJSON() {
                 <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
               `;
               layer.bindPopup(popupContent).openPopup();
-              mostrarTabela(codigoIBGE); // Chama a função para mostrar a tabela de vendas da cidade
+              mostrarTabela(codigoIBGE);
             });
           }
         }
@@ -178,14 +188,12 @@ function carregarGeoJSON() {
 function mostrarTabela(codigoIBGE) {
   if (!codigoIBGE || !dadosCSV.length) return;
 
-  // Filtra os dados da cidade selecionada
   const vendasCidade = dadosCSV.filter(item =>
     item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
     item.ANO === filtroAnoSelecionado &&
     (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
   );
 
-  // Ordena por mês e dia
   vendasCidade.sort((a, b) => {
     const mesA = parseInt(a.MÊS);
     const mesB = parseInt(b.MÊS);
@@ -193,7 +201,6 @@ function mostrarTabela(codigoIBGE) {
     return parseInt(a.DIA) - parseInt(b.DIA);
   });
 
-  // Cria a tabela HTML
   let tabelaHTML = `
     <h3>Detalhes de Vendas</h3>
     <table>
@@ -208,7 +215,6 @@ function mostrarTabela(codigoIBGE) {
       <tbody>
   `;
 
-  // Adiciona as linhas da tabela
   vendasCidade.forEach(venda => {
     const dataFormatada = `${venda.DIA}/${venda.MÊS}/${venda.ANO}`;
     const faturamentoFormatado = parseFloat(venda.FATURAMENTO || 0).toLocaleString('pt-BR', {
@@ -231,7 +237,6 @@ function mostrarTabela(codigoIBGE) {
     </table>
   `;
 
-  // Exibe a tabela no painel direito
   document.getElementById('dados-cidade').innerHTML = tabelaHTML;
 }
 
