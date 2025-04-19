@@ -4,21 +4,13 @@ let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
-
+// Inicializa o ícone do marcador
 const rcIcon = L.icon({
-    iconUrl: regiaoAtual.marcadorIcone,
+    iconUrl: 'data/rc/marcador_Jeison.svg',
     iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
     iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
     popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
 });
-
-// Ícone personalizado para os RCs   ---- icone azul que funciona
-//const rcIcon = L.icon({
-//    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-//   iconSize: [25, 41],
-//    iconAnchor: [12, 41],
-//    popupAnchor: [1, -34]
-//});
 
 // Inicializa o mapa
 function initMap() {
@@ -33,15 +25,15 @@ function initMap() {
   }).addTo(map);
 }
 
+// Carregar a região
 function carregarRegiao(regiaoId) {
   console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
   
   regiaoAtual = configuracoesRegioes[regiaoId];
   
-  // Destruir o mapa existente
   if (map) {
-    map.remove();
+    map.remove(); // Destruir o mapa existente
   }
   
   // Reiniciar variáveis
@@ -84,8 +76,6 @@ function carregarDadosAPI() {
     .catch(error => console.error('Erro ao carregar dados da API:', error));
 }
 
-// Restante do script.js mantido igual...
-// [Cole aqui todo o restante do seu script.js original]
 // Carrega o GeoJSON com os limites dos municípios
 function carregarGeoJSON() {
   if (!regiaoAtual) {
@@ -93,30 +83,29 @@ function carregarGeoJSON() {
     return;
   }
 
-  // Codifica o caminho para lidar com espaços e caracteres especiais
   const caminhoGeoJSON = encodeURI(regiaoAtual.geojsonPath);
   
   fetch(caminhoGeoJSON)
-    .then(response => {
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      return response.json();
-    })
+    .then(response => response.json())
     .then(geojson => {
       console.log('GeoJSON carregado:', geojson);
 
-      // Primeiro cria todos os marcadores dos RCs ESPECÍFICOS DA REGIÃO
+      // Cria marcadores para os RCs específicos da região
       Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
-          // Verifica se o Turf.js está carregado
-          if (!turf) {
-            console.error('Turf.js não está carregado');
-            return;
-          }
-          
           const centroid = turf.centroid(feature).geometry.coordinates;
-          L.marker([centroid[1], centroid[0]], { icon: rcIcon })
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}<br><br><img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />`)
+          const icone = L.icon({
+            iconUrl: regiaoAtual.marcadorIcone,
+            iconSize: [32, 32]
+          });
+
+          L.marker([centroid[1], centroid[0]], { icon: icone })
+            .bindPopup(`
+              <strong>${feature.properties.NM_MUN}</strong><br>
+              <strong>RC:</strong> ${rc}<br><br>
+              <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+            `)
             .addTo(map);
         }
       });
@@ -153,40 +142,21 @@ function carregarGeoJSON() {
                 <p>Quantidade: ${totalQnt}</p>
                 ${regiaoAtual.cidadesRC[codigoIBGE] ? `<p>RC: ${regiaoAtual.cidadesRC[codigoIBGE]}</p>` : ''}
               </div>`;
-            
-            
-
 
             layer.on('click', function() {
               mostrarTabela(codigoIBGE);
               filtrarGraficoPorCidade(codigoIBGE);
             });
           }
-
-          // Hover effects
-          layer.on('mouseover', function() {
-            this.setStyle({
-              weight: 3,
-              color: '#666'
-            });
-          });
-          
-          layer.on('mouseout', function() {
-            this.setStyle({
-              weight: 1,
-              color: 'black'
-            });
-          });
         }
       }).addTo(map);
     })
     .catch(error => {
       console.error('Falha ao carregar GeoJSON:', error);
-      console.error('Caminho tentado:', regiaoAtual.geojsonPath);
     });
 }
 
-// NOVA FUNÇÃO PARA FILTRAR GRÁFICO
+// Função para filtrar gráfico mensal por cidade
 function filtrarGraficoPorCidade(codigoIBGE) {
   const dadosFiltrados = dadosCSV.filter(item =>
     item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
@@ -218,6 +188,7 @@ function filtrarGraficoPorCidade(codigoIBGE) {
   });
 }
 
+// Função para formatar datas
 function formatarData(data) {
   if (!data || typeof data !== 'string') return '';
 
@@ -240,6 +211,7 @@ function formatarData(data) {
   return data;
 }
 
+// Função para mostrar resumo do estado
 function mostrarResumoEstado() {
   const container = document.getElementById('dados-cidade');
   const dadosFiltrados = dadosCSV.filter(item =>
@@ -270,10 +242,10 @@ function mostrarResumoEstado() {
   `;
 
   container.innerHTML = html;
-  // Resetar gráfico para mostrar todos os dados
   gerarGraficoMensal(); 
 }
 
+// Função para mostrar a tabela de vendas por cidade
 function mostrarTabela(codigoIBGE) {
   const vendas = dadosCSV.filter(item =>
     item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
@@ -347,7 +319,6 @@ function popularFiltros() {
   const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
   const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
 
-  // Obter ano atual
   const anoAtual = new Date().getFullYear().toString();
 
   selectAno.innerHTML = anos.map(ano => 
@@ -356,7 +327,6 @@ function popularFiltros() {
   selectMes.innerHTML = `<option value="todos">Todos</option>` +
     meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
 
-  // Atualizar variáveis globais com os valores selecionados
   filtroAnoSelecionado = selectAno.value;
   filtroMesSelecionado = selectMes.value;
 
@@ -393,7 +363,7 @@ function initApp() {
   document.head.appendChild(turfScript);
 }
 
-// ============= NOVAS FUNÇÕES PARA O GRÁFICO =============
+// Função para gerar o gráfico mensal
 function gerarGraficoMensal() {
   const dadosFiltrados = dadosCSV.filter(item =>
     item.ANO === filtroAnoSelecionado &&
