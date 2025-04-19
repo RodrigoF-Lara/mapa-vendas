@@ -149,12 +149,21 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
+          // Aqui vamos garantir que o popup mostre as informações de vendas ao clicar
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            
+            const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
+            const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
             layer.on('click', function() {
-              mostrarTabela(codigoIBGE);
-              filtrarGraficoPorCidade(codigoIBGE);
+              const popupContent = `
+                <strong>${feature.properties.NM_MUN}</strong><br>
+                <strong>RC:</strong> ${regiaoAtual.cidadesRC[codigoIBGE]}<br><br>
+                <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
+                <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
+                <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+              `;
+              layer.bindPopup(popupContent).openPopup();
             });
           }
         }
