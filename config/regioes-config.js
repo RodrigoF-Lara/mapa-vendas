@@ -9,6 +9,8 @@ const configuracoesRegioes = {
     cidadesRC: {
       '4301602': 'GUSTAVO'      
     }
+    imagem: 'mapa-vendas/data/rc/Jeison.PNG',
+    marcadorIcone: 'mapa-vendas/assets/icons/icone-sul.png'
   },
   
   'rs_norte': {
