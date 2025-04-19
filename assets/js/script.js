@@ -101,11 +101,11 @@ function carregarGeoJSON() {
             iconSize: [32, 32]
           });
 
-          // Aqui vamos garantir que os marcadores sejam exibidos independentemente das vendas
+          // Exibe o marcador, mas sem imagem nem nome do RC no popup
           const popupContent = `
             <strong>${feature.properties.NM_MUN}</strong><br>
-            <strong>RC:</strong> ${rc}<br><br>
-            <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+            <strong>📦 Quantidade Vendida:</strong> ${0}<br>
+            <strong>💰 Faturamento:</strong> ${0}<br><br>
           `;
           
           L.marker([centroid[1], centroid[0]], { icon: icone })
@@ -149,7 +149,7 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
-          // Aqui vamos garantir que o popup mostre as informações de vendas ao clicar
+          // Exibe o popup de vendas ao clicar nas cidades
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
@@ -159,7 +159,7 @@ function carregarGeoJSON() {
               const popupContent = `
                 <strong>${feature.properties.NM_MUN}</strong><br>
                 <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
-                <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>                
+                <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
               `;
               layer.bindPopup(popupContent).openPopup();
             });
