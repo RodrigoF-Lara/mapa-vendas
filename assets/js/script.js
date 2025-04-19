@@ -119,8 +119,7 @@ function carregarGeoJSON() {
             .bindPopup(`
               <strong>${feature.properties.NM_MUN}</strong><br>
               <strong>RC:</strong> ${rc}<br>
-              //<img src="mapa-vendas/data/rc/Jeison.PNG" alt="Imagem do local de vendas" width="200" />
-            `);
+                      `);
             //.bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
             .addTo(map);
         }
