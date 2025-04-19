@@ -102,7 +102,7 @@ function carregarGeoJSON() {
           });
 
           // Exibe o marcador com a imagem do RC
-          const popupContent = `
+          const popupContent = ` 
             <strong>${feature.properties.NM_MUN}</strong><br>
             <strong>📦 Quantidade Vendida:</strong> ${0}<br>
             <strong>💰 Faturamento:</strong> ${0}<br><br>
