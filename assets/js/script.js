@@ -101,30 +101,16 @@ function carregarGeoJSON() {
             iconSize: [32, 32]
           });
 
-          // Filtra os dados de vendas para colorir a cidade
-          const vendasCidade = dadosCSV.filter(item =>
-            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-            item.ANO === filtroAnoSelecionado &&
-            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-          );
-
-          if (vendasCidade.length > 0) {
-            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
-            const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-            const popupContent = `
-              <strong>${feature.properties.NM_MUN}</strong><br>
-              <strong>RC:</strong> ${rc}<br><br>
-              <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
-              <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
-              <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
-            `;
-            
-            L.marker([centroid[1], centroid[0]], { icon: icone })
-              .bindPopup(popupContent)
-              .addTo(map);
-          }
+          // Aqui vamos garantir que os marcadores sejam exibidos independentemente das vendas
+          const popupContent = `
+            <strong>${feature.properties.NM_MUN}</strong><br>
+            <strong>RC:</strong> ${rc}<br><br>
+            <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+          `;
+          
+          L.marker([centroid[1], centroid[0]], { icon: icone })
+            .bindPopup(popupContent)
+            .addTo(map);
         }
       });
 
