@@ -110,9 +110,14 @@ function carregarGeoJSON() {
 
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
+            const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
             const popupContent = `
               <strong>${feature.properties.NM_MUN}</strong><br>
               <strong>RC:</strong> ${rc}<br><br>
+              <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
+              <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
               <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
             `;
             
@@ -198,8 +203,11 @@ function mostrarResumoEstado() {
 
   const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+  // Obter o nome da região selecionada
+  const nomeRegiao = regiaoAtual ? regiaoAtual.nome : 'Estado do RS';
+
   let html = `
-    <p><strong>📍 Total do Estado do RS</strong></p>
+    <p><strong>📍 Total do ${nomeRegiao}</strong></p>
     <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
     <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
     <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p>
