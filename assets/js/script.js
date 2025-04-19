@@ -69,6 +69,7 @@ function carregarDadosAPI() {
         popularFiltros(); // Chama para popular os filtros de ano e mês
         carregarGeoJSON(); // Agora carrega os marcadores e geojson
         gerarGraficoMensal(); // Gera o gráfico mensal
+        mostrarResumoEstado(); // Mostra o resumo inicial
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -173,6 +174,89 @@ function carregarGeoJSON() {
     });
 }
 
+// Função para mostrar a tabela de vendas da cidade selecionada
+function mostrarTabela(codigoIBGE) {
+  if (!codigoIBGE || !dadosCSV.length) return;
+
+  // Filtra os dados da cidade selecionada
+  const vendasCidade = dadosCSV.filter(item =>
+    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  // Ordena por mês e dia
+  vendasCidade.sort((a, b) => {
+    const mesA = parseInt(a.MÊS);
+    const mesB = parseInt(b.MÊS);
+    if (mesA !== mesB) return mesA - mesB;
+    return parseInt(a.DIA) - parseInt(b.DIA);
+  });
+
+  // Cria a tabela HTML
+  let tabelaHTML = `
+    <h3>Detalhes de Vendas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Produto</th>
+          <th>Quantidade</th>
+          <th>Faturamento</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  // Adiciona as linhas da tabela
+  vendasCidade.forEach(venda => {
+    const dataFormatada = `${venda.DIA}/${venda.MÊS}/${venda.ANO}`;
+    const faturamentoFormatado = parseFloat(venda.FATURAMENTO || 0).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+
+    tabelaHTML += `
+      <tr>
+        <td>${dataFormatada}</td>
+        <td>${venda['TB_PRODUTOS.NOME'] || 'N/A'}</td>
+        <td>${venda.QNT || 0}</td>
+        <td>${faturamentoFormatado}</td>
+      </tr>
+    `;
+  });
+
+  tabelaHTML += `
+      </tbody>
+    </table>
+  `;
+
+  // Exibe a tabela no painel direito
+  document.getElementById('dados-cidade').innerHTML = tabelaHTML;
+}
+
+// Função para mostrar o resumo geral do estado
+function mostrarResumoEstado() {
+  if (!dadosCSV.length) return;
+
+  const vendasFiltradas = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  const totalQnt = vendasFiltradas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFat = vendasFiltradas.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
+  const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  const resumoHTML = `
+    <h3>Resumo do Estado</h3>
+    <p><strong>Total de Máquinas Vendidas:</strong> ${totalQnt}</p>
+    <p><strong>Faturamento Total:</strong> ${formatadoFAT}</p>
+  `;
+
+  document.getElementById('dados-cidade').innerHTML = resumoHTML;
+}
+
 // Função para gerar o gráfico mensal
 function gerarGraficoMensal() {
   const dadosFiltrados = dadosCSV.filter(item =>
@@ -230,12 +314,14 @@ function popularFiltros() {
     filtroAnoSelecionado = selectAno.value;
     reiniciarMapa();
     gerarGraficoMensal();
+    mostrarResumoEstado();
   });
 
   selectMes.addEventListener('change', () => {
     filtroMesSelecionado = selectMes.value;
     reiniciarMapa();
     gerarGraficoMensal();
+    mostrarResumoEstado();
   });
 }
 
