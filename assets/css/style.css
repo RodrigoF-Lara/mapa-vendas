@@ -16,7 +16,7 @@ body {
 
 /* Mapa garantido (60% da tela) */
 .map-wrapper {
-  width: 60%;
+  width: 50%;
   height: 100vh;
   background: #e9ecef;
 }
@@ -28,7 +28,7 @@ body {
 
 /* Painel direito (40% da tela) */
 .panel-wrapper {
-  width: 40%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   background: white;
@@ -80,4 +80,117 @@ button {
   font-size: 0.85rem;
   cursor: pointer;
   white-space: nowrap;
+}
+
+/* Gráfico acima da tabela (30% do painel) */
+.chart-card {
+  height: 30%;
+  min-height: 220px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.chart-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+#grafico-mensal {
+  height: calc(100% - 25px);
+  width: 100%;
+}
+
+/* Tabela (70% do painel) */
+.data-card {
+  flex: 1;
+  padding: 12px 15px;
+  overflow-y: auto;
+}
+
+/* Estilos da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .map-wrapper, .panel-wrapper {
+    width: 100%;
+    height: auto;
+  }
+  
+  .map-wrapper {
+    height: 50vh;
+  }
+  
+  .panel-wrapper {
+    height: 50vh;
+  }
+  
+  .filter-controls {
+    flex-wrap: wrap;
+  }
+  
+  .filter-controls > div {
+    min-width: 45%;
+  }
+
+ /* Estilo do marcador RC (funciona em desktop e mobile) */
+.rc-marker {
+  background-color: #e74c3c;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  position: relative;
+  box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
+}
+
+.rc-marker::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #e74c3c;
+  left: 0;
+  top: 12px;
+}
+  
+  .regiao-selector {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  #filtro-regiao {
+    padding: 6px 12px;
+    min-width: 200px;
+    font-size: 14px;
+  }
 }
