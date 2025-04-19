@@ -154,28 +154,6 @@ th {
     min-width: 45%;
   }
 
- /* Estilo do marcador RC (funciona em desktop e mobile) */
-.rc-marker {
-  background-color: #e74c3c;
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  position: relative;
-  box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
-}
-
-.rc-marker::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid #e74c3c;
-  left: 0;
-  top: 12px;
-}
-  
   .regiao-selector {
     position: absolute;
     top: 10px;
