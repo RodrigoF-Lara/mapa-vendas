@@ -92,7 +92,6 @@ function carregarDadosAPI() {
         });
 
         carregarGeoJSON();
-        mostrarResumoEstado();
         gerarGraficoMensal();
       } else {
         console.error('Nenhum dado encontrado na planilha.');
