@@ -116,7 +116,7 @@ function carregarGeoJSON() {
           
           const centroid = turf.centroid(feature).geometry.coordinates;
           L.marker([centroid[1], centroid[0]], { icon: rcIcon })
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
+            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}<br><br>Rodrigo`)
             .addTo(map);
         }
       });
