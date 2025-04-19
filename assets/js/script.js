@@ -18,7 +18,7 @@ function initMap() {
     view: [-30.0346, -51.2177],
     zoom: 6
   };
-  
+
   map = L.map('map').setView(config.view, config.zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
