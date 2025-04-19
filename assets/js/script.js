@@ -158,10 +158,8 @@ function carregarGeoJSON() {
             layer.on('click', function() {
               const popupContent = `
                 <strong>${feature.properties.NM_MUN}</strong><br>
-                //<strong>RC:</strong> ${regiaoAtual.cidadesRC[codigoIBGE]}<br><br>
                 <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
-                <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
-                //<img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+                <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>                
               `;
               layer.bindPopup(popupContent).openPopup();
             });
