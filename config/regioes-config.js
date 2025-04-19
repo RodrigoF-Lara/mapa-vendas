@@ -8,7 +8,7 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
       '4301602': 'GUSTAVO'      
-    }
+    },
     imagem: 'mapa-vendas/data/rc/Jeison.PNG',
     marcadorIcone: 'mapa-vendas/assets/icons/icone-sul.png'
   },
@@ -35,9 +35,9 @@ const configuracoesRegioes = {
     cidadesRC: {
       '4209003': 'LEONARDO'
     }
-    },
+  },
   
-    'pr': {
+  'pr': {
     id: 'pr',
     nome: 'PR',
     planilhaId: '1_DlY-t96oZ5HMctUv40MjZSFPQNBkr0XmGglUQ5kBn0',
@@ -46,10 +46,10 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
         '4104808': 'ISRAEL'
-        }
-    },
+    }
+  },
   
-       'sp': {
+  'sp': {
     id: 'sp',
     nome: 'SP',
     planilhaId: '1iIyNSJSvZO53txewSIdgulgOQr9LkKVlKC4jYdleH1U',
@@ -58,8 +58,8 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
         '3529005': 'ANDRE'
-      }
-    },
+    }
+  },
   
   'ms': {
     id: 'ms',
