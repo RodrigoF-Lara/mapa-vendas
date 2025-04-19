@@ -51,6 +51,7 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
+        console.log('Dados da API:', data.values); // Verifique se os dados estão sendo carregados corretamente
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -100,6 +101,8 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
+          console.log('Vendas da cidade:', vendasCidade); // Verifique os dados filtrados de vendas
+
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             const popupContent = `
@@ -144,6 +147,8 @@ function carregarGeoJSON() {
             item.ANO === filtroAnoSelecionado &&
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
+
+          console.log('Vendas cidade para polígonos:', vendasCidade); // Verifique a filtragem
 
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
@@ -250,114 +255,6 @@ function mostrarResumoEstado() {
   gerarGraficoMensal(); 
 }
 
-// Função para mostrar a tabela de vendas por cidade
-function mostrarTabela(codigoIBGE) {
-  const vendas = dadosCSV.filter(item =>
-    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  const container = document.getElementById('dados-cidade');
-
-  if (vendas.length === 0) {
-    container.innerHTML = '<p>Nenhuma venda para a cidade nesse filtro.</p>';
-    return;
-  }
-
-  const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = vendas.reduce((soma, item) => {
-    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
-    return soma + parseFloat(valorStr);
-  }, 0);
-  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  const rc = regiaoAtual.cidadesRC[codigoIBGE];
-  let rcInfo = '';
-  if (rc) {
-    rcInfo = `<p><strong>🏠 RC:</strong> ${rc}</p>`;
-  }
-
-  let html = `
-    ${rcInfo}
-    <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
-    <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
-
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>NOTA</th>
-            <th>PEDIDO</th>
-            <th>CLIENTE</th>
-            <th>CIDADE</th>
-            <th>DESCRIÇÃO</th>
-            <th>QNT</th>
-            <th>FATURAMENTO</th>
-            <th>DATA</th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-  vendas.forEach(item => {
-    html += `
-          <tr>
-            <td>${item.NOTA}</td>
-            <td>${item.PEDIDO}</td>
-            <td>${item.CLIENTE}</td>
-            <td>${item.CIDADE}</td>
-            <td>${item['DESCRIÇÃO']}</td>
-            <td>${item.QNT}</td>
-            <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${formatarData(item.DATA)}</td>
-          </tr>`;
-  });
-
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
-}
-
-function popularFiltros() {
-  const selectAno = document.getElementById('filtro-ano');
-  const selectMes = document.getElementById('filtro-mes');
-
-  const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
-  const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
-
-  const anoAtual = new Date().getFullYear().toString();
-
-  selectAno.innerHTML = anos.map(ano => 
-    `<option value="${ano}" ${ano === anoAtual ? 'selected' : ''}>${ano}</option>`
-  ).join('');
-  selectMes.innerHTML = `<option value="todos">Todos</option>` +
-    meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
-
-  filtroAnoSelecionado = selectAno.value;
-  filtroMesSelecionado = selectMes.value;
-
-  selectAno.addEventListener('change', () => {
-    filtroAnoSelecionado = selectAno.value;
-    reiniciarMapa();
-    gerarGraficoMensal();
-  });
-
-  selectMes.addEventListener('change', () => {
-    filtroMesSelecionado = selectMes.value;
-    reiniciarMapa();
-    gerarGraficoMensal();
-  });
-}
-
-function reiniciarMapa() {
-  map.eachLayer(layer => {
-    if (layer instanceof L.TileLayer) return;
-    map.removeLayer(layer);
-  });
-
-  carregarGeoJSON();
-  mostrarResumoEstado();
-}
-
 function initApp() {
   const turfScript = document.createElement('script');
   turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
@@ -366,41 +263,6 @@ function initApp() {
     carregarDadosAPI();
   };
   document.head.appendChild(turfScript);
-}
-
-// Função para gerar o gráfico mensal
-function gerarGraficoMensal() {
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  const meses = Array(12).fill(0).map((_, i) => i + 1);
-  const vendasPorMes = Array(12).fill(0);
-
-  dadosFiltrados.forEach(item => {
-    const mes = parseInt(item.MÊS) - 1;
-    if (mes >= 0 && mes < 12) {
-      vendasPorMes[mes] += parseFloat(item.QNT || 0);
-    }
-  });
-
-  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
-
-  const trace = {
-    x: nomesMeses,
-    y: vendasPorMes,
-    type: 'bar',
-    marker: { color: '#4CAF50' }
-  };
-
-  const layout = {
-    title: `Máquinas Vendidas em ${filtroAnoSelecionado}`,
-    xaxis: { title: 'Mês' },
-    yaxis: { title: 'Quantidade' }
-  };
-
-  Plotly.newPlot('grafico-mensal', [trace], layout);
 }
 
 initApp();
