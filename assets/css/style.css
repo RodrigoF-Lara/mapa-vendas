@@ -193,4 +193,30 @@ th {
     min-width: 200px;
     font-size: 14px;
   }
+/* Estilo do botão de "Exibir Visão do Mapa" */
+#exibirViewBtn {
+  background-color: #007bff; /* Cor de fundo azul */
+  color: white; /* Texto branco */
+  padding: 10px 20px; /* Espaçamento interno */
+  border: none; /* Remove borda */
+  border-radius: 5px; /* Bordas arredondadas */
+  cursor: pointer; /* Cursor em formato de mão */
+  font-size: 16px; /* Tamanho do texto */
+  margin-top: 20px; /* Espaçamento superior */
+  display: inline-block; /* Garante que o botão fique ao lado do label */
+}
+
+/* Estilo para quando o botão estiver em hover */
+#exibirViewBtn:hover {
+  background-color: #0056b3; /* Cor de fundo mais escura ao passar o mouse */
+}
+
+/* Estilo do label de "Visão do Mapa" */
+#viewLabel {
+  display: block; /* Faz o label ficar em uma linha separada */
+  margin-top: 10px; /* Espaçamento superior */
+  font-size: 16px; /* Tamanho do texto */
+  color: #333; /* Cor do texto */
+}
+  
 }
