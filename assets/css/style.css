@@ -1,7 +1,8 @@
 /* Reduzindo a altura do mapa para garantir que o botão apareça abaixo */
 #map {
-  height: 50vh;  /* Definindo uma altura de 50% da tela */
+  height: 60vh;  /* 60% da altura da tela para o mapa */
   width: 100%;
+  margin-bottom: 20px;  /* Espaço entre o mapa e o botão */
 }
 
 /* Estilo do contêiner do botão e label */
@@ -10,10 +11,10 @@
   padding: 10px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%; /* Garantir que ocupe toda a largura disponível */
-  justify-content: flex-start;
-  position: relative; /* Garantir que o botão e o label fiquem visíveis */
+  align-items: center; /* Centraliza o botão e o label */
+  width: 100%;
+  justify-content: center;
+  position: relative;
 }
 
 /* Estilo do botão de "Exibir Visão do Mapa" */
