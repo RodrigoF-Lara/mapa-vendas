@@ -5,11 +5,11 @@ let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
 // Ícone personalizado para os RCs
-const rcIcon = L.divIcon({
-  className: 'rc-marker',
-  iconSize: [32, 20],
-  iconAnchor: [6, 20],
-  popupAnchor: [0, -20]
+const rcIcon = L.icon({
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34]
 });
 
 // Inicializa o mapa
