@@ -116,7 +116,11 @@ function carregarGeoJSON() {
           
           const centroid = turf.centroid(feature).geometry.coordinates;
           L.marker([centroid[1], centroid[0]], { icon: rcIcon })
-            .bindPopup("<b>Texto do local</b><br><img src='/data/rc/Jeison.PNG' width='100%' alt='Jeison'>");
+            .bindPopup(`
+              <strong>${feature.properties.NM_MUN}</strong><br>
+              <strong>RC:</strong> ${rc}<br>
+              <img src="mapa-vendas/data/rc/Jeison.PNG" alt="Imagem do local de vendas" width="200" />
+            `);
             //.bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
             .addTo(map);
         }
