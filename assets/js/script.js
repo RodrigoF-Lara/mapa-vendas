@@ -44,7 +44,7 @@ function carregarRegiao(regiaoId) {
   
   // Criar novo mapa
   initMap();
-  carregarDadosAPI();
+  carregarDadosAPI();  // Carregar os dados da API do Google Sheets
 }
 
 // Carrega os dados da Google Sheets API
