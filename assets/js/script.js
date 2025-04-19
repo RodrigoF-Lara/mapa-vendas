@@ -158,10 +158,10 @@ function carregarGeoJSON() {
             layer.on('click', function() {
               const popupContent = `
                 <strong>${feature.properties.NM_MUN}</strong><br>
-                //<strong>RC:</strong> ${regiaoAtual.cidadesRC[codigoIBGE]}<br><br>
+                <strong>RC:</strong> ${regiaoAtual.cidadesRC[codigoIBGE]}<br><br>
                 <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
                 <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
-                //<img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+                <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
               `;
               layer.bindPopup(popupContent).openPopup();
             });
@@ -252,6 +252,40 @@ function reiniciarMapa() {
 
   carregarGeoJSON();
   mostrarResumoEstado();
+}
+
+function gerarGraficoMensal() {
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  const meses = Array(12).fill(0).map((_, i) => i + 1);
+  const vendasPorMes = Array(12).fill(0);
+
+  dadosFiltrados.forEach(item => {
+    const mes = parseInt(item.MÊS) - 1;
+    if (mes >= 0 && mes < 12) {
+      vendasPorMes[mes] += parseFloat(item.QNT || 0);
+    }
+  });
+
+  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
+
+  const trace = {
+    x: nomesMeses,
+    y: vendasPorMes,
+    type: 'bar',
+    marker: { color: '#4CAF50' }
+  };
+
+  const layout = {
+    title: `Máquinas Vendidas em ${filtroAnoSelecionado}`,
+    xaxis: { title: 'Mês' },
+    yaxis: { title: 'Quantidade' }
+  };
+
+  Plotly.newPlot('grafico-mensal', [trace], layout);
 }
 
 function initApp() {
