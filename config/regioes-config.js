@@ -10,7 +10,7 @@ const configuracoesRegioes = {
       '4301602': 'GUSTAVO'      
     },
     imagem: 'data/rc/Jeison.PNG',
-    marcadorIcone: 'assets/icons/icone-sul.png'
+    marcadorIcone: 'data/rc/marcador_Jeison.svg'
   },
   
   'rs_norte': {
