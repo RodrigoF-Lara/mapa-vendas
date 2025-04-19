@@ -4,15 +4,7 @@ let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
-// Inicializa o ícone do marcador
-const rcIcon = L.icon({
-    iconUrl: 'data/rc/marcador_Jeison.svg',
-    iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
-    iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
-    popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
-});
-
-// Inicializa o mapa
+// Inicializa o ícone do marcador (utilizando a configuração dinâmica da região)
 function initMap() {
   const config = regiaoAtual || {
     view: [-30.0346, -51.2177],
@@ -32,8 +24,9 @@ function carregarRegiao(regiaoId) {
   
   regiaoAtual = configuracoesRegioes[regiaoId];
   
+  // Destruir o mapa existente
   if (map) {
-    map.remove(); // Destruir o mapa existente
+    map.remove(); 
   }
   
   // Reiniciar variáveis
@@ -96,7 +89,7 @@ function carregarGeoJSON() {
         if (feature) {
           const centroid = turf.centroid(feature).geometry.coordinates;
           const icone = L.icon({
-            iconUrl: regiaoAtual.marcadorIcone,
+            iconUrl: regiaoAtual.marcadorIcone, // Usando o ícone da região selecionada
             iconSize: [32, 32]
           });
 
