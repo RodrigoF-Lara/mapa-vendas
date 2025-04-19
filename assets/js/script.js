@@ -116,7 +116,7 @@ function carregarGeoJSON() {
           
           const centroid = turf.centroid(feature).geometry.coordinates;
           L.marker([centroid[1], centroid[0]], { icon: rcIcon })
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}<br><br>Rodrigo`)
+            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}<br><br><img src="data/rc/Jeison.PNG" alt="Imagem do local de vendas" width="200" />`)
             .addTo(map);
         }
       });
