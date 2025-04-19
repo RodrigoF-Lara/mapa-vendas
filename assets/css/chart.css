@@ -1,18 +1,1 @@
-/* Gráfico acima da tabela (30% do painel) */
-.chart-card {
-  height: 30%;
-  min-height: 220px;
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-}
 
-.chart-card h3 {
-  margin: 0 0 8px 0;
-  font-size: 1rem;
-  color: #2c3e50;
-}
-
-#grafico-mensal {
-  height: calc(100% - 25px);
-  width: 100%;
-}
