@@ -116,7 +116,8 @@ function carregarGeoJSON() {
           
           const centroid = turf.centroid(feature).geometry.coordinates;
           L.marker([centroid[1], centroid[0]], { icon: rcIcon })
-            .bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
+            .bindPopup("<b>Texto do local</b><br><img src='/data/rc/Jeison.PNG' width='100%' alt='Jeison'>");
+            //.bindPopup(`<strong>${feature.properties.NM_MUN}</strong><br><strong>RC:</strong> ${rc}`)
             .addTo(map);
         }
       });
@@ -154,7 +155,8 @@ function carregarGeoJSON() {
                 ${regiaoAtual.cidadesRC[codigoIBGE] ? `<p>RC: ${regiaoAtual.cidadesRC[codigoIBGE]}</p>` : ''}
               </div>`;
             
-            layer.bindPopup(popupContent);
+            
+
 
             layer.on('click', function() {
               mostrarTabela(codigoIBGE);
