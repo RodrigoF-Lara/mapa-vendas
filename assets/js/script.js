@@ -120,24 +120,93 @@ function carregarGeoJSON() {
               .bindPopup(popupContent)
               .addTo(map);
           }
-
-          // Adiciona estilo dinâmico ao polígono da cidade com base nas vendas
-          L.geoJSON(geojson, {
-            style: function() {
-              return {
-                fillColor: '#ffeb3b', // Cor das cidades com vendas
-                fillOpacity: 0.7,
-                weight: 1,
-                color: 'black'
-              };
-            }
-          }).addTo(map);
         }
       });
+
+      // Processa os polígonos com estilo dinâmico para as cidades
+      L.geoJSON(geojson, {
+        style: function(feature) {
+          const codigoIBGE = feature.properties.CD_MUN;
+          const vendasCidade = dadosCSV.filter(item =>
+            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+            item.ANO === filtroAnoSelecionado &&
+            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+          );
+
+          if (vendasCidade.length > 0) {
+            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            return {
+              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e', // Pintar com cor diferente se houver vendas
+              fillOpacity: 0.7,
+              weight: 1,
+              color: 'black'
+            };
+          } else {
+            return {
+              fillColor: '#ffffff', // Sem vendas, sem cor
+              fillOpacity: 0.3,
+              weight: 1,
+              color: 'black'
+            };
+          }
+        },
+        onEachFeature: function(feature, layer) {
+          const codigoIBGE = feature.properties.CD_MUN;
+          const vendasCidade = dadosCSV.filter(item =>
+            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+            item.ANO === filtroAnoSelecionado &&
+            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+          );
+
+          if (vendasCidade.length > 0) {
+            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            
+            layer.on('click', function() {
+              mostrarTabela(codigoIBGE);
+              filtrarGraficoPorCidade(codigoIBGE);
+            });
+          }
+        }
+      }).addTo(map);
     })
     .catch(error => {
       console.error('Falha ao carregar GeoJSON:', error);
     });
+}
+
+// Função para mostrar o resumo dos dados do estado
+function mostrarResumoEstado() {
+  const container = document.getElementById('dados-cidade');
+  
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  if (dadosFiltrados.length === 0) {
+    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
+    return;
+  }
+
+  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFAT = dadosFiltrados.reduce((soma, item) => {
+    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+    return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
+  }, 0);
+  
+  const totalCidadesComVendas = [...new Set(dadosFiltrados.map(item => item['TB_CIDADES.CODIGO_IBGE']))].length;
+
+  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  let html = `
+    <p><strong>📍 Total do Estado do RS</strong></p>
+    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
+    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
+    <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p>
+  `;
+
+  container.innerHTML = html;
+  gerarGraficoMensal(); 
 }
 
 // Função para popular os filtros de ano e mês
@@ -172,7 +241,6 @@ function popularFiltros() {
   });
 }
 
-// Função para reiniciar o mapa
 function reiniciarMapa() {
   map.eachLayer(layer => {
     if (layer instanceof L.TileLayer) return;
