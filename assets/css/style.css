@@ -1,73 +1,196 @@
-/* Definindo a altura do mapa para garantir que o botão apareça abaixo */
+/* Reset e configurações básicas */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f7fa;
+}
+
+/* Container principal */
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Mapa garantido (60% da tela) */
+.map-wrapper {
+  width: 60%;
+  height: 100vh;
+  background: #e9ecef;
+}
+
 #map {
-  height: 60vh;  /* 60% da altura da tela para o mapa */
+  height: 100%;
   width: 100%;
-  margin-bottom: 20px;  /* Espaço entre o mapa e o botão */
-  position: relative; /* Para possibilitar o posicionamento do botão dentro do mapa */
 }
 
-/* Estilo do contêiner do botão e label */
-.view-container {
-  margin-top: 20px; /* Espaço entre o mapa e o botão */
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%; /* Garantir que ocupe toda a largura disponível */
-  justify-content: flex-start;
-  position: absolute; /* Posicionamento absoluto dentro do mapa */
-  left: 10px;  /* Afastamento da esquerda */
-  bottom: 10px; /* Afastamento da parte inferior do mapa */
-  z-index: 10;  /* Garantir que o botão fique acima do mapa */
-}
-
-/* Estilo do botão de "Exibir Visão do Mapa" */
-#exibirViewBtn {
-  background-color: #007bff; /* Cor de fundo azul */
-  color: white; /* Texto branco */
-  padding: 10px 20px; /* Espaçamento interno */
-  border: none; /* Remove borda */
-  border-radius: 5px; /* Bordas arredondadas */
-  cursor: pointer; /* Cursor em formato de mão */
-  font-size: 16px; /* Tamanho do texto */
-  margin-top: 20px; /* Espaçamento superior */
-  display: inline-block; /* Garante que o botão fique ao lado do label */
-}
-
-/* Estilo para quando o botão estiver em hover */
-#exibirViewBtn:hover {
-  background-color: #0056b3; /* Cor de fundo mais escura ao passar o mouse */
-}
-
-/* Estilo do label de "Visão do Mapa" */
-#viewLabel {
-  margin-top: 10px; /* Espaçamento superior */
-  font-size: 16px; /* Tamanho do texto */
-  color: #333; /* Cor do texto */
-}
-
-/* Estilo para o painel de filtros */
+/* Painel direito (40% da tela) */
 .panel-wrapper {
+  width: 40%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-left: 20px;
+  background: white;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
 }
 
-/* Estilo para o painel de gráficos e dados */
-.chart-card, .data-card {
-  margin-top: 20px;
-  width: 100%;
-}
-
-/* Estilo para os filtros */
+/* Filtros compactos */
 .filter-card {
-  margin-top: 20px;
+  padding: 12px 15px;
+  background: #2c3e50;
+  color: white;
+}
+
+.filter-card h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.filter-controls > div {
+  flex: 1;
+}
+
+.filter-controls label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+}
+
+.filter-controls select {
+  width: 100%;
+  padding: 6px;
+  font-size: 0.85rem;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 6px 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Gráfico acima da tabela (30% do painel) */
+.chart-card {
+  height: 30%;
+  min-height: 220px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.chart-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+#grafico-mensal {
+  height: calc(100% - 25px);
   width: 100%;
 }
 
-/* Tamanho do gráfico */
-#grafico-mensal {
+/* Tabela (70% do painel) */
+.data-card {
+  flex: 1;
+  padding: 12px 15px;
+  overflow-y: auto;
+}
+
+/* Estilos da tabela */
+table {
   width: 100%;
-  height: 250px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .map-wrapper, .panel-wrapper {
+    width: 100%;
+    height: auto;
+  }
+  
+  .map-wrapper {
+    height: 50vh;
+  }
+  
+  .panel-wrapper {
+    height: 50vh;
+  }
+  
+  .filter-controls {
+    flex-wrap: wrap;
+  }
+  
+  .filter-controls > div {
+    min-width: 45%;
+  }
+
+ /* Estilo do marcador RC (funciona em desktop e mobile) */
+.rc-marker {
+  background-color: #e74c3c;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  position: relative;
+  box-shadow: 0 0 0 2px white, 0 0 5px rgba(0,0,0,0.3);
+}
+
+.rc-marker::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #e74c3c;
+  left: 0;
+  top: 12px;
+}
+  
+  .regiao-selector {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  #filtro-regiao {
+    padding: 6px 12px;
+    min-width: 200px;
+    font-size: 14px;
+  }
 }
