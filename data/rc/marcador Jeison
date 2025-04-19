@@ -9,5 +9,5 @@
   <clipPath id="clipCircle">
     <circle cx="60" cy="55" r="35"/>
   </clipPath>
-  <image href="data:image/png;base64,IMAGE_BASE64_AQUI" x="25" y="20" width="70" height="70" clip-path="url(#clipCircle)" />
+  <image href="data:image/png;base64,base64 Jeison.txt" x="25" y="20" width="70" height="70" clip-path="url(#clipCircle)" />
 </svg>
