@@ -16,7 +16,7 @@ body {
 
 /* Mapa garantido (60% da tela) */
 .map-wrapper {
-  width: 60%;
+  width: 50%;
   height: 100vh;
   background: #e9ecef;
 }
@@ -28,7 +28,7 @@ body {
 
 /* Painel direito (40% da tela) */
 .panel-wrapper {
-  width: 40%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   background: white;
