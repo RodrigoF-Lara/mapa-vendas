@@ -66,7 +66,31 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros();
+
+        // Preencher os filtros de Ano e Mês com os dados
+        const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+        const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort();
+
+        // Preencher as opções de ano
+        const filtroAnoSelect = document.getElementById('filtro-ano');
+        filtroAnoSelect.innerHTML = '<option value="">Selecione o Ano</option>';
+        anos.forEach(ano => {
+          const option = document.createElement('option');
+          option.value = ano;
+          option.textContent = ano;
+          filtroAnoSelect.appendChild(option);
+        });
+
+        // Preencher as opções de mês
+        const filtroMesSelect = document.getElementById('filtro-mes');
+        filtroMesSelect.innerHTML = '<option value="todos">Todos</option>';
+        meses.forEach(mes => {
+          const option = document.createElement('option');
+          option.value = mes;
+          option.textContent = mes;
+          filtroMesSelect.appendChild(option);
+        });
+
         carregarGeoJSON();
         mostrarResumoEstado();
         gerarGraficoMensal();
