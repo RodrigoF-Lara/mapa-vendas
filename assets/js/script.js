@@ -59,7 +59,7 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros();
+        popularFiltros(); // Agora a função deve ser chamada corretamente
         carregarGeoJSON();
         mostrarResumoEstado();
         gerarGraficoMensal();
@@ -68,6 +68,38 @@ function carregarDadosAPI() {
       }
     })
     .catch(error => console.error('Erro ao carregar dados da API:', error));
+}
+
+// Função para popular os filtros de ano e mês
+function popularFiltros() {
+  const selectAno = document.getElementById('filtro-ano');
+  const selectMes = document.getElementById('filtro-mes');
+
+  const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+  const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
+
+  const anoAtual = new Date().getFullYear().toString();
+
+  selectAno.innerHTML = anos.map(ano => 
+    `<option value="${ano}" ${ano === anoAtual ? 'selected' : ''}>${ano}</option>`
+  ).join('');
+  selectMes.innerHTML = `<option value="todos">Todos</option>` +
+    meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
+
+  filtroAnoSelecionado = selectAno.value;
+  filtroMesSelecionado = selectMes.value;
+
+  selectAno.addEventListener('change', () => {
+    filtroAnoSelecionado = selectAno.value;
+    reiniciarMapa();
+    gerarGraficoMensal();
+  });
+
+  selectMes.addEventListener('change', () => {
+    filtroMesSelecionado = selectMes.value;
+    reiniciarMapa();
+    gerarGraficoMensal();
+  });
 }
 
 // Carrega o GeoJSON com os limites dos municípios
@@ -164,95 +196,6 @@ function carregarGeoJSON() {
     .catch(error => {
       console.error('Falha ao carregar GeoJSON:', error);
     });
-}
-
-// Função para filtrar gráfico mensal por cidade
-function filtrarGraficoPorCidade(codigoIBGE) {
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-    item.ANO === filtroAnoSelecionado
-  );
-
-  const meses = Array(12).fill(0);
-  dadosFiltrados.forEach(item => {
-    const mes = parseInt(item.MÊS) - 1;
-    if (mes >= 0 && mes < 12) {
-      meses[mes] += parseFloat(item.QNT || 0);
-    }
-  });
-
-  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
-  const cidadeNome = Object.entries(cidadesRC).find(([cod]) => cod === codigoIBGE)?.[1] || 
-                    document.querySelector(`[data-codigo="${codigoIBGE}"]`)?.innerText || 
-                    'Cidade Selecionada';
-
-  Plotly.newPlot('grafico-mensal', [{
-    x: nomesMeses,
-    y: meses,
-    type: 'bar',
-    marker: { color: '#4CAF50' }
-  }], {
-    title: `Vendas Mensais - ${cidadeNome}`,
-    xaxis: { title: 'Mês' },
-    yaxis: { title: 'Quantidade' }
-  });
-}
-
-// Função para formatar datas
-function formatarData(data) {
-  if (!data || typeof data !== 'string') return '';
-
-  const partes = data.split('/');
-  if (partes.length === 3) {
-    const dia = partes[0].padStart(2, '0');
-    const mes = partes[1].padStart(2, '0');
-    const ano = partes[2];
-    return `${dia}/${mes}/${ano}`;
-  }
-
-  if (data.includes('-')) {
-    const isoPartes = data.split('-');
-    if (isoPartes.length === 3) {
-      const [ano, mes, dia] = isoPartes;
-      return `${dia}/${mes}/${ano}`;
-    }
-  }
-
-  return data;
-}
-
-// Função para mostrar resumo do estado
-function mostrarResumoEstado() {
-  const container = document.getElementById('dados-cidade');
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  if (dadosFiltrados.length === 0) {
-    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
-    return;
-  }
-
-  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = dadosFiltrados.reduce((soma, item) => {
-    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
-    return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
-  }, 0);
-  
-  const totalCidadesComVendas = [...new Set(dadosFiltrados.map(item => item['TB_CIDADES.CODIGO_IBGE']))].length;
-
-  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  let html = `
-    <p><strong>📍 Total do Estado do RS</strong></p>
-    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
-    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
-    <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p>
-  `;
-
-  container.innerHTML = html;
-  gerarGraficoMensal(); 
 }
 
 function initApp() {
