@@ -4,7 +4,7 @@ let filtroAnoSelecionado = '';
 let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
-// Inicializa o ícone do marcador (utilizando a configuração dinâmica da região)
+// Inicializa o ícone do marcador
 function initMap() {
   const config = regiaoAtual || {
     view: [-30.0346, -51.2177],
@@ -89,23 +89,47 @@ function carregarGeoJSON() {
         if (feature) {
           const centroid = turf.centroid(feature).geometry.coordinates;
           const icone = L.icon({
-            iconUrl: regiaoAtual.marcadorIcone, // Usando o ícone da região selecionada
+            iconUrl: regiaoAtual.marcadorIcone,
             iconSize: [32, 32]
           });
 
-          L.marker([centroid[1], centroid[0]], { icon: icone })
-            .bindPopup(`
+          // Filtra os dados de vendas para colorir a cidade
+          const vendasCidade = dadosCSV.filter(item =>
+            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+            item.ANO === filtroAnoSelecionado &&
+            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+          );
+
+          if (vendasCidade.length > 0) {
+            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            const popupContent = `
               <strong>${feature.properties.NM_MUN}</strong><br>
               <strong>RC:</strong> ${rc}<br><br>
               <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
-            `)
-            .addTo(map);
+            `;
+            
+            L.marker([centroid[1], centroid[0]], { icon: icone })
+              .bindPopup(popupContent)
+              .addTo(map);
+
+            // Adiciona estilo dinâmico ao polígono da cidade com base nas vendas
+            L.geoJSON(geojson, {
+              style: function() {
+                return {
+                  fillColor: '#ffeb3b', // Cor das cidades com vendas
+                  fillOpacity: 0.7,
+                  weight: 1,
+                  color: 'black'
+                };
+              }
+            }).addTo(map);
+          }
         }
       });
 
-      // Processa os polígonos com estilo dinâmico
+      // Processa os polígonos com estilo dinâmico para todas as cidades
       L.geoJSON(geojson, {
-        style: function(feature) {
+        style: function() {
           return {
             fillColor: 'gray',
             fillOpacity: 0.3,
@@ -127,18 +151,6 @@ function carregarGeoJSON() {
             layer.setStyle({
               fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
               fillOpacity: 0.7
-            });
-
-            const popupContent = `
-              <div class="map-popup">
-                <h4>${feature.properties.NM_MUN}</h4>
-                <p>Quantidade: ${totalQnt}</p>
-                ${regiaoAtual.cidadesRC[codigoIBGE] ? `<p>RC: ${regiaoAtual.cidadesRC[codigoIBGE]}</p>` : ''}
-              </div>`;
-
-            layer.on('click', function() {
-              mostrarTabela(codigoIBGE);
-              filtrarGraficoPorCidade(codigoIBGE);
             });
           }
         }
