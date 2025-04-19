@@ -172,92 +172,73 @@ function carregarGeoJSON() {
     });
 }
 
-// Função para mostrar a tabela de vendas por cidade
-function mostrarTabela(codigoIBGE) {
-  const vendas = dadosCSV.filter(item =>
-    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+// Função para mostrar o resumo do estado
+function mostrarResumoEstado() {
+  const container = document.getElementById('dados-cidade');
+  const dadosFiltrados = dadosCSV.filter(item =>
     item.ANO === filtroAnoSelecionado &&
     (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
   );
 
-  const container = document.getElementById('dados-cidade');
-
-  if (vendas.length === 0) {
-    container.innerHTML = '<p>Nenhuma venda para a cidade nesse filtro.</p>';
+  if (dadosFiltrados.length === 0) {
+    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
     return;
   }
 
-  const totalQNT = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = vendas.reduce((soma, item) => {
+  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFAT = dadosFiltrados.reduce((soma, item) => {
     const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
     return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
   }, 0);
   
+  const totalCidadesComVendas = [...new Set(dadosFiltrados.map(item => item['TB_CIDADES.CODIGO_IBGE']))].length;
+
   const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  // Obter o nome da cidade
-  const cidadeNome = vendas[0].CIDADE;
-
   let html = `
-    <p><strong>${cidadeNome} - Vendas</strong></p>
-    <p><strong>📦 Total de Quantidade Vendida:</strong> ${totalQNT}</p>
-    <p><strong>💰 Total de Faturamento:</strong> ${formatadoFAT}</p>
+    <p><strong>📍 Total do Estado do RS</strong></p>
+    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
+    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
+    <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p>
+  `;
 
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>NOTA</th>
-            <th>PEDIDO</th>
-            <th>CLIENTE</th>
-            <th>CIDADE</th>
-            <th>DESCRIÇÃO</th>
-            <th>QNT</th>
-            <th>FATURAMENTO</th>
-            <th>DATA</th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-  vendas.forEach(item => {
-    html += `
-          <tr>
-            <td>${item.NOTA}</td>
-            <td>${item.PEDIDO}</td>
-            <td>${item.CLIENTE}</td>
-            <td>${item.CIDADE}</td>
-            <td>${item['DESCRIÇÃO']}</td>
-            <td>${item.QNT}</td>
-            <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${formatarData(item.DATA)}</td>
-          </tr>`;
-  });
-
-  html += `</tbody></table></div>`;
   container.innerHTML = html;
+  gerarGraficoMensal(); 
 }
 
-// Função de formatação de data
-function formatarData(data) {
-  if (!data || typeof data !== 'string') return '';
+// Função para gerar o gráfico mensal
+function gerarGraficoMensal() {
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
 
-  const partes = data.split('/');
-  if (partes.length === 3) {
-    const dia = partes[0].padStart(2, '0');
-    const mes = partes[1].padStart(2, '0');
-    const ano = partes[2];
-    return `${dia}/${mes}/${ano}`;
-  }
+  const meses = Array(12).fill(0).map((_, i) => i + 1);
+  const vendasPorMes = Array(12).fill(0);
 
-  if (data.includes('-')) {
-    const isoPartes = data.split('-');
-    if (isoPartes.length === 3) {
-      const [ano, mes, dia] = isoPartes;
-      return `${dia}/${mes}/${ano}`;
+  dadosFiltrados.forEach(item => {
+    const mes = parseInt(item.MÊS) - 1;
+    if (mes >= 0 && mes < 12) {
+      vendasPorMes[mes] += parseFloat(item.QNT || 0);
     }
-  }
+  });
 
-  return data;
+  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
+
+  const trace = {
+    x: nomesMeses,
+    y: vendasPorMes,
+    type: 'bar',
+    marker: { color: '#4CAF50' }
+  };
+
+  const layout = {
+    title: `Máquinas Vendidas em ${filtroAnoSelecionado}`,
+    xaxis: { title: 'Mês' },
+    yaxis: { title: 'Quantidade' }
+  };
+
+  Plotly.newPlot('grafico-mensal', [trace], layout);
 }
 
 function popularFiltros() {
@@ -299,40 +280,6 @@ function reiniciarMapa() {
 
   carregarGeoJSON();
   mostrarResumoEstado();
-}
-
-function gerarGraficoMensal() {
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  const meses = Array(12).fill(0).map((_, i) => i + 1);
-  const vendasPorMes = Array(12).fill(0);
-
-  dadosFiltrados.forEach(item => {
-    const mes = parseInt(item.MÊS) - 1;
-    if (mes >= 0 && mes < 12) {
-      vendasPorMes[mes] += parseFloat(item.QNT || 0);
-    }
-  });
-
-  const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
-
-  const trace = {
-    x: nomesMeses,
-    y: vendasPorMes,
-    type: 'bar',
-    marker: { color: '#4CAF50' }
-  };
-
-  const layout = {
-    title: `Máquinas Vendidas em ${filtroAnoSelecionado}`,
-    xaxis: { title: 'Mês' },
-    yaxis: { title: 'Quantidade' }
-  };
-
-  Plotly.newPlot('grafico-mensal', [trace], layout);
 }
 
 function initApp() {
