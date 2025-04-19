@@ -5,6 +5,14 @@ let filtroMesSelecionado = 'todos';
 let regiaoAtual = null;
 
 // Inicializa o ícone do marcador
+const rcIcon = L.icon({
+  iconUrl: 'data/rc/marcador_Jeison.svg',
+  iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
+  iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
+  popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
+});
+
+// Inicializa o mapa
 function initMap() {
   const config = regiaoAtual || {
     view: [-30.0346, -51.2177],
@@ -24,9 +32,8 @@ function carregarRegiao(regiaoId) {
   
   regiaoAtual = configuracoesRegioes[regiaoId];
   
-  // Destruir o mapa existente
   if (map) {
-    map.remove(); 
+    map.remove(); // Destruir o mapa existente
   }
   
   // Reiniciar variáveis
@@ -51,7 +58,7 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
-        console.log('Dados da API:', data.values); // Verifique os dados
+        console.log('Dados da API:', data.values); // Verifique os dados carregados
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -59,10 +66,10 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros(); // Agora a função deve ser chamada corretamente
-        carregarGeoJSON();
-        mostrarResumoEstado(); // Chama a função para mostrar o resumo dos dados
-        gerarGraficoMensal();
+        popularFiltros(); // Chama para popular os filtros de ano e mês
+        carregarGeoJSON(); // Agora carrega os marcadores e geojson
+        mostrarResumoEstado(); // Exibe o resumo do estado
+        gerarGraficoMensal(); // Gera o gráfico mensal
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -70,41 +77,67 @@ function carregarDadosAPI() {
     .catch(error => console.error('Erro ao carregar dados da API:', error));
 }
 
-// Função para mostrar o resumo dos dados do estado
-function mostrarResumoEstado() {
-  const container = document.getElementById('dados-cidade');
-  
-  // Filtra os dados conforme o ano e mês selecionado
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  if (dadosFiltrados.length === 0) {
-    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
+// Carrega o GeoJSON com os limites dos municípios
+function carregarGeoJSON() {
+  if (!regiaoAtual) {
+    console.error('Nenhuma região selecionada');
     return;
   }
 
-  // Soma os dados de quantidade e faturamento
-  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFAT = dadosFiltrados.reduce((soma, item) => {
-    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
-    return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
-  }, 0);
+  const caminhoGeoJSON = encodeURI(regiaoAtual.geojsonPath);
   
-  const totalCidadesComVendas = [...new Set(dadosFiltrados.map(item => item['TB_CIDADES.CODIGO_IBGE']))].length;
+  fetch(caminhoGeoJSON)
+    .then(response => response.json())
+    .then(geojson => {
+      console.log('GeoJSON carregado:', geojson);
 
-  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      // Cria marcadores para os RCs específicos da região
+      Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
+        const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
+        if (feature) {
+          const centroid = turf.centroid(feature).geometry.coordinates;
+          const icone = L.icon({
+            iconUrl: regiaoAtual.marcadorIcone,
+            iconSize: [32, 32]
+          });
 
-  let html = `
-    <p><strong>📍 Total do Estado do RS</strong></p>
-    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
-    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
-    <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p>
-  `;
+          // Filtra os dados de vendas para colorir a cidade
+          const vendasCidade = dadosCSV.filter(item =>
+            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
+            item.ANO === filtroAnoSelecionado &&
+            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+          );
 
-  container.innerHTML = html;
-  gerarGraficoMensal(); 
+          if (vendasCidade.length > 0) {
+            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+            const popupContent = `
+              <strong>${feature.properties.NM_MUN}</strong><br>
+              <strong>RC:</strong> ${rc}<br><br>
+              <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
+            `;
+            
+            L.marker([centroid[1], centroid[0]], { icon: icone })
+              .bindPopup(popupContent)
+              .addTo(map);
+          }
+
+          // Adiciona estilo dinâmico ao polígono da cidade com base nas vendas
+          L.geoJSON(geojson, {
+            style: function() {
+              return {
+                fillColor: '#ffeb3b', // Cor das cidades com vendas
+                fillOpacity: 0.7,
+                weight: 1,
+                color: 'black'
+              };
+            }
+          }).addTo(map);
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Falha ao carregar GeoJSON:', error);
+    });
 }
 
 // Função para popular os filtros de ano e mês
