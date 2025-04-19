@@ -51,7 +51,7 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
-        console.log('Dados da API:', data.values); // Verifique se os dados estão sendo carregados corretamente
+        console.log('Dados da API:', data.values); // Verifique os dados
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -61,13 +61,50 @@ function carregarDadosAPI() {
         });
         popularFiltros(); // Agora a função deve ser chamada corretamente
         carregarGeoJSON();
-        mostrarResumoEstado();
+        mostrarResumoEstado(); // Chama a função para mostrar o resumo dos dados
         gerarGraficoMensal();
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
     })
     .catch(error => console.error('Erro ao carregar dados da API:', error));
+}
+
+// Função para mostrar o resumo dos dados do estado
+function mostrarResumoEstado() {
+  const container = document.getElementById('dados-cidade');
+  
+  // Filtra os dados conforme o ano e mês selecionado
+  const dadosFiltrados = dadosCSV.filter(item =>
+    item.ANO === filtroAnoSelecionado &&
+    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+  );
+
+  if (dadosFiltrados.length === 0) {
+    container.innerHTML = '<p>Nenhum dado disponível para o filtro selecionado.</p>';
+    return;
+  }
+
+  // Soma os dados de quantidade e faturamento
+  const totalQNT = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFAT = dadosFiltrados.reduce((soma, item) => {
+    const valorStr = (item.FATURAMENTO || '0').replace('.', '').replace(',', '.');
+    return soma + (isNaN(parseFloat(valorStr)) ? 0 : parseFloat(valorStr));
+  }, 0);
+  
+  const totalCidadesComVendas = [...new Set(dadosFiltrados.map(item => item['TB_CIDADES.CODIGO_IBGE']))].length;
+
+  const formatadoFAT = totalFAT.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  let html = `
+    <p><strong>📍 Total do Estado do RS</strong></p>
+    <p><strong>📦 Quantidade Vendida:</strong> ${totalQNT}</p>
+    <p><strong>💰 Faturamento Total:</strong> ${formatadoFAT}</p>
+    <p><strong>🌍 Número de Cidades com Vendas:</strong> ${totalCidadesComVendas}</p>
+  `;
+
+  container.innerHTML = html;
+  gerarGraficoMensal(); 
 }
 
 // Função para popular os filtros de ano e mês
@@ -102,100 +139,15 @@ function popularFiltros() {
   });
 }
 
-// Carrega o GeoJSON com os limites dos municípios
-function carregarGeoJSON() {
-  if (!regiaoAtual) {
-    console.error('Nenhuma região selecionada');
-    return;
-  }
+// Função para reiniciar o mapa
+function reiniciarMapa() {
+  map.eachLayer(layer => {
+    if (layer instanceof L.TileLayer) return;
+    map.removeLayer(layer);
+  });
 
-  const caminhoGeoJSON = encodeURI(regiaoAtual.geojsonPath);
-  
-  fetch(caminhoGeoJSON)
-    .then(response => response.json())
-    .then(geojson => {
-      console.log('GeoJSON carregado:', geojson);
-
-      // Cria marcadores para os RCs específicos da região
-      Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE, rc]) => {
-        const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
-        if (feature) {
-          const centroid = turf.centroid(feature).geometry.coordinates;
-          const icone = L.icon({
-            iconUrl: regiaoAtual.marcadorIcone,
-            iconSize: [32, 32]
-          });
-
-          // Filtra os dados de vendas para colorir a cidade
-          const vendasCidade = dadosCSV.filter(item =>
-            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-            item.ANO === filtroAnoSelecionado &&
-            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-          );
-
-          console.log('Vendas da cidade:', vendasCidade); // Verifique os dados filtrados de vendas
-
-          if (vendasCidade.length > 0) {
-            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            const popupContent = `
-              <strong>${feature.properties.NM_MUN}</strong><br>
-              <strong>RC:</strong> ${rc}<br><br>
-              <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
-            `;
-            
-            L.marker([centroid[1], centroid[0]], { icon: icone })
-              .bindPopup(popupContent)
-              .addTo(map);
-
-            // Adiciona estilo dinâmico ao polígono da cidade com base nas vendas
-            L.geoJSON(geojson, {
-              style: function() {
-                return {
-                  fillColor: '#ffeb3b', // Cor das cidades com vendas
-                  fillOpacity: 0.7,
-                  weight: 1,
-                  color: 'black'
-                };
-              }
-            }).addTo(map);
-          }
-        }
-      });
-
-      // Processa os polígonos com estilo dinâmico para todas as cidades
-      L.geoJSON(geojson, {
-        style: function() {
-          return {
-            fillColor: 'gray',
-            fillOpacity: 0.3,
-            weight: 1,
-            color: 'black'
-          };
-        },
-        onEachFeature: function(feature, layer) {
-          const codigoIBGE = feature.properties.CD_MUN;
-          const vendasCidade = dadosCSV.filter(item =>
-            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-            item.ANO === filtroAnoSelecionado &&
-            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-          );
-
-          console.log('Vendas cidade para polígonos:', vendasCidade); // Verifique a filtragem
-
-          if (vendasCidade.length > 0) {
-            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            
-            layer.setStyle({
-              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
-              fillOpacity: 0.7
-            });
-          }
-        }
-      }).addTo(map);
-    })
-    .catch(error => {
-      console.error('Falha ao carregar GeoJSON:', error);
-    });
+  carregarGeoJSON();
+  mostrarResumoEstado();
 }
 
 function initApp() {
