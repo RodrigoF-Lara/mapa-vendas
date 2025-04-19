@@ -5,26 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Mapa de Vendas RS</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="style.css" />
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="config/regioes-config.js"></script>
+  <script src="regioes-config.js"></script>
 </head>
 <body>
 
   <div class="regiao-selector">
-    <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
-      <option value="">Selecione a Região</option>
-      <option value="rs_sul">RS Sul</option>
-      <option value="rs_norte">RS Norte</option>
-      <option value="sc">SC</option>
-      <option value="pr">PR</option>
-      <option value="sp">SP</option>
-      <option value="ms">MS</option>
-    </select>
-  </div>
+  <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
+    <option value="">Selecione a Região</option>
+    <option value="rs_sul">RS Sul</option>
+    <option value="rs_norte">RS Norte</option>
+    <option value="sc">SC</option>
+    <option value=pr">PR</option>
+    <option value="sp">SP</option>
+    <option value="ms">MS</option>
+    <!-- Adicione as outras 19 regiões aqui -->
+  </select>
+</div>
   
   <div class="app-container">
     <!-- Mapa garantido na esquerda -->
@@ -46,7 +47,7 @@
             <label for="filtro-mes">Mês:</label>
             <select id="filtro-mes"></select>
           </div>
-          <button onclick="atualizarDados()">Atualizar</button>
+          <button onclick="mostrarResumoEstado()">Atualizar</button>
         </div>
       </div>
       
@@ -63,38 +64,6 @@
     </div>
   </div>
 
-  <!-- Novo botão e label para exibir a coordenada da visão -->
-  <div class="view-container">
-    <button id="exibirViewBtn" onclick="exibirViewMapa()">Exibir Visão do Mapa</button>
-    <label id="viewLabel">Visão do Mapa: </label>
-  </div>
-
-  <script src="assets/js/script.js"></script>
-  <script>
-    // Inicializa o mapa automaticamente quando a página for carregada
-    window.onload = function() {
-      initMap();  // Chama a função para inicializar o mapa
-    };
-
-    // Função para exibir a visão do mapa
-    function exibirViewMapa() {
-      const bounds = map.getBounds();  // Pega os limites atuais do mapa
-      
-      const sw = bounds.getSouthWest();  // Pega o canto inferior esquerdo
-      const ne = bounds.getNorthEast();  // Pega o canto superior direito
-      
-      // Exibe as coordenadas no label
-      const view = `View: [${sw.lat}, ${sw.lng}, ${ne.lat}, ${ne.lng}]`;
-      document.getElementById('viewLabel').innerText = `Visão do Mapa: ${view}`;
-    }
-
-    // Função de atualização de dados
-    function atualizarDados() {
-      // Aqui você pode adicionar a lógica de atualização dos dados de vendas, gráficos, etc.
-      console.log("Atualizando dados...");
-      // Exemplo: gerarGraficoMensal();
-    }
-  </script>
-
+<script src="script.js"></script>
 </body>
 </html>
