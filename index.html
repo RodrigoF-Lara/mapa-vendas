@@ -5,33 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Mapa de Vendas RS</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="style.css" />
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@turf/turf"></script>  <!-- Adicionado para importar o turf.js -->
-  <script src="config/regioes-config.js"></script>
+  <script src="regioes-config.js"></script>
 </head>
 <body>
 
   <div class="regiao-selector">
-    <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
-      <option value="">Selecione a Região</option>
-      <option value="rs_sul">RS Sul</option>
-      <option value="rs_norte">RS Norte</option>
-      <option value="sc">SC</option>
-      <option value="pr">PR</option>
-      <option value="sp">SP</option>
-      <option value="ms">MS</option>
-    </select>
-  </div>
+  <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
+    <option value="">Selecione a Região</option>
+    <option value="rs_sul">RS Sul</option>
+    <option value="rs_norte">RS Norte</option>
+    <option value="sc">SC</option>
+    <option value=pr">PR</option>
+    <option value="sp">SP</option>
+    <option value="ms">MS</option>
+    <!-- Adicione as outras 19 regiões aqui -->
+  </select>
+</div>
   
   <div class="app-container">
+    <!-- Mapa garantido na esquerda -->
     <div class="map-wrapper">
       <div id="map"></div>
     </div>
+    
+    <!-- Painel direito com nova hierarquia -->
     <div class="panel-wrapper">
+      <!-- Filtros compactos -->
       <div class="filter-card">
         <h2>Filtros</h2>
         <div class="filter-controls">
@@ -47,24 +51,19 @@
         </div>
       </div>
       
+      <!-- Gráfico agora acima da tabela -->
       <div class="chart-card">
         <h3>Vendas Mensais</h3>
         <div id="grafico-mensal"></div>
       </div>
       
+      <!-- Tabela com scroll -->
       <div class="data-card">
         <div id="dados-cidade"></div>
       </div>
     </div>
   </div>
 
-  <script src="assets/js/script.js"></script>
-  <script>
-    // Inicializa o mapa automaticamente quando a página for carregada
-    window.onload = function() {
-      initMap();  // Chama a função para inicializar o mapa
-    };
-  </script>
-
+<script src="script.js"></script>
 </body>
 </html>
