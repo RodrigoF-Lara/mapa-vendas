@@ -22,7 +22,7 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
         '4304705': 'LEANDRO'
-    }
+    },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
   },
@@ -36,7 +36,7 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
       '4209003': 'LEONARDO'
-    }
+    },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
   },
@@ -50,7 +50,7 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
         '4104808': 'ISRAEL'
-    }
+    },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
   },
@@ -64,7 +64,7 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
         '3529005': 'ANDRE'
-    }
+    },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
   },
@@ -78,7 +78,7 @@ const configuracoesRegioes = {
     zoom: 7,
     cidadesRC: {
         '5003702': 'GRAZIAN'
-    }
+    },
     imagem: 'data/rc/Jeison.PNG',
     marcadorIcone: 'data/rc/marcador_Jeison.svg'
   }
