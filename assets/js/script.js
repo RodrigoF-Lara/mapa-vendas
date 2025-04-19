@@ -7,7 +7,7 @@ let regiaoAtual = null;
 
 const rcIcon = L.icon({
     iconUrl: 'data/rc/marcador_Jeison.svg',
-    iconSize: [25, 41], // Tamanho do ícone (ajuste conforme necessário)
+    iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
     iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
     popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
 });
