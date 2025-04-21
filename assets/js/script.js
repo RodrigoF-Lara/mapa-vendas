@@ -67,6 +67,7 @@ function carregarDadosAPI() {
         popularFiltros(); // Chama para popular os filtros de ano e mês
         carregarGeoJSON(); // Agora carrega os marcadores e geojson
         gerarGraficoMensal(); // Gera o gráfico mensal
+        mostrarResumoEstado(); // Mostra o resumo do estado automaticamente após carregar os dados
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
