@@ -1,61 +1,84 @@
 // Configurações das regiões
 const configuracoesRegioes = {
   rs_sul: {
-    view: [-30.0346, -51.2177],
-    zoom: 6,
+    id: 'rs_sul',
+    nome: 'RS Sul',
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Substitua pelo ID real da planilha
     geojsonPath: 'data/geojson/municipios-RS_SUL.geojson',
-    marcadorIcone: 'data/rc/marcador_Gustavo.svg',
-    imagem: 'data/rc/Gustavo.PNG',
+    view: [-30.0346, -51.2177],
+    zoom: 6,
     cidadesRC: {
       '4301602': 'GUSTAVO' 
     }
   },
-  // Adicione outras regiões aqui se necessário
-  rs_norte: {
-    view: [-29.0, -52.0],
-    zoom: 6,
-    planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/municipios-rs_norte.geojson',
-    marcadorIcone: 'data/rc/marcador_padrao.svg',
-    imagem: 'data/imagens/rs_norte.jpg',
-    cidadesRC: {}
+'rs_norte': {
+    id: 'rs_norte',
+    nome: 'RS Norte',
+    planilhaId: '1zxsWdSrPsPV6zqvNk0cv8zUosvntcZPGBMT9oLiB21s',
+    geojsonPath: 'municipios-RS_Norte.geojson', // Sintaxe corrigida
+    view: [-28.5000, -53.0000],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Jeison.svg',
+    imagem: 'data/rc/Jeison.PNG',
+    cidadesRC: {
+        '4304705': 'LEANDRO'
+    }
   },
-  sc: {
-    view: [-27.5, -50.0],
-    zoom: 6,
-    planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/municipios-sc.geojson',
-    marcadorIcone: 'data/rc/marcador_padrao.svg',
-    imagem: 'data/imagens/sc.jpg',
-    cidadesRC: {}
-  },
-  pr: {
-    view: [-25.5, -52.0],
-    zoom: 6,
-    planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/municipios-pr.geojson',
-    marcadorIcone: 'data/rc/marcador_padrao.svg',
-    imagem: 'data/imagens/pr.jpg',
-    cidadesRC: {}
-  },
-  sp: {
-    view: [-23.5, -46.6],
-    zoom: 6,
-    planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/municipios-sp.geojson',
-    marcadorIcone: 'data/rc/marcador_padrao.svg',
-    imagem: 'data/imagens/sp.jpg',
-    cidadesRC: {}
-  },
-  ms: {
-    view: [-20.5, -54.6],
-    zoom: 6,
-    planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/municipios-ms.geojson',
-    marcadorIcone: 'data/rc/marcador_padrao.svg',
-    imagem: 'data/imagens/ms.jpg',
-    cidadesRC: {}
+  
+  'sc': {
+    id: 'sc',
+    nome: 'SC',
+    planilhaId: '1aWYSIjBBS6q6TaLlDETakqz_QUQrg3dR8nVwKYQlyHY',
+    geojsonPath: 'municipios-SC.geojson', // Sintaxe corrigida
+    view: [-27.2423, -50.2189],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Jeison.svg',
+    imagem: 'data/rc/Jeison.PNG',
+    cidadesRC: {
+      '4209003': 'LEONARDO'
+    }
+    },
+  
+    'pr': {
+    id: 'pr',
+    nome: 'PR',
+    planilhaId: '1_DlY-t96oZ5HMctUv40MjZSFPQNBkr0XmGglUQ5kBn0',
+    geojsonPath: 'municipios-PR.geojson', // Sintaxe corrigida
+    view: [-24.7935, -50.0000],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Jeison.svg',
+    imagem: 'data/rc/Jeison.PNG',
+    cidadesRC: {
+        '4104808': 'ISRAEL'
+        }
+    },
+  
+       'sp': {
+    id: 'sp',
+    nome: 'SP',
+    planilhaId: '1iIyNSJSvZO53txewSIdgulgOQr9LkKVlKC4jYdleH1U',
+    geojsonPath: 'municipios-SP.geojson', // Sintaxe corrigida
+    view: [-22.1500, -48.0000],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Andre.svg',
+    imagem: 'data/rc/Andre.PNG',
+    cidadesRC: {
+        '3529005': 'ANDRE'
+      }
+    },
+  
+  'ms': {
+    id: 'ms',
+    nome: 'MS',
+    planilhaId: '1UCqKvj-R5QRhRaHo6bsLGhWRiLvlw2txPQsPeHG1-rE',
+    geojsonPath: 'municipios-MS.geojson', // Sintaxe corrigida
+    view: [-20.4697, -54.6201],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Jeison.svg',
+    imagem: 'data/rc/Jeison.PNG',
+    cidadesRC: {
+        '5003702': 'GRAZIAN'
+    }
   }
 };
 
