@@ -83,7 +83,8 @@ function mostrarResumoEstado() {
   );
   
   if (dadosFiltrados.length === 0) {
-    document.getElementById('dados-cidade').innerHTML = '<p>Sem dados para exibir com os filtros selecionados.</p>';
+    document.getElementById('resumo-estado').innerHTML = '<p>Sem dados para exibir com os filtros selecionados.</p>';
+    document.getElementById('dados-cidade').innerHTML = '';
     return;
   }
   
@@ -100,7 +101,7 @@ function mostrarResumoEstado() {
   });
   const numCidadesComVendas = cidadesComVendas.size;
   
-  // Criar o resumo visual com ícones
+  // Criar o resumo visual com ícones para exibir acima do mapa
   let resumoHTML = `
     <div class="resumo-estado-container">
       <div class="resumo-titulo">
@@ -135,11 +136,14 @@ function mostrarResumoEstado() {
     </div>
   `;
   
-  // Adicionar a tabela de resumo por produto após o resumo visual
-  resumoHTML += '<h3>Resumo por Produto</h3>';
-  resumoHTML += '<div class="table-container"><table>';
-  resumoHTML += '<thead><tr><th>Produto</th><th>Quantidade Vendida</th><th>Faturamento</th></tr></thead>';
-  resumoHTML += '<tbody>';
+  // Inserir o resumo visual na div acima do mapa
+  document.getElementById('resumo-estado').innerHTML = resumoHTML;
+  
+  // Criar a tabela de resumo por produto para a div de dados da cidade
+  let tabelaHTML = '<h3>Resumo por Produto</h3>';
+  tabelaHTML += '<div class="table-container"><table>';
+  tabelaHTML += '<thead><tr><th>Produto</th><th>Quantidade Vendida</th><th>Faturamento</th></tr></thead>';
+  tabelaHTML += '<tbody>';
   
   // Agrupar por produto
   const produtosAgrupados = {};
@@ -156,7 +160,7 @@ function mostrarResumoEstado() {
   
   // Adicionar linhas para cada produto
   Object.entries(produtosAgrupados).forEach(([produto, dados]) => {
-    resumoHTML += `<tr>
+    tabelaHTML += `<tr>
       <td>${produto}</td>
       <td>${dados.qnt}</td>
       <td>${dados.fat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
@@ -164,14 +168,14 @@ function mostrarResumoEstado() {
   });
   
   // Linha de total
-  resumoHTML += `<tr style="font-weight: bold; background-color: #f0f0f0;">
+  tabelaHTML += `<tr style="font-weight: bold; background-color: #f0f0f0;">
     <td>TOTAL</td>
     <td>${totalQnt}</td>
     <td>${formatadoFAT}</td>
   </tr>`;
   
-  resumoHTML += '</tbody></table></div>';
+  tabelaHTML += '</tbody></table></div>';
   
-  // Inserir o resumo na div de dados da cidade
-  document.getElementById('dados-cidade').innerHTML = resumoHTML;
+  // Inserir a tabela na div de dados da cidade
+  document.getElementById('dados-cidade').innerHTML = tabelaHTML;
 }
