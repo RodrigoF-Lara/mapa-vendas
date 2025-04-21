@@ -91,11 +91,55 @@ function mostrarResumoEstado() {
   const totalFat = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
   const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   
-  // Gerar tabela de resumo
-  let tabelaHTML = '<h3>Resumo do Estado</h3>';
-  tabelaHTML += '<table>';
-  tabelaHTML += '<thead><tr><th>Produto</th><th>Quantidade Vendida</th><th>Faturamento</th></tr></thead>';
-  tabelaHTML += '<tbody>';
+  // Calcular número de cidades com vendas
+  const cidadesComVendas = new Set();
+  dadosFiltrados.forEach(item => {
+    if (item.CIDADE) {
+      cidadesComVendas.add(item.CIDADE);
+    }
+  });
+  const numCidadesComVendas = cidadesComVendas.size;
+  
+  // Criar o resumo visual com ícones
+  let resumoHTML = `
+    <div class="resumo-estado-container">
+      <div class="resumo-titulo">
+        <span class="icone-resumo">📍</span> Total do Estado do ${regiaoAtual.nome}
+      </div>
+      
+      <div class="resumo-estatisticas">
+        <div class="estatistica-item">
+          <span class="icone-estatistica">📦</span>
+          <div class="estatistica-info">
+            <div class="estatistica-label">Quantidade Vendida:</div>
+            <div class="estatistica-valor">${totalQnt}</div>
+          </div>
+        </div>
+        
+        <div class="estatistica-item">
+          <span class="icone-estatistica">💰</span>
+          <div class="estatistica-info">
+            <div class="estatistica-label">Faturamento Total:</div>
+            <div class="estatistica-valor">${formatadoFAT}</div>
+          </div>
+        </div>
+        
+        <div class="estatistica-item">
+          <span class="icone-estatistica">🏙️</span>
+          <div class="estatistica-info">
+            <div class="estatistica-label">Número de Cidades com Vendas:</div>
+            <div class="estatistica-valor">${numCidadesComVendas}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Adicionar a tabela de resumo por produto após o resumo visual
+  resumoHTML += '<h3>Resumo por Produto</h3>';
+  resumoHTML += '<div class="table-container"><table>';
+  resumoHTML += '<thead><tr><th>Produto</th><th>Quantidade Vendida</th><th>Faturamento</th></tr></thead>';
+  resumoHTML += '<tbody>';
   
   // Agrupar por produto
   const produtosAgrupados = {};
@@ -112,7 +156,7 @@ function mostrarResumoEstado() {
   
   // Adicionar linhas para cada produto
   Object.entries(produtosAgrupados).forEach(([produto, dados]) => {
-    tabelaHTML += `<tr>
+    resumoHTML += `<tr>
       <td>${produto}</td>
       <td>${dados.qnt}</td>
       <td>${dados.fat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
@@ -120,14 +164,14 @@ function mostrarResumoEstado() {
   });
   
   // Linha de total
-  tabelaHTML += `<tr style="font-weight: bold; background-color: #f0f0f0;">
+  resumoHTML += `<tr style="font-weight: bold; background-color: #f0f0f0;">
     <td>TOTAL</td>
     <td>${totalQnt}</td>
     <td>${formatadoFAT}</td>
   </tr>`;
   
-  tabelaHTML += '</tbody></table>';
+  resumoHTML += '</tbody></table></div>';
   
-  // Inserir a tabela na div de dados da cidade
-  document.getElementById('dados-cidade').innerHTML = tabelaHTML;
+  // Inserir o resumo na div de dados da cidade
+  document.getElementById('dados-cidade').innerHTML = resumoHTML;
 }
