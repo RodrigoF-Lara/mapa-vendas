@@ -67,6 +67,7 @@ function carregarDadosAPI() {
         popularFiltros(); // Chama para popular os filtros de ano e mês
         carregarGeoJSON(); // Agora carrega os marcadores e geojson
         gerarGraficoMensal(); // Gera o gráfico mensal
+        mostrarResumoEstado(); // Mostra o resumo do estado automaticamente após carregar os dados
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -232,60 +233,20 @@ function exibirDadosNaTabela(vendas) {
   tabelaContainer.innerHTML = html;
 }
 
-// Função para formatar data - CORRIGIDA
+// Função para formatar data
 function formatarData(dataString) {
-  if (!dataString) return '';
+  if (!dataString) return ''; // Retorna vazio se não houver data
+
+  // Assumindo que a data está no formato YYYY-MM-DD ou um formato de timestamp
+  const data = new Date(dataString);
   
-  // Verifica se a string está vazia ou é inválida
-  if (dataString.trim() === '') return '';
-  
-  try {
-    // Tenta identificar o formato da data
-    let data;
-    
-    // Verifica se a data está no formato DD/MM/YYYY
-    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dataString)) {
-      const partes = dataString.split('/');
-      data = new Date(partes[2], partes[1] - 1, partes[0]);
-    } 
-    // Verifica se a data está no formato YYYY-MM-DD
-    else if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(dataString)) {
-      data = new Date(dataString);
-    }
-    // Verifica se a data está no formato DD-MM-YYYY
-    else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dataString)) {
-      const partes = dataString.split('-');
-      data = new Date(partes[2], partes[1] - 1, partes[0]);
-    }
-    // Verifica se a data está no formato MM/DD/YYYY (formato americano)
-    else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dataString)) {
-      // Tenta interpretar como formato brasileiro primeiro (DD/MM/YYYY)
-      const partes = dataString.split('/');
-      if (parseInt(partes[0]) <= 12 && parseInt(partes[1]) <= 31) {
-        // Pode ser tanto MM/DD quanto DD/MM, vamos assumir DD/MM para o Brasil
-        data = new Date(partes[2], partes[1] - 1, partes[0]);
-      } else {
-        // Se o primeiro número for > 12, só pode ser DD/MM
-        data = new Date(partes[2], partes[1] - 1, partes[0]);
-      }
-    }
-    // Tenta converter diretamente se nenhum dos formatos acima for reconhecido
-    else {
-      data = new Date(dataString);
-    }
-    
-    // Verifica se a data é válida
-    if (isNaN(data.getTime())) {
-      console.log('Data inválida:', dataString);
-      return dataString; // Retorna a string original se a data for inválida
-    }
-    
-    // Formata a data no padrão brasileiro
-    return data.toLocaleDateString('pt-BR');
-  } catch (e) {
-    console.error('Erro ao formatar data:', e);
-    return dataString; // Retorna a string original em caso de erro
+  if (isNaN(data.getTime())) {
+    // Se a data não for válida, retorna a string original
+    console.error("Data inválida:", dataString);
+    return dataString;
   }
+
+  return data.toLocaleDateString('pt-BR'); // Formatação em pt-BR
 }
 
 // Função para gerar o gráfico mensal
