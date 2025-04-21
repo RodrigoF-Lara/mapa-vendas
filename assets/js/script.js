@@ -1,26 +1,15 @@
-// Verificação de variáveis já declaradas
-if (typeof dadosCSV === 'undefined') {
-  var dadosCSV = [];
-}
-if (typeof map === 'undefined') {
-  var map;
-}
-if (typeof filtroAnoSelecionado === 'undefined') {
-  var filtroAnoSelecionado = '';
-}
-if (typeof filtroMesSelecionado === 'undefined') {
-  var filtroMesSelecionado = 'todos';
-}
-if (typeof regiaoAtual === 'undefined') {
-  var regiaoAtual = null;
-}
+let dadosCSV = [];
+let map;
+let filtroAnoSelecionado = '';
+let filtroMesSelecionado = 'todos';
+let regiaoAtual = null;
 
 // Inicializa o ícone do marcador
 const rcIcon = L.icon({
-  iconUrl: 'data/rc/marcador_Jeison.svg',
-  iconSize: [35, 51],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34]
+  iconUrl: 'data/rc/marcador_Jeison.svg', // Ícone do RC
+  iconSize: [35, 51], // Tamanho do ícone (ajuste conforme necessário)
+  iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
+  popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
 });
 
 // Inicializa o mapa
@@ -44,13 +33,15 @@ function carregarRegiao(regiaoId) {
   regiaoAtual = configuracoesRegioes[regiaoId];
   
   if (map) {
-    map.remove();
+    map.remove(); // Destruir o mapa existente
   }
   
+  // Reiniciar variáveis
   dadosCSV = [];
   filtroAnoSelecionado = '';
   filtroMesSelecionado = 'todos';
   
+  // Criar novo mapa
   initMap();
   carregarDadosAPI();
 }
@@ -67,7 +58,7 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
-        console.log('Dados da API:', data.values);
+        console.log('Dados da API:', data.values); // Verifique os dados carregados
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -75,10 +66,9 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros();
-        carregarGeoJSON();
-        gerarGraficoMensal();
-        mostrarResumoEstado();
+        popularFiltros(); // Chama para popular os filtros de ano e mês
+        carregarGeoJSON(); // Agora carrega os marcadores e geojson
+        gerarGraficoMensal(); // Gera o gráfico mensal
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -107,17 +97,15 @@ function carregarGeoJSON() {
           const centroid = turf.centroid(feature).geometry.coordinates;
           const icone = L.icon({
             iconUrl: regiaoAtual.marcadorIcone,
-            iconSize: [32, 32]
+            iconSize: [32, 32] // Tamanho do ícone do RC
           });
 
-          // Popup com verificação segura da imagem
+          // Exibe o marcador com a imagem do RC
           const popupContent = ` 
             <strong>${feature.properties.NM_MUN}</strong><br>
             <strong>📦 Quantidade Vendida:</strong> ${0}<br>
             <strong>💰 Faturamento:</strong> ${0}<br><br>
-            ${regiaoAtual && regiaoAtual.imagem ? 
-              `<img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />` : 
-              ''}
+            <img src="${regiaoAtual.imagem}" alt="Imagem do local de vendas" width="200" />
           `;
           
           L.marker([centroid[1], centroid[0]], { icon: icone })
@@ -139,14 +127,14 @@ function carregarGeoJSON() {
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             return {
-              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e',
+              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e', // Pintar com cor diferente se houver vendas
               fillOpacity: 0.7,
               weight: 1,
               color: 'black'
             };
           } else {
             return {
-              fillColor: '#ffffff',
+              fillColor: '#ffffff', // Sem vendas, sem cor
               fillOpacity: 0.3,
               weight: 1,
               color: 'black'
@@ -161,6 +149,7 @@ function carregarGeoJSON() {
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
 
+          // Exibe o popup de vendas ao clicar nas cidades
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
@@ -173,7 +162,7 @@ function carregarGeoJSON() {
                 <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
               `;
               layer.bindPopup(popupContent).openPopup();
-              mostrarTabela(codigoIBGE);
+              mostrarTabela(codigoIBGE); // Chama a função para mostrar a tabela de vendas da cidade
             });
           }
         }
@@ -182,84 +171,6 @@ function carregarGeoJSON() {
     .catch(error => {
       console.error('Falha ao carregar GeoJSON:', error);
     });
-}
-
-// Função para mostrar a tabela de vendas da cidade selecionada
-function mostrarTabela(codigoIBGE) {
-  if (!codigoIBGE || !dadosCSV.length) return;
-
-  const vendasCidade = dadosCSV.filter(item =>
-    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  vendasCidade.sort((a, b) => {
-    const mesA = parseInt(a.MÊS);
-    const mesB = parseInt(b.MÊS);
-    if (mesA !== mesB) return mesA - mesB;
-    return parseInt(a.DIA) - parseInt(b.DIA);
-  });
-
-  let tabelaHTML = `
-    <h3>Detalhes de Vendas</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Produto</th>
-          <th>Quantidade</th>
-          <th>Faturamento</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  vendasCidade.forEach(venda => {
-    const dataFormatada = `${venda.DIA}/${venda.MÊS}/${venda.ANO}`;
-    const faturamentoFormatado = parseFloat(venda.FATURAMENTO || 0).toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
-
-    tabelaHTML += `
-      <tr>
-        <td>${dataFormatada}</td>
-        <td>${venda['TB_PRODUTOS.NOME'] || 'N/A'}</td>
-        <td>${venda.QNT || 0}</td>
-        <td>${faturamentoFormatado}</td>
-      </tr>
-    `;
-  });
-
-  tabelaHTML += `
-      </tbody>
-    </table>
-  `;
-
-  document.getElementById('dados-cidade').innerHTML = tabelaHTML;
-}
-
-// Função para mostrar o resumo geral do estado
-function mostrarResumoEstado() {
-  if (!dadosCSV.length) return;
-
-  const vendasFiltradas = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  const totalQnt = vendasFiltradas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFat = vendasFiltradas.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
-  const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  const resumoHTML = `
-    <h3>Resumo do Estado</h3>
-    <p><strong>Total de Máquinas Vendidas:</strong> ${totalQnt}</p>
-    <p><strong>Faturamento Total:</strong> ${formatadoFAT}</p>
-  `;
-
-  document.getElementById('dados-cidade').innerHTML = resumoHTML;
 }
 
 // Função para gerar o gráfico mensal
@@ -319,14 +230,12 @@ function popularFiltros() {
     filtroAnoSelecionado = selectAno.value;
     reiniciarMapa();
     gerarGraficoMensal();
-    mostrarResumoEstado();
   });
 
   selectMes.addEventListener('change', () => {
     filtroMesSelecionado = selectMes.value;
     reiniciarMapa();
     gerarGraficoMensal();
-    mostrarResumoEstado();
   });
 }
 
