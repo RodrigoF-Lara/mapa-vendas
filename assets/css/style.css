@@ -6,18 +6,60 @@ body {
   height: 100vh;
   overflow: hidden;
   background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Seletor de região */
+.regiao-selector {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#filtro-regiao {
+  padding: 6px 12px;
+  min-width: 200px;
+  font-size: 14px;
+}
+
+/* Barra de filtros no topo */
+.top-filter-bar {
+  background: #2c3e50;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 900;
+}
+
+/* Container para o resumo acima do mapa */
+.resumo-top-container {
+  padding: 10px 15px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 /* Container principal */
 .app-container {
   display: flex;
-  height: 100vh;
+  flex: 1;
+  overflow: hidden;
 }
 
 /* Mapa garantido (60% da tela) */
 .map-wrapper {
   width: 60%;
-  height: 100vh;
+  height: 100%;
   background: #e9ecef;
 }
 
@@ -36,17 +78,6 @@ body {
 }
 
 /* Filtros compactos */
-.filter-card {
-  padding: 12px 15px;
-  background: #2c3e50;
-  color: white;
-}
-
-.filter-card h2 {
-  margin: 0 0 10px 0;
-  font-size: 1.1rem;
-}
-
 .filter-controls {
   display: flex;
   gap: 10px;
@@ -135,6 +166,8 @@ th {
   padding: 15px;
   margin-bottom: 20px;
   border-left: 4px solid #e74c3c;
+  flex: 1;
+  min-width: 300px;
 }
 
 .resumo-titulo {
@@ -153,15 +186,20 @@ th {
 
 .resumo-estatisticas {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .estatistica-item {
   display: flex;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px dashed #ddd;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  min-width: 200px;
+  flex: 1;
 }
 
 .icone-estatistica {
@@ -228,9 +266,7 @@ th {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
-  #filtro-regiao {
-    padding: 6px 12px;
-    min-width: 200px;
-    font-size: 14px;
+  .resumo-estatisticas {
+    flex-direction: column;
   }
 }
