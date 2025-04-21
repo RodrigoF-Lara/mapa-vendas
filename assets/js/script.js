@@ -1,3 +1,4 @@
+// Variáveis globais
 let dadosCSV = [];
 let map;
 let filtroAnoSelecionado = '';
@@ -260,3 +261,37 @@ function initApp() {
 }
 
 initApp();
+
+// Função para mostrar a tabela de vendas da cidade
+function mostrarTabela(codigoIBGE) {
+  const dadosCidade = dadosCSV.filter(item => item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE);
+  
+  if (dadosCidade.length === 0) {
+    console.error('Nenhum dado encontrado para a cidade');
+    return;
+  }
+
+  // Gerar o HTML da tabela
+  let tabelaHTML = '<table>';
+  tabelaHTML += '<thead><tr><th>Produto</th><th>Quantidade Vendida</th><th>Faturamento</th></tr></thead>';
+  tabelaHTML += '<tbody>';
+
+  dadosCidade.forEach(item => {
+    tabelaHTML += `<tr>
+      <td>${item.PRODUTO}</td>
+      <td>${item.QNT}</td>
+      <td>${parseFloat(item.FATURAMENTO).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+    </tr>`;
+  });
+
+  tabelaHTML += '</tbody></table>';
+
+  // Inserir a tabela na div de dados da cidade
+  document.getElementById('dados-cidade').innerHTML = tabelaHTML;
+}
+
+// Função para mostrar o resumo do estado
+function mostrarResumoEstado() {
+  // Implementar conforme necessário
+  console.log("Resumo do estado atualizado");
+}
