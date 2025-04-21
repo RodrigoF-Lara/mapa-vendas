@@ -16,7 +16,7 @@ const configuracoesRegioes = {
     view: [-29.0, -52.0],
     zoom: 6,
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/rs_norte.geojson',
+    geojsonPath: 'data/municipios-rs_norte.geojson',
     marcadorIcone: 'data/rc/marcador_padrao.svg',
     imagem: 'data/imagens/rs_norte.jpg',
     cidadesRC: {}
@@ -25,7 +25,7 @@ const configuracoesRegioes = {
     view: [-27.5, -50.0],
     zoom: 6,
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/sc.geojson',
+    geojsonPath: 'data/municipios-sc.geojson',
     marcadorIcone: 'data/rc/marcador_padrao.svg',
     imagem: 'data/imagens/sc.jpg',
     cidadesRC: {}
@@ -34,7 +34,7 @@ const configuracoesRegioes = {
     view: [-25.5, -52.0],
     zoom: 6,
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/pr.geojson',
+    geojsonPath: 'data/municipios-pr.geojson',
     marcadorIcone: 'data/rc/marcador_padrao.svg',
     imagem: 'data/imagens/pr.jpg',
     cidadesRC: {}
@@ -43,7 +43,7 @@ const configuracoesRegioes = {
     view: [-23.5, -46.6],
     zoom: 6,
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/sp.geojson',
+    geojsonPath: 'data/municipios-sp.geojson',
     marcadorIcone: 'data/rc/marcador_padrao.svg',
     imagem: 'data/imagens/sp.jpg',
     cidadesRC: {}
@@ -52,7 +52,7 @@ const configuracoesRegioes = {
     view: [-20.5, -54.6],
     zoom: 6,
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Use o ID correto
-    geojsonPath: 'data/ms.geojson',
+    geojsonPath: 'data/municipios-ms.geojson',
     marcadorIcone: 'data/rc/marcador_padrao.svg',
     imagem: 'data/imagens/ms.jpg',
     cidadesRC: {}
