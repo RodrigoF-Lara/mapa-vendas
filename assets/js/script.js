@@ -234,15 +234,18 @@ function exibirDadosNaTabela(vendas) {
 
 // Função para formatar data
 function formatarData(dataString) {
-  if (!dataString) return '';
+  if (!dataString) return ''; // Retorna vazio se não houver data
+
+  // Assumindo que a data está no formato YYYY-MM-DD ou um formato de timestamp
+  const data = new Date(dataString);
   
-  // Assumindo que a data está no formato YYYY-MM-DD ou outro formato consistente
-  try {
-    const data = new Date(dataString);
-    return data.toLocaleDateString('pt-BR');
-  } catch (e) {
-    return dataString; // Retorna a string original se não conseguir formatar
+  if (isNaN(data.getTime())) {
+    // Se a data não for válida, retorna a string original
+    console.error("Data inválida:", dataString);
+    return dataString;
   }
+
+  return data.toLocaleDateString('pt-BR'); // Formatação em pt-BR
 }
 
 // Função para gerar o gráfico mensal
