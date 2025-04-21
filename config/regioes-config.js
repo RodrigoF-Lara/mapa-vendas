@@ -1,11 +1,14 @@
 // Configurações das regiões
 const configuracoesRegioes = {
   'rs_sul': {
-    
+    id: 'rs_sul',
+    nome: 'RS Sul',
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA',
     geojsonPath: 'data/geojson/municipios-RS_Sul.geojson',
     view: [-30.0346, -51.2177],
     zoom: 6,
+    marcadorIcone: 'data/rc/marcador_Gustavo.svg',
+    imagem: 'data/rc/Gustavo.PNG',
     cidadesRC: {'4301602': 'GUSTAVO' }
            },
   
