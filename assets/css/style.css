@@ -1,85 +1,272 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <link rel="stylesheet" href="assets/css/style.css"/>
- 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
-  
-  <!-- Variáveis globais -->
-  <script>
-    // Declaração de variáveis globais para evitar redeclaração
-    let dadosCSV = [];
-    let map;
-    let filtroAnoSelecionado = '';
-    let filtroMesSelecionado = 'todos';
-    let regiaoAtual = null;
-  </script>
-  
-  <!-- Carregar configurações -->
-  <script src="config/regioes-config.js"></script>
-</head>
-<body>
+/* Reset e configurações básicas */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+}
 
-  <div class="regiao-selector">
-    <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
-      <option value="">Selecione a Região</option>
-      <option value="rs_sul">RS Sul</option>
-      <option value="rs_norte">RS Norte</option>
-      <option value="sc">SC</option>
-      <option value="pr">PR</option>
-      <option value="sp">SP</option>
-      <option value="ms">MS</option>
-      <!-- Adicione as outras 19 regiões aqui -->
-    </select>
-  </div>
-  
-  <!-- Filtros no topo -->
-  <div class="top-filter-bar">
-    <div class="filter-controls">
-      <div>
-        <label for="filtro-ano">Ano:</label>
-        <select id="filtro-ano"></select>
-      </div>
-      <div>
-        <label for="filtro-mes">Mês:</label>
-        <select id="filtro-mes"></select>
-      </div>
-      <button onclick="mostrarResumoEstado()">Atualizar</button>
-    </div>
-  </div>
-  
-  <!-- Nova seção para o resumo acima do mapa -->
-  <div class="resumo-top-container">
-    <div id="resumo-estado"></div>
-  </div>
-  
-  <div class="app-container">
-    <!-- Mapa garantido na esquerda -->
-    <div class="map-wrapper">
-      <div id="map"></div>
-    </div>
-    
-    <!-- Painel direito com nova hierarquia -->
-    <div class="panel-wrapper">
-      <!-- Gráfico acima da tabela -->
-      <div class="chart-card">
-        <h3>Vendas Mensais</h3>
-        <div id="grafico-mensal"></div>
-      </div>
-      
-      <!-- Tabela com scroll -->
-      <div class="data-card">
-        <div id="dados-cidade"></div>
-      </div>
-    </div>
-  </div>
+/* Seletor de região */
+.regiao-selector {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
 
-<script src="assets/js/script.js"></script>
-</body>
-</html>
+#filtro-regiao {
+  padding: 6px 12px;
+  min-width: 200px;
+  font-size: 14px;
+}
+
+/* Barra de filtros no topo */
+.top-filter-bar {
+  background: #2c3e50;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 900;
+}
+
+/* Container para o resumo acima do mapa */
+.resumo-top-container {
+  padding: 10px 15px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Container principal */
+.app-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Mapa garantido (60% da tela) */
+.map-wrapper {
+  width: 60%;
+  height: 100%;
+  background: #e9ecef;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Painel direito (40% da tela) */
+.panel-wrapper {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+}
+
+/* Filtros compactos */
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.filter-controls > div {
+  flex: 1;
+}
+
+.filter-controls label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+}
+
+.filter-controls select {
+  width: 100%;
+  padding: 6px;
+  font-size: 0.85rem;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 6px 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Gráfico acima da tabela (30% do painel) */
+.chart-card {
+  height: 30%;
+  min-height: 220px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.chart-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+#grafico-mensal {
+  height: calc(100% - 25px);
+  width: 100%;
+}
+
+/* Tabela (70% do painel) */
+.data-card {
+  flex: 1;
+  padding: 12px 15px;
+  overflow-y: auto;
+}
+
+/* Estilos da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+/* Estilos para o resumo do estado */
+.resumo-estado-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #e74c3c;
+  flex: 1;
+  min-width: 300px;
+}
+
+.resumo-titulo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.icone-resumo {
+  font-size: 1.4rem;
+  margin-right: 8px;
+}
+
+.resumo-estatisticas {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.estatistica-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  min-width: 200px;
+  flex: 1;
+}
+
+.icone-estatistica {
+  font-size: 1.8rem;
+  margin-right: 15px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.estatistica-info {
+  flex: 1;
+}
+
+.estatistica-label {
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.estatistica-valor {
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.table-container {
+  margin-top: 15px;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .map-wrapper, .panel-wrapper {
+    width: 100%;
+    height: auto;
+  }
+  
+  .map-wrapper {
+    height: 50vh;
+  }
+  
+  .panel-wrapper {
+    height: 50vh;
+  }
+  
+  .filter-controls {
+    flex-wrap: wrap;
+  }
+  
+  .filter-controls > div {
+    min-width: 45%;
+  }
+
+  .regiao-selector {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .resumo-estatisticas {
+    flex-direction: column;
+  }
+}
