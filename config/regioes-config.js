@@ -17,7 +17,7 @@ const configuracoesRegioes = {
     nome: 'RS Norte',
     planilhaId: '1zxsWdSrPsPV6zqvNk0cv8zUosvntcZPGBMT9oLiB21s',
     geojsonPath: 'data/geojson/municipios-RS_Norte.geojson',
-    view: [-28.5000, -53.0000],
+    view: [-29.5000, -53.0000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Jeison.svg',
     imagem: 'data/rc/Jeison.PNG',
