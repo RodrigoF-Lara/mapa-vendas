@@ -47,6 +47,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
+  max-height: 120px; /* Reduzido em aproximadamente 50% */
+  overflow: hidden;
 }
 
 /* Container principal */
@@ -56,9 +58,9 @@ body {
   overflow: hidden;
 }
 
-/* Mapa garantido (60% da tela) */
+/* Mapa garantido (54% da tela - reduzido em 10% do original de 60%) */
 .map-wrapper {
-  width: 60%;
+  width: 54%;
   height: 100%;
   background: #e9ecef;
 }
@@ -68,9 +70,9 @@ body {
   width: 100%;
 }
 
-/* Painel direito (40% da tela) */
+/* Painel direito (46% da tela - aumentado para compensar a redução do mapa) */
 .panel-wrapper {
-  width: 40%;
+  width: 46%;
   display: flex;
   flex-direction: column;
   background: white;
@@ -159,53 +161,55 @@ th {
   top: 0;
 }
 
-/* Estilos para o resumo do estado */
+/* Estilos para o resumo do estado - reduzido em tamanho */
 .resumo-estado-container {
   background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
   border-left: 4px solid #e74c3c;
   flex: 1;
-  min-width: 300px;
+  min-width: 250px;
+  max-width: 100%;
 }
 
 .resumo-titulo {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   color: #e74c3c;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
 }
 
 .icone-resumo {
-  font-size: 1.4rem;
-  margin-right: 8px;
+  font-size: 1.2rem;
+  margin-right: 6px;
 }
 
 .resumo-estatisticas {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 10px;
 }
 
 .estatistica-item {
   display: flex;
   align-items: center;
-  padding: 8px 15px;
+  padding: 6px 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
   background: white;
-  min-width: 200px;
+  min-width: 150px;
   flex: 1;
+  font-size: 0.9rem;
 }
 
 .icone-estatistica {
-  font-size: 1.8rem;
-  margin-right: 15px;
-  min-width: 30px;
+  font-size: 1.4rem;
+  margin-right: 10px;
+  min-width: 25px;
   text-align: center;
 }
 
@@ -215,11 +219,12 @@ th {
 
 .estatistica-label {
   font-weight: bold;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
+  font-size: 0.8rem;
 }
 
 .estatistica-valor {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #2c3e50;
 }
 
