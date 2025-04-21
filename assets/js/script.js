@@ -1,9 +1,3 @@
-let dadosCSV = [];
-let map;
-let filtroAnoSelecionado = '';
-let filtroMesSelecionado = 'todos';
-let regiaoAtual = null;
-
 // Inicializa o ícone do marcador
 const rcIcon = L.icon({
   iconUrl: 'data/rc/marcador_Jeison.svg', // Ícone do RC
