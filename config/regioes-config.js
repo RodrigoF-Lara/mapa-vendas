@@ -5,13 +5,11 @@ const configuracoesRegioes = {
     zoom: 6,
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA', // Substitua pelo ID real da planilha
     geojsonPath: 'data/geojson/municipios-RS_SUL.geojson',
-    marcadorIcone: 'data/rc/marcador_Jeison.svg',
-    imagem: 'data/imagens/rs_sul.jpg',
+    marcadorIcone: 'data/rc/marcador_Gustavo.svg',
+    imagem: 'data/rc/Gustavo.PNG',
     cidadesRC: {
       '4301602': 'GUSTAVO' 
-    },
-    imagem: 'data/rc/Gustavo.PNG',
-    marcadorIcone: 'data/rc/marcador_Gustavo.svg'
+    }
   },
   // Adicione outras regiões aqui se necessário
   rs_norte: {
@@ -119,9 +117,3 @@ function mostrarResumoEstado() {
   // Inserir a tabela na div de dados da cidade
   document.getElementById('dados-cidade').innerHTML = tabelaHTML;
 }
-
-// Esta função foi removida, pois agora usamos a função exibirDadosNaTabela do script.js
-// Função para mostrar a tabela de vendas da cidade
-// function mostrarTabela(codigoIBGE) {
-//   /* Código removido */
-// }
