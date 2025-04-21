@@ -160,7 +160,7 @@ function carregarGeoJSON() {
                 <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
               `;
               layer.bindPopup(popupContent).openPopup();
-              mostrarTabela(codigoIBGE); // Chama a função para mostrar a tabela de vendas da cidade
+              exibirDadosNaTabela(vendasCidade); // Alterado para usar a nova função de exibição de tabela
             });
           }
         }
@@ -169,6 +169,80 @@ function carregarGeoJSON() {
     .catch(error => {
       console.error('Falha ao carregar GeoJSON:', error);
     });
+}
+
+// Função para exibir dados na tabela com os novos cabeçalhos
+function exibirDadosNaTabela(vendas) {
+  const tabelaContainer = document.getElementById('dados-cidade');
+  
+  if (vendas.length === 0) {
+    tabelaContainer.innerHTML = '<p>Sem dados para exibir com os filtros selecionados.</p>';
+    return;
+  }
+  
+  let html = `<div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>NOTA</th>
+            <th>PEDIDO</th>
+            <th>CLIENTE</th>
+            <th>CIDADE</th>
+            <th>DESCRIÇÃO</th>
+            <th>QNT</th>
+            <th>FATURAMENTO</th>
+            <th>DATA</th>
+          </tr>
+        </thead>
+        <tbody>`;
+  
+  vendas.forEach(item => {
+    html += `
+          <tr>
+            <td>${item.NOTA || ''}</td>
+            <td>${item.PEDIDO || ''}</td>
+            <td>${item.CLIENTE || ''}</td>
+            <td>${item.CIDADE || ''}</td>
+            <td>${item['DESCRIÇÃO'] || item.PRODUTO || ''}</td>
+            <td>${item.QNT || '0'}</td>
+            <td>${parseFloat((item.FATURAMENTO || '0').replace('.', '').replace(',', '.')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${formatarData(item.DATA || '')}</td>
+          </tr>`;
+  });
+  
+  // Calcular totais
+  const totalQnt = vendas.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+  const totalFat = vendas.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
+  const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  
+  // Adicionar linha de total
+  html += `
+          <tr style="font-weight: bold; background-color: #f0f0f0;">
+            <td colspan="5">TOTAL</td>
+            <td>${totalQnt}</td>
+            <td>${formatadoFAT}</td>
+            <td></td>
+          </tr>`;
+  
+  html += `
+        </tbody>
+      </table>
+    </div>`;
+  
+  tabelaContainer.innerHTML = html;
+}
+
+// Função para formatar data
+function formatarData(dataString) {
+  if (!dataString) return '';
+  
+  // Assumindo que a data está no formato YYYY-MM-DD ou outro formato consistente
+  try {
+    const data = new Date(dataString);
+    return data.toLocaleDateString('pt-BR');
+  } catch (e) {
+    return dataString; // Retorna a string original se não conseguir formatar
+  }
 }
 
 // Função para gerar o gráfico mensal
