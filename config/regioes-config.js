@@ -120,46 +120,8 @@ function mostrarResumoEstado() {
   document.getElementById('dados-cidade').innerHTML = tabelaHTML;
 }
 
+// Esta função foi removida, pois agora usamos a função exibirDadosNaTabela do script.js
 // Função para mostrar a tabela de vendas da cidade
-function mostrarTabela(codigoIBGE) {
-  const dadosCidade = dadosCSV.filter(item => 
-    item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-  
-  if (dadosCidade.length === 0) {
-    console.error('Nenhum dado encontrado para a cidade');
-    return;
-  }
-
-  // Calcular totais
-  const totalQnt = dadosCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-  const totalFat = dadosCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
-  const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  // Gerar o HTML da tabela
-  let tabelaHTML = '<table>';
-  tabelaHTML += '<thead><tr><th>Produto</th><th>Quantidade Vendida</th><th>Faturamento</th></tr></thead>';
-  tabelaHTML += '<tbody>';
-
-  dadosCidade.forEach(item => {
-    tabelaHTML += `<tr>
-      <td>${item.PRODUTO}</td>
-      <td>${item.QNT}</td>
-      <td>${parseFloat(item.FATURAMENTO).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-    </tr>`;
-  });
-  
-  // Linha de total
-  tabelaHTML += `<tr style="font-weight: bold; background-color: #f0f0f0;">
-    <td>TOTAL</td>
-    <td>${totalQnt}</td>
-    <td>${formatadoFAT}</td>
-  </tr>`;
-
-  tabelaHTML += '</tbody></table>';
-
-  // Inserir a tabela na div de dados da cidade
-  document.getElementById('dados-cidade').innerHTML = tabelaHTML;
-}
+// function mostrarTabela(codigoIBGE) {
+//   /* Código removido */
+// }
