@@ -75,7 +75,26 @@ const configuracoesRegioes = {
 
 // Função para mostrar o resumo do estado
 function mostrarResumoEstado() {
-  if (!dadosCSV || !filtroAnoSelecionado) return;
+  // Verificar se temos dados e se o ano está selecionado
+  // Se filtroAnoSelecionado estiver vazio, use o ano atual
+  if (!dadosCSV || dadosCSV.length === 0) return;
+  
+  if (!filtroAnoSelecionado || filtroAnoSelecionado === '') {
+    const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+    if (anos.length > 0) {
+      const anoAtual = new Date().getFullYear().toString();
+      // Tenta usar o ano atual, ou o último ano disponível
+      filtroAnoSelecionado = anos.includes(anoAtual) ? anoAtual : anos[anos.length - 1];
+      
+      // Atualiza o select do ano se existir
+      const selectAno = document.getElementById('filtro-ano');
+      if (selectAno) {
+        selectAno.value = filtroAnoSelecionado;
+      }
+    } else {
+      return; // Não há anos disponíveis
+    }
+  }
   
   const dadosFiltrados = dadosCSV.filter(item =>
     item.ANO === filtroAnoSelecionado &&
