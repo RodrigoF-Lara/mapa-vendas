@@ -37,7 +37,7 @@ function carregarDadosRotasPlanejadas() {
         
         // Se o checkbox estiver marcado, mostrar os marcadores
         if (mostrarRotasPlanejadas) {
-          mostrarMarcadoresRotasPlanejadas();
+       //   mostrarMarcadoresRotasPlanejadas();
         }
       } else {
         console.error('Nenhum dado encontrado na planilha de rotas planejadas.');
