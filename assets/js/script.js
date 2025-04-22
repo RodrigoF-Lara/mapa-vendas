@@ -42,6 +42,11 @@ function carregarRegiao(regiaoId) {
   // Criar novo mapa
   initMap();
   carregarDadosAPI();
+  
+  // Carregar dados das rotas planejadas
+  if (typeof carregarDadosRotasPlanejadas === 'function') {
+    carregarDadosRotasPlanejadas();
+  }
 }
 
 // Carrega os dados da Google Sheets API
@@ -184,6 +189,11 @@ function atualizarVisualizacao() {
   
   // Mostrar o resumo do estado com comparação entre anos
   mostrarResumoEstadoComparativo();
+  
+  // Mostrar marcadores de rotas planejadas se estiver ativado
+  if (typeof mostrarRotasPlanejadas !== 'undefined' && mostrarRotasPlanejadas && typeof mostrarMarcadoresRotasPlanejadas === 'function') {
+    mostrarMarcadoresRotasPlanejadas();
+  }
 }
 
 // Carrega o GeoJSON com os limites dos municípios e aplica cores por ano
@@ -453,30 +463,5 @@ function mostrarResumoEstadoComparativo() {
           <div class="estatistica-valor">
             📦 ${totalQnt} unidades<br>
             💰 ${formatadoFAT}<br>
-            🏙️ ${numCidadesComVendas} cidades
-          </div>
-        </div>
-      </div>
-    `;
-  });
-  
-  resumoHTML += `
-      </div>
-    </div>
-  `;
-  
-  // Inserir o resumo visual na div acima do mapa
-  resumoContainer.innerHTML = resumoHTML;
-}
-
-function initApp() {
-  const turfScript = document.createElement('script');
-  turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
-  turfScript.onload = function() {
-    initMap();
-    carregarDadosAPI();
-  };
-  document.head.appendChild(turfScript);
-}
-
-initApp();
+            🏙️ ${numCidadesComVendas} cidade
+(Content truncated due to size limit. Use line ranges to read in chunks)
