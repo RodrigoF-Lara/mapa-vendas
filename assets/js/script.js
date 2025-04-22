@@ -1,5 +1,5 @@
 // Não declare novamente as variáveis que já foram declaradas em regioes-config.js
-// As variáveis dadosCSV, map, filtroAnoSelecionado, filtroMesSelecionado e regiaoAtual
+// As variáveis dadosCSV, map, filtrosAnosSelecionados, filtroMesSelecionado e regiaoAtual
 // já são acessíveis pois o arquivo regioes-config.js é carregado antes
 
 // Inicializa o ícone do marcador
@@ -36,7 +36,7 @@ function carregarRegiao(regiaoId) {
   
   // Reiniciar variáveis
   dadosCSV = [];
-  filtroAnoSelecionado = '';
+  filtrosAnosSelecionados = []; // Inicializa array vazio para anos selecionados
   filtroMesSelecionado = 'todos';
   
   // Criar novo mapa
@@ -65,9 +65,7 @@ function carregarDadosAPI() {
           }, {});
         });
         popularFiltros(); // Chama para popular os filtros de ano e mês
-        carregarGeoJSON(); // Agora carrega os marcadores e geojson
-        gerarGraficoMensal(); // Gera o gráfico mensal
-        mostrarResumoEstado(); // Mostra o resumo do estado automaticamente após carregar os dados
+        atualizarVisualizacao(); // Atualiza o mapa, gráfico e resumo
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -75,8 +73,121 @@ function carregarDadosAPI() {
     .catch(error => console.error('Erro ao carregar dados da API:', error));
 }
 
-// Carrega o GeoJSON com os limites dos municípios
-function carregarGeoJSON() {
+// Função para popular os checkboxes de anos e o dropdown de meses
+function popularFiltros() {
+  // Obter anos únicos dos dados
+  const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+  const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
+  
+  // Selecionar o ano atual ou o último ano disponível por padrão
+  const anoAtual = new Date().getFullYear().toString();
+  const anoDefault = anos.includes(anoAtual) ? anoAtual : anos[anos.length - 1];
+  
+  // Adicionar o ano padrão ao array de anos selecionados
+  if (anoDefault) {
+    filtrosAnosSelecionados = [anoDefault];
+  }
+  
+  // Popular os checkboxes de anos
+  const anosContainer = document.getElementById('anos-checkboxes');
+  anosContainer.innerHTML = '';
+  
+  anos.forEach(ano => {
+    const isChecked = filtrosAnosSelecionados.includes(ano);
+    const checkboxDiv = document.createElement('div');
+    checkboxDiv.className = 'ano-checkbox';
+    checkboxDiv.innerHTML = `
+      <input type="checkbox" id="ano-${ano}" value="${ano}" ${isChecked ? 'checked' : ''}>
+      <label for="ano-${ano}" class="ano-checkbox-label">${ano}</label>
+    `;
+    anosContainer.appendChild(checkboxDiv);
+    
+    // Adicionar evento de change para o checkbox
+    const checkbox = checkboxDiv.querySelector(`#ano-${ano}`);
+    checkbox.addEventListener('change', function() {
+      if (this.checked) {
+        // Adicionar ao array se não existir
+        if (!filtrosAnosSelecionados.includes(ano)) {
+          filtrosAnosSelecionados.push(ano);
+        }
+      } else {
+        // Remover do array
+        filtrosAnosSelecionados = filtrosAnosSelecionados.filter(a => a !== ano);
+      }
+      
+      // Atualizar a legenda de cores
+      atualizarLegendaAnos();
+      
+      // Não atualizar automaticamente para evitar muitas atualizações
+      // O usuário deve clicar no botão Atualizar
+    });
+  });
+  
+  // Popular o dropdown de meses
+  const selectMes = document.getElementById('filtro-mes');
+  selectMes.innerHTML = `<option value="todos">Todos</option>` +
+    meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
+  
+  filtroMesSelecionado = 'todos';
+  
+  selectMes.addEventListener('change', () => {
+    filtroMesSelecionado = selectMes.value;
+    // Não atualizar automaticamente para evitar muitas atualizações
+    // O usuário deve clicar no botão Atualizar
+  });
+  
+  // Inicializar a legenda de cores
+  atualizarLegendaAnos();
+}
+
+// Função para atualizar a legenda de cores dos anos
+function atualizarLegendaAnos() {
+  const legendaContainer = document.getElementById('legenda-anos');
+  legendaContainer.innerHTML = '';
+  
+  if (filtrosAnosSelecionados.length === 0) {
+    legendaContainer.innerHTML = '<span>Nenhum ano selecionado</span>';
+    return;
+  }
+  
+  filtrosAnosSelecionados.forEach(ano => {
+    const cor = coresAnos[ano] || '#999999'; // Cor padrão se não estiver definida
+    
+    const legendaItem = document.createElement('div');
+    legendaItem.className = 'legenda-item';
+    legendaItem.innerHTML = `
+      <span class="legenda-cor" style="background-color: ${cor};"></span>
+      <span>${ano}</span>
+    `;
+    
+    legendaContainer.appendChild(legendaItem);
+  });
+}
+
+// Função principal para atualizar toda a visualização
+function atualizarVisualizacao() {
+  if (!map || filtrosAnosSelecionados.length === 0) {
+    return;
+  }
+  
+  // Limpar o mapa mantendo apenas a camada base
+  map.eachLayer(layer => {
+    if (layer instanceof L.TileLayer) return;
+    map.removeLayer(layer);
+  });
+  
+  // Carregar o GeoJSON com as cores por ano
+  carregarGeoJSONMultiplosAnos();
+  
+  // Atualizar o gráfico mensal
+  gerarGraficoMensalMultiplosAnos();
+  
+  // Mostrar o resumo do estado com comparação entre anos
+  mostrarResumoEstadoComparativo();
+}
+
+// Carrega o GeoJSON com os limites dos municípios e aplica cores por ano
+function carregarGeoJSONMultiplosAnos() {
   if (!regiaoAtual) {
     console.error('Nenhuma região selecionada');
     return;
@@ -113,59 +224,50 @@ function carregarGeoJSON() {
         }
       });
 
-      // Processa os polígonos com estilo dinâmico para as cidades
-      L.geoJSON(geojson, {
-        style: function(feature) {
-          const codigoIBGE = feature.properties.CD_MUN;
+      // Para cada cidade, verificar vendas em cada ano selecionado
+      geojson.features.forEach(feature => {
+        const codigoIBGE = feature.properties.CD_MUN;
+        
+        // Para cada ano selecionado, criar uma camada separada com cor diferente
+        filtrosAnosSelecionados.forEach(ano => {
           const vendasCidade = dadosCSV.filter(item =>
             item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-            item.ANO === filtroAnoSelecionado &&
+            item.ANO === ano &&
             (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
           );
-
-          if (vendasCidade.length > 0) {
-            const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
-            return {
-              fillColor: totalQnt > 0 ? '#ffeb3b' : '#9e9e9e', // Pintar com cor diferente se houver vendas
-              fillOpacity: 0.7,
-              weight: 1,
-              color: 'black'
-            };
-          } else {
-            return {
-              fillColor: '#ffffff', // Sem vendas, sem cor
-              fillOpacity: 0.3,
-              weight: 1,
-              color: 'black'
-            };
-          }
-        },
-        onEachFeature: function(feature, layer) {
-          const codigoIBGE = feature.properties.CD_MUN;
-          const vendasCidade = dadosCSV.filter(item =>
-            item['TB_CIDADES.CODIGO_IBGE'] === codigoIBGE &&
-            item.ANO === filtroAnoSelecionado &&
-            (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-          );
-
-          // Exibe o popup de vendas ao clicar nas cidades
+          
           if (vendasCidade.length > 0) {
             const totalQnt = vendasCidade.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
             const totalFat = vendasCidade.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
             const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
+            
+            // Usar a cor específica para o ano
+            const cor = coresAnos[ano] || '#999999';
+            
+            // Criar um polígono para este ano específico
+            const layer = L.geoJSON(feature, {
+              style: {
+                fillColor: cor,
+                fillOpacity: 0.7,
+                weight: 1,
+                color: 'black'
+              }
+            }).addTo(map);
+            
+            // Adicionar popup com informações do ano específico
+            layer.bindPopup(`
+              <strong>${feature.properties.NM_MUN} - ${ano}</strong><br>
+              <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
+              <strong>💰 Faturamento:</strong> ${formatadoFAT}<br>
+            `);
+            
+            // Adicionar evento de clique para mostrar os dados na tabela
             layer.on('click', function() {
-              const popupContent = `
-                <strong>${feature.properties.NM_MUN}</strong><br>
-                <strong>📦 Quantidade Vendida:</strong> ${totalQnt}<br>
-                <strong>💰 Faturamento:</strong> ${formatadoFAT}<br><br>
-              `;
-              layer.bindPopup(popupContent).openPopup();
-              exibirDadosNaTabela(vendasCidade); // Alterado para usar a nova função de exibição de tabela
+              exibirDadosNaTabela(vendasCidade, ano);
             });
           }
-        }
-      }).addTo(map);
+        });
+      });
     })
     .catch(error => {
       console.error('Falha ao carregar GeoJSON:', error);
@@ -173,7 +275,7 @@ function carregarGeoJSON() {
 }
 
 // Função para exibir dados na tabela com os novos cabeçalhos
-function exibirDadosNaTabela(vendas) {
+function exibirDadosNaTabela(vendas, ano) {
   const tabelaContainer = document.getElementById('dados-cidade');
   
   if (vendas.length === 0) {
@@ -181,10 +283,14 @@ function exibirDadosNaTabela(vendas) {
     return;
   }
   
-  let html = `<div class="table-container">
+  // Usar a cor específica para o ano no cabeçalho
+  const cor = coresAnos[ano] || '#999999';
+  
+  let html = `<h3>Vendas de ${ano}</h3>
+    <div class="table-container">
       <table>
         <thead>
-          <tr>
+          <tr style="background-color: ${cor}20;">
             <th>NOTA</th>
             <th>PEDIDO</th>
             <th>CLIENTE</th>
@@ -218,7 +324,7 @@ function exibirDadosNaTabela(vendas) {
   
   // Adicionar linha de total
   html += `
-          <tr style="font-weight: bold; background-color: #f0f0f0;">
+          <tr style="font-weight: bold; background-color: ${cor}30;">
             <td colspan="5">TOTAL</td>
             <td>${totalQnt}</td>
             <td>${formatadoFAT}</td>
@@ -249,90 +355,122 @@ function formatarData(dataString) {
   return data.toLocaleDateString('pt-BR'); // Formatação em pt-BR
 }
 
-// Função para gerar o gráfico mensal
-function gerarGraficoMensal() {
-  const dadosFiltrados = dadosCSV.filter(item =>
-    item.ANO === filtroAnoSelecionado &&
-    (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
-  );
-
-  const meses = Array(12).fill(0).map((_, i) => i + 1);
-  const vendasPorMes = Array(12).fill(0);
-
-  dadosFiltrados.forEach(item => {
-    const mes = parseInt(item.MÊS) - 1;
-    if (mes >= 0 && mes < 12) {
-      vendasPorMes[mes] += parseFloat(item.QNT || 0);
-    }
-  });
-
+// Função para gerar o gráfico mensal com múltiplos anos
+function gerarGraficoMensalMultiplosAnos() {
   const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
-
-  const trace = {
-    x: nomesMeses,
-    y: vendasPorMes,
-    type: 'bar',
-    marker: { color: '#4CAF50' }
-  };
-
+  const traces = [];
+  
+  // Para cada ano selecionado, criar uma série de dados
+  filtrosAnosSelecionados.forEach(ano => {
+    const dadosFiltrados = dadosCSV.filter(item =>
+      item.ANO === ano &&
+      (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+    );
+    
+    const vendasPorMes = Array(12).fill(0);
+    
+    dadosFiltrados.forEach(item => {
+      const mes = parseInt(item.MÊS) - 1;
+      if (mes >= 0 && mes < 12) {
+        vendasPorMes[mes] += parseFloat(item.QNT || 0);
+      }
+    });
+    
+    // Usar a cor específica para o ano
+    const cor = coresAnos[ano] || '#999999';
+    
+    traces.push({
+      x: nomesMeses,
+      y: vendasPorMes,
+      type: 'bar',
+      name: ano,
+      marker: { color: cor }
+    });
+  });
+  
   const layout = {
-    title: `Máquinas Vendidas em ${filtroAnoSelecionado}`,
+    title: 'Máquinas Vendidas por Ano',
     xaxis: { title: 'Mês' },
-    yaxis: { title: 'Quantidade' }
+    yaxis: { title: 'Quantidade' },
+    barmode: 'group', // Agrupar barras lado a lado
+    legend: { orientation: 'h', y: -0.2 } // Legenda horizontal abaixo do gráfico
   };
-
-  Plotly.newPlot('grafico-mensal', [trace], layout);
+  
+  Plotly.newPlot('grafico-mensal', traces, layout);
 }
 
-function popularFiltros() {
-  const selectAno = document.getElementById('filtro-ano');
-  const selectMes = document.getElementById('filtro-mes');
-
-  const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
-  const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
-
-  const anoAtual = new Date().getFullYear().toString();
-
-  selectAno.innerHTML = anos.map(ano => 
-    `<option value="${ano}" ${ano === anoAtual ? 'selected' : ''}>${ano}</option>`
-  ).join('');
-  selectMes.innerHTML = `<option value="todos">Todos</option>` +
-    meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
-
-  filtroAnoSelecionado = selectAno.value;
-  filtroMesSelecionado = selectMes.value;
-
-  selectAno.addEventListener('change', () => {
-    filtroAnoSelecionado = selectAno.value;
-    reiniciarMapa();
-    gerarGraficoMensal();
+// Função para mostrar o resumo do estado com comparação entre anos
+function mostrarResumoEstadoComparativo() {
+  const resumoContainer = document.getElementById('resumo-estado');
+  
+  if (!dadosCSV || filtrosAnosSelecionados.length === 0) {
+    resumoContainer.innerHTML = '<p>Selecione pelo menos um ano para visualizar o resumo.</p>';
+    return;
+  }
+  
+  // Criar o resumo visual com ícones
+  let resumoHTML = `
+    <div class="resumo-estado-container">
+      <div class="resumo-titulo">
+        <span class="icone-resumo">📍</span> Total do Estado do ${regiaoAtual.nome}
+      </div>
+      
+      <div class="resumo-estatisticas">
+  `;
+  
+  // Para cada ano selecionado, criar um item de estatística
+  filtrosAnosSelecionados.forEach(ano => {
+    const dadosFiltrados = dadosCSV.filter(item =>
+      item.ANO === ano &&
+      (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+    );
+    
+    if (dadosFiltrados.length === 0) {
+      return; // Pular este ano se não houver dados
+    }
+    
+    const totalQnt = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.QNT || 0), 0);
+    const totalFat = dadosFiltrados.reduce((soma, item) => soma + parseFloat(item.FATURAMENTO || 0), 0);
+    const formatadoFAT = totalFat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    
+    // Calcular número de cidades com vendas
+    const cidadesComVendas = new Set();
+    dadosFiltrados.forEach(item => {
+      if (item.CIDADE) {
+        cidadesComVendas.add(item.CIDADE);
+      }
+    });
+    const numCidadesComVendas = cidadesComVendas.size;
+    
+    // Usar a cor específica para o ano
+    const cor = coresAnos[ano] || '#999999';
+    
+    resumoHTML += `
+      <div class="estatistica-item estatistica-item-ano" style="border-left-color: ${cor};">
+        <span class="icone-estatistica">📅</span>
+        <div class="estatistica-info">
+          <div class="estatistica-label">Ano: ${ano}</div>
+          <div class="estatistica-valor">
+            📦 ${totalQnt} unidades<br>
+            💰 ${formatadoFAT}<br>
+            🏙️ ${numCidadesComVendas} cidades
+          </div>
+        </div>
+      </div>
+    `;
   });
-
-  selectMes.addEventListener('change', () => {
-    filtroMesSelecionado = selectMes.value;
-    reiniciarMapa();
-    gerarGraficoMensal();
-  });
-}
-
-function reiniciarMapa() {
-  map.eachLayer(layer => {
-    if (layer instanceof L.TileLayer) return;
-    map.removeLayer(layer);
-  });
-
-  carregarGeoJSON();
-  mostrarResumoEstado();
+  
+  resumoHTML += `
+      </div>
+    </div>
+  `;
+  
+  // Inserir o resumo visual na div acima do mapa
+  resumoContainer.innerHTML = resumoHTML;
 }
 
 function initApp() {
   const turfScript = document.createElement('script');
   turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
-  turfScript.onload = function() {
-    initMap();
-    carregarDadosAPI();
-  };
-  document.head.appendChild(turfScript);
-}
-
-initApp();
+  turfScript.onload =
+(Content truncated due to size limit. Use line ranges to read in chunks)
