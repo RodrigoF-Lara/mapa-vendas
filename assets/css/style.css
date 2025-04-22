@@ -39,6 +39,72 @@ body {
   z-index: 900;
 }
 
+/* Estilos para os checkboxes de anos */
+.anos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.ano-checkbox {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ano-checkbox:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ano-checkbox input {
+  margin-right: 5px;
+}
+
+.ano-checkbox-label {
+  font-size: 0.85rem;
+}
+
+/* Legenda de cores para os anos */
+.legenda-anos-container {
+  background: white;
+  padding: 8px 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.legenda-titulo {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.legenda-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+}
+
+.legenda-cor {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  margin-right: 5px;
+  display: inline-block;
+}
+
 /* Container para o resumo acima do mapa */
 .resumo-top-container {
   padding: 10px 15px;
@@ -83,7 +149,7 @@ body {
 .filter-controls {
   display: flex;
   gap: 10px;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .filter-controls > div {
@@ -113,6 +179,7 @@ button {
   font-size: 0.85rem;
   cursor: pointer;
   white-space: nowrap;
+  margin-top: 20px;
 }
 
 /* Gráfico acima da tabela (30% do painel) */
@@ -206,6 +273,10 @@ th {
   font-size: 0.9rem;
 }
 
+.estatistica-item-ano {
+  border-left-width: 4px;
+}
+
 .icone-estatistica {
   font-size: 1.4rem;
   margin-right: 10px;
@@ -231,6 +302,24 @@ th {
 .table-container {
   margin-top: 15px;
   overflow-x: auto;
+}
+
+/* Estilos para comparação de anos */
+.comparacao-anos-tabela {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.comparacao-anos-tabela th {
+  text-align: center;
+}
+
+.comparacao-anos-tabela td {
+  text-align: center;
+}
+
+.comparacao-anos-tabela .header-ano {
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {
@@ -273,5 +362,14 @@ th {
 
   .resumo-estatisticas {
     flex-direction: column;
+  }
+  
+  .legenda-anos-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .legenda-items {
+    margin-top: 5px;
   }
 }
