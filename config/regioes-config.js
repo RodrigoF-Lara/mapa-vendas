@@ -8,7 +8,7 @@ const configuracoesRegioes = {
     view: [-30.0346, -51.2177],
     zoom: 6,
     marcadorIcone: 'data/rc/marcador_Gustavo.svg',
-    imagem: 'data/rc/Gustavo.png',
+    imagem: 'data/rc/Gustavo.PNG',
     cidadesRC: {'4301602': 'GUSTAVO' }
            },
   
@@ -20,7 +20,7 @@ const configuracoesRegioes = {
     view: [-29.5000, -53.0000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Leandro.svg',
-    imagem: 'data/rc/Leandro.png',
+    imagem: 'data/rc/Leandro.PNG',
     cidadesRC: {'4304705': 'LEANDRO'}
             },
   
@@ -32,7 +32,7 @@ const configuracoesRegioes = {
     view: [-27.2423, -50.2189],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Jeison.svg',
-    imagem: 'data/rc/Jeison.png',
+    imagem: 'data/rc/Jeison.PNG',
     cidadesRC: {'4209003': 'LEONARDO'}
         },
   
@@ -44,7 +44,7 @@ const configuracoesRegioes = {
     view: [-24.7935, -50.0000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Israel.svg',
-    imagem: 'data/rc/Israel.png',
+    imagem: 'data/rc/Israel.PNG',
     cidadesRC: {'4104808': 'ISRAEL'}
           },
   
@@ -56,7 +56,7 @@ const configuracoesRegioes = {
     view: [-22.1500, -48.0000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Andre.svg',
-    imagem: 'data/rc/Andre.png',
+    imagem: 'data/rc/Andre.PNG',
     cidadesRC: {'3529005': 'ANDRE'}
     },
   
@@ -68,7 +68,7 @@ const configuracoesRegioes = {
     view: [-20.4697, -54.6201],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
-    imagem: 'data/rc/Grazian.png',
+    imagem: 'data/rc/Grazian.PNG',
     cidadesRC: {'5003702': 'GRAZIAN'}
   }
 };
