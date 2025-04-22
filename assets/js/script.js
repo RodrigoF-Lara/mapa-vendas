@@ -118,8 +118,8 @@ function popularFiltros() {
       // Atualizar a legenda de cores
       atualizarLegendaAnos();
       
-      // Não atualizar automaticamente para evitar muitas atualizações
-      // O usuário deve clicar no botão Atualizar
+      // Atualizar automaticamente a visualização quando o checkbox for alterado
+      atualizarVisualizacao();
     });
   });
   
@@ -132,8 +132,8 @@ function popularFiltros() {
   
   selectMes.addEventListener('change', () => {
     filtroMesSelecionado = selectMes.value;
-    // Não atualizar automaticamente para evitar muitas atualizações
-    // O usuário deve clicar no botão Atualizar
+    // Atualizar automaticamente a visualização quando o mês for alterado
+    atualizarVisualizacao();
   });
   
   // Inicializar a legenda de cores
@@ -473,10 +473,5 @@ function initApp() {
   const turfScript = document.createElement('script');
   turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
   turfScript.onload = function() {
-    initMap();
-    carregarDadosAPI();
-  };
-  document.head.appendChild(turfScript);
-}
-
-initApp();
+    initM
+(Content truncated due to size limit. Use line ranges to read in chunks)
