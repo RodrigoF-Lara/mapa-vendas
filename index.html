@@ -81,6 +81,16 @@
       <input type="checkbox" id="rotas-planejadas" onchange="toggleRotasPlanejadas()">
       <label for="rotas-planejadas">Mostrar Rotas Planejadas</label>
     </div>
+    <div class="filtro-rotas">
+      <label for="filtro-rota">Filtrar Rota:</label>
+      <select id="filtro-rota" onchange="filtrarRotas()">
+        <option value="todas">Todas</option>
+        <option value="1">Rota 1</option>
+        <option value="2">Rota 2</option>
+        <option value="3">Rota 3</option>
+        <option value="4">Rota 4</option>
+      </select>
+    </div>
   </div>
   
   <!-- Nova seção para o resumo acima do mapa -->
