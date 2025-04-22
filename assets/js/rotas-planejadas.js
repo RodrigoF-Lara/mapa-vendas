@@ -59,7 +59,7 @@ function mostrarMarcadoresRotasPlanejadas() {
   const rotaIcon = L.divIcon({
     className: 'marcador-rota-planejada',
     html: '<div class="marcador-rota-planejada-icon">R</div>',
-    iconSize: [24, 24],
+    iconSize: [0, 0],
     iconAnchor: [12, 12]
   });
   
