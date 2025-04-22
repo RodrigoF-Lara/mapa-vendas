@@ -19,6 +19,7 @@
     let filtrosAnosSelecionados = []; // Novo: array para múltiplos anos
     let filtroMesSelecionado = 'todos';
     let regiaoAtual = null;
+    let mostrarRotasPlanejadas = false; // Nova variável para controlar a exibição das rotas planejadas
     
     // Cores para diferentes anos no mapa
     const coresAnos = {
@@ -73,6 +74,14 @@
     </div>
   </div>
   
+  <!-- Checkbox para rotas planejadas -->
+  <div class="rotas-planejadas-container">
+    <div class="rotas-checkbox">
+      <input type="checkbox" id="rotas-planejadas" onchange="toggleRotasPlanejadas()">
+      <label for="rotas-planejadas">Mostrar Rotas Planejadas</label>
+    </div>
+  </div>
+  
   <!-- Nova seção para o resumo acima do mapa -->
   <div class="resumo-top-container">
     <div id="resumo-estado"></div>
@@ -100,5 +109,6 @@
   </div>
 
 <script src="assets/js/script.js"></script>
+<script src="assets/js/rotas-planejadas.js"></script>
 </body>
 </html>
