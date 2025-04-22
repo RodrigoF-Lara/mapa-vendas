@@ -149,16 +149,71 @@ body {
   font-size: 0.9rem;
 }
 
-/* Container para o resumo acima do mapa - aumentado em altura conforme solicitado */
+/* Container para o resumo acima do mapa */
 .resumo-top-container {
-  padding: 10px 15px;
   background: white;
   border-bottom: 1px solid #ddd;
+  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.resumo-header {
+  position: relative;
+  width: 100%;
+  padding: 10px 15px;
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  max-height: 180px; /* Aumentado de 120px para 180px (50% a mais) */
-  overflow: auto; /* Alterado de hidden para auto para permitir rolagem se necessário */
+}
+
+#resumo-estado {
+  flex: 1;
+}
+
+/* Botão de toggle para o resumo */
+.toggle-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #c0392b;
+}
+
+.toggle-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+/* Classe para quando o resumo está recolhido */
+.resumo-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.resumo-collapsed {
+  max-height: 40px;
+  padding-bottom: 0;
+}
+
+/* Esconder conteúdo quando recolhido */
+.resumo-collapsed .resumo-estado-container {
+  display: none;
 }
 
 /* Container principal */
@@ -384,6 +439,20 @@ th {
   font-weight: bold;
 }
 
+/* Ajustes para quando o resumo está recolhido */
+.resumo-collapsed + .app-container .map-wrapper,
+.resumo-collapsed + .app-container .panel-wrapper {
+  height: calc(100vh - 160px); /* Ajustar altura quando o resumo está recolhido */
+}
+
+.resumo-collapsed + .app-container .chart-card {
+  height: 45%; /* Aumentar altura do gráfico quando o resumo está recolhido */
+}
+
+.resumo-collapsed + .app-container .data-card {
+  flex: 1; /* Aumentar espaço para a tabela quando o resumo está recolhido */
+}
+
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
@@ -437,5 +506,25 @@ th {
   
   .rotas-planejadas-container {
     padding: 6px 10px;
+  }
+  
+  .toggle-button {
+    width: 26px;
+    height: 26px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .toggle-icon {
+    font-size: 12px;
+  }
+  
+  /* Ajustes para quando o resumo está recolhido em telas pequenas */
+  .resumo-collapsed + .app-container .map-wrapper {
+    height: 55vh;
+  }
+  
+  .resumo-collapsed + .app-container .panel-wrapper {
+    height: 45vh;
   }
 }
