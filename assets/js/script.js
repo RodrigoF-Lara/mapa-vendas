@@ -473,5 +473,10 @@ function initApp() {
   const turfScript = document.createElement('script');
   turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
   turfScript.onload = function() {
-    initM
-(Content truncated due to size limit. Use line ranges to read in chunks)
+    initMap();
+    carregarDadosAPI();
+  };
+  document.head.appendChild(turfScript);
+}
+
+initApp();
