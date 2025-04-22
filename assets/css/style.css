@@ -112,6 +112,7 @@ body {
   border-bottom: 1px solid #ddd;
   display: flex;
   align-items: center;
+  gap: 20px;
 }
 
 .rotas-checkbox {
@@ -128,6 +129,24 @@ body {
   font-size: 0.9rem;
   font-weight: bold;
   color: #2c3e50;
+}
+
+.filtro-rotas {
+  display: flex;
+  align-items: center;
+}
+
+.filtro-rotas label {
+  font-size: 0.9rem;
+  margin-right: 8px;
+  color: #2c3e50;
+}
+
+.filtro-rotas select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
 }
 
 /* Container para o resumo acima do mapa - aumentado em altura conforme solicitado */
