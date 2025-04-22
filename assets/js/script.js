@@ -171,7 +171,7 @@ function atualizarLegendaAnos() {
 
 // Função principal para atualizar toda a visualização
 function atualizarVisualizacao() {
-  if (!map || filtrosAnosSelecionados.length === 0) {
+  if (!map) {
     return;
   }
   
@@ -180,6 +180,21 @@ function atualizarVisualizacao() {
     if (layer instanceof L.TileLayer) return;
     map.removeLayer(layer);
   });
+  
+  // Se não houver anos selecionados, apenas mostrar o mapa em branco
+  if (filtrosAnosSelecionados.length === 0) {
+    // Atualizar o resumo do estado mesmo sem anos selecionados
+    const resumoContainer = document.getElementById('resumo-estado');
+    if (resumoContainer) {
+      resumoContainer.innerHTML = '<p>Selecione pelo menos um ano para visualizar dados no mapa.</p>';
+    }
+    
+    // Mostrar marcadores de rotas planejadas se estiver ativado, mesmo sem anos selecionados
+    if (typeof mostrarRotasPlanejadas !== 'undefined' && mostrarRotasPlanejadas && typeof mostrarMarcadoresRotasPlanejadas === 'function') {
+      mostrarMarcadoresRotasPlanejadas();
+    }
+    return;
+  }
   
   // Carregar o GeoJSON com as cores por ano
   carregarGeoJSONMultiplosAnos();
@@ -480,7 +495,7 @@ function mostrarResumoEstadoComparativo() {
 }
 
 function initApp() {
-  // Inicializar o mapa
+  // Inicializar o mapa mesmo sem região selecionada
   initMap();
   
   // Configurar o seletor de região
@@ -491,6 +506,9 @@ function initApp() {
     if (regiaoSalva) {
       seletorRegiao.value = regiaoSalva;
       carregarRegiao(regiaoSalva);
+    } else {
+      // Mesmo sem região selecionada, atualizar a visualização para mostrar o mapa em branco
+      atualizarVisualizacao();
     }
     
     // Adicionar evento para salvar a seleção
