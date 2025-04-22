@@ -20,7 +20,7 @@ const configuracoesRegioes = {
     view: [-29.5000, -53.0000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Leandro.svg',
-    imagem: 'data/rc/Leandro.PNG',
+    imagem: 'data/rc/Leandro.png',
     cidadesRC: {'4304705': 'LEANDRO'}
             },
   
