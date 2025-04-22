@@ -105,7 +105,7 @@ body {
   display: inline-block;
 }
 
-/* Container para o resumo acima do mapa */
+/* Container para o resumo acima do mapa - aumentado em altura conforme solicitado */
 .resumo-top-container {
   padding: 10px 15px;
   background: white;
@@ -113,8 +113,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  max-height: 120px; /* Reduzido em aproximadamente 50% */
-  overflow: hidden;
+  max-height: 180px; /* Aumentado de 120px para 180px (50% a mais) */
+  overflow: auto; /* Alterado de hidden para auto para permitir rolagem se necessário */
 }
 
 /* Container principal */
@@ -182,10 +182,10 @@ button {
   margin-top: 20px;
 }
 
-/* Gráfico acima da tabela (30% do painel) */
+/* Gráfico acima da tabela - aumentado em altura conforme solicitado */
 .chart-card {
-  height: 30%;
-  min-height: 220px;
+  height: 40%; /* Aumentado de 30% para 40% */
+  min-height: 280px; /* Aumentado de 220px para 280px */
   padding: 12px 15px;
   border-bottom: 1px solid #eee;
 }
@@ -201,7 +201,7 @@ button {
   width: 100%;
 }
 
-/* Tabela (70% do painel) */
+/* Tabela (reduzida para compensar o aumento do gráfico) */
 .data-card {
   flex: 1;
   padding: 12px 15px;
@@ -228,11 +228,11 @@ th {
   top: 0;
 }
 
-/* Estilos para o resumo do estado - reduzido em tamanho */
+/* Estilos para o resumo do estado - ajustado para melhor visualização */
 .resumo-estado-container {
   background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px; /* Aumentado de 10px para 12px */
   margin-bottom: 10px;
   border-left: 4px solid #e74c3c;
   flex: 1;
@@ -244,7 +244,7 @@ th {
   font-size: 1rem;
   font-weight: bold;
   color: #e74c3c;
-  margin-bottom: 10px;
+  margin-bottom: 12px; /* Aumentado de 10px para 12px */
   display: flex;
   align-items: center;
 }
@@ -258,13 +258,13 @@ th {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px; /* Aumentado de 10px para 12px */
 }
 
 .estatistica-item {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 8px 12px; /* Aumentado de 6px 10px para 8px 12px */
   border: 1px solid #ddd;
   border-radius: 6px;
   background: white;
@@ -290,13 +290,14 @@ th {
 
 .estatistica-label {
   font-weight: bold;
-  margin-bottom: 2px;
+  margin-bottom: 3px; /* Aumentado de 2px para 3px */
   font-size: 0.8rem;
 }
 
 .estatistica-valor {
   font-size: 0.95rem;
   color: #2c3e50;
+  line-height: 1.4; /* Adicionado para melhorar a legibilidade */
 }
 
 .table-container {
