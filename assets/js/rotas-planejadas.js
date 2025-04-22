@@ -1,6 +1,7 @@
 // Variáveis para armazenar dados das rotas planejadas
 let dadosRotasPlanejadas = [];
 let marcadoresRotasPlanejadas = [];
+let contornosRotasPlanejadas = []; // Nova variável para armazenar os contornos das cidades
 
 // ID da planilha do Google Sheets com as rotas planejadas
 const rotasPlanejadas_sheetId = '1veYXK8VAo0aydKe2a1zRnENADBRjCXQx-GlX9Uy6r-0';
@@ -93,6 +94,24 @@ function mostrarMarcadoresRotasPlanejadas() {
           
           // Armazenar o marcador para poder removê-lo depois
           marcadoresRotasPlanejadas.push(marker);
+          
+          // Adicionar contorno preto à cidade
+          const contorno = L.geoJSON(feature, {
+            style: {
+              color: '#000000', // Cor preta para o contorno
+              weight: 3, // Espessura da linha
+              opacity: 1, // Opacidade total
+              fillColor: '#ff5722', // Cor de preenchimento laranja
+              fillOpacity: 0.1, // Preenchimento quase transparente
+              dashArray: '5, 5' // Linha tracejada para destacar
+            }
+          }).addTo(map);
+          
+          // Adicionar o mesmo popup ao contorno
+          contorno.bindPopup(popupContent);
+          
+          // Armazenar o contorno para poder removê-lo depois
+          contornosRotasPlanejadas.push(contorno);
         }
       })
       .catch(error => {
@@ -103,10 +122,17 @@ function mostrarMarcadoresRotasPlanejadas() {
 
 // Função para limpar os marcadores das rotas planejadas
 function limparMarcadoresRotasPlanejadas() {
+  // Remover marcadores
   marcadoresRotasPlanejadas.forEach(marker => {
     if (map) map.removeLayer(marker);
   });
   marcadoresRotasPlanejadas = [];
+  
+  // Remover contornos
+  contornosRotasPlanejadas.forEach(contorno => {
+    if (map) map.removeLayer(contorno);
+  });
+  contornosRotasPlanejadas = [];
 }
 
 // Função para alternar a exibição das rotas planejadas
