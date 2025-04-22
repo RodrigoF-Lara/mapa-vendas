@@ -19,8 +19,8 @@ const configuracoesRegioes = {
     geojsonPath: 'data/geojson/municipios-RS_Norte.geojson',
     view: [-29.5000, -53.0000],
     zoom: 7,
-    marcadorIcone: 'data/rc/marcador_Jeison.svg',
-    imagem: 'data/rc/Jeison.PNG',
+    marcadorIcone: 'data/rc/marcador_Leandro.svg',
+    imagem: 'data/rc/Leandro.PNG',
     cidadesRC: {'4304705': 'LEANDRO'}
             },
   
@@ -43,8 +43,8 @@ const configuracoesRegioes = {
     geojsonPath: 'data/geojson/municipios-PR.geojson',
     view: [-24.7935, -50.0000],
     zoom: 7,
-    marcadorIcone: 'data/rc/marcador_Jeison.svg',
-    imagem: 'data/rc/Jeison.PNG',
+    marcadorIcone: 'data/rc/marcador_Israel.svg',
+    imagem: 'data/rc/Israel.PNG',
     cidadesRC: {'4104808': 'ISRAEL'}
           },
   
@@ -67,8 +67,8 @@ const configuracoesRegioes = {
     geojsonPath: 'data/geojson/municipios-MS.geojson',
     view: [-20.4697, -54.6201],
     zoom: 7,
-    marcadorIcone: 'data/rc/marcador_Jeison.svg',
-    imagem: 'data/rc/Jeison.PNG',
+    marcadorIcone: 'data/rc/marcador_Grazian.svg',
+    imagem: 'data/rc/Grazian.PNG',
     cidadesRC: {'5003702': 'GRAZIAN'}
   }
 };
