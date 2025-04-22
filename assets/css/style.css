@@ -105,6 +105,31 @@ body {
   display: inline-block;
 }
 
+/* Estilos para o checkbox de rotas planejadas */
+.rotas-planejadas-container {
+  background: white;
+  padding: 8px 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+}
+
+.rotas-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.rotas-checkbox input {
+  margin-right: 8px;
+}
+
+.rotas-checkbox label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
 /* Container para o resumo acima do mapa - aumentado em altura conforme solicitado */
 .resumo-top-container {
   padding: 10px 15px;
@@ -323,6 +348,23 @@ th {
   font-weight: bold;
 }
 
+/* Estilo para marcadores de rotas planejadas */
+.marcador-rota-planejada {
+  border: 2px solid #ff5722;
+  border-radius: 50%;
+  background-color: rgba(255, 87, 34, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
+}
+
+.marcador-rota-planejada-icon {
+  color: #ff5722;
+  font-size: 16px;
+  font-weight: bold;
+}
+
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
@@ -372,5 +414,9 @@ th {
   
   .legenda-items {
     margin-top: 5px;
+  }
+  
+  .rotas-planejadas-container {
+    padding: 6px 10px;
   }
 }
