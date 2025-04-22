@@ -16,9 +16,18 @@
     // Declaração de variáveis globais para evitar redeclaração
     let dadosCSV = [];
     let map;
-    let filtroAnoSelecionado = '';
+    let filtrosAnosSelecionados = []; // Novo: array para múltiplos anos
     let filtroMesSelecionado = 'todos';
     let regiaoAtual = null;
+    
+    // Cores para diferentes anos no mapa
+    const coresAnos = {
+      '2023': '#ff6b6b', // Vermelho
+      '2024': '#4ecdc4', // Turquesa
+      '2025': '#ffbe0b', // Amarelo
+      '2026': '#3a86ff', // Azul
+      '2027': '#8338ec'  // Roxo
+    };
   </script>
   
   <!-- Carregar configurações -->
@@ -43,14 +52,24 @@
   <div class="top-filter-bar">
     <div class="filter-controls">
       <div>
-        <label for="filtro-ano">Ano:</label>
-        <select id="filtro-ano"></select>
+        <label>Anos:</label>
+        <div id="anos-checkboxes" class="anos-container">
+          <!-- Checkboxes serão adicionados dinamicamente aqui -->
+        </div>
       </div>
       <div>
         <label for="filtro-mes">Mês:</label>
         <select id="filtro-mes"></select>
       </div>
-      <button onclick="mostrarResumoEstado()">Atualizar</button>
+      <button onclick="atualizarVisualizacao()">Atualizar</button>
+    </div>
+  </div>
+  
+  <!-- Legenda de cores para os anos -->
+  <div class="legenda-anos-container">
+    <div class="legenda-titulo">Legenda - Anos:</div>
+    <div id="legenda-anos" class="legenda-items">
+      <!-- Itens de legenda serão adicionados dinamicamente aqui -->
     </div>
   </div>
   
