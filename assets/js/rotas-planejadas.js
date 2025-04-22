@@ -2,6 +2,7 @@
 let dadosRotasPlanejadas = [];
 let marcadoresRotasPlanejadas = [];
 let contornosRotasPlanejadas = []; // Nova variável para armazenar os contornos das cidades
+let filtroRotaSelecionada = 'todas'; // Nova variável para armazenar a rota selecionada no filtro
 
 // ID da planilha do Google Sheets com as rotas planejadas
 const rotasPlanejadas_sheetId = '1veYXK8VAo0aydKe2a1zRnENADBRjCXQx-GlX9Uy6r-0';
@@ -60,11 +61,18 @@ function mostrarMarcadoresRotasPlanejadas() {
     className: 'marcador-rota-planejada',
     html: '<div class="marcador-rota-planejada-icon">R</div>',
     iconSize: [0, 0],
-    iconAnchor: [12, 12]
+    iconAnchor: [0, 0]
   });
   
-  // Para cada cidade nas rotas planejadas, encontrar o feature correspondente no GeoJSON e adicionar um marcador
-  dadosRotasPlanejadas.forEach(rota => {
+  // Filtrar as rotas com base na seleção do dropdown
+  const rotasFiltradas = filtroRotaSelecionada === 'todas' 
+    ? dadosRotasPlanejadas 
+    : dadosRotasPlanejadas.filter(rota => rota.ROTA === `Rota ${filtroRotaSelecionada}`);
+  
+  console.log(`Rotas filtradas (${filtroRotaSelecionada}):`, rotasFiltradas);
+  
+  // Para cada cidade nas rotas planejadas filtradas, encontrar o feature correspondente no GeoJSON e adicionar um marcador
+  rotasFiltradas.forEach(rota => {
     const codigoIBGE = rota.COD_IBGE;
     
     // Buscar no GeoJSON a cidade correspondente
@@ -143,5 +151,15 @@ function toggleRotasPlanejadas() {
     mostrarMarcadoresRotasPlanejadas();
   } else {
     limparMarcadoresRotasPlanejadas();
+  }
+}
+
+// Função para filtrar rotas com base na seleção do dropdown
+function filtrarRotas() {
+  filtroRotaSelecionada = document.getElementById('filtro-rota').value;
+  
+  // Se as rotas planejadas estiverem visíveis, atualizar os marcadores
+  if (mostrarRotasPlanejadas) {
+    mostrarMarcadoresRotasPlanejadas();
   }
 }
