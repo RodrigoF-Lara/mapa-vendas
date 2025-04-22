@@ -30,7 +30,7 @@ function carregarDadosRotasPlanejadas() {
         
         // Filtrar apenas as rotas da região atual
         dadosRotasPlanejadas = dadosRotasPlanejadas.filter(rota => 
-          rota.REGIÃO === regiaoAtual.nome.substring(0, 2) // Assumindo que a região na planilha é apenas a sigla do estado
+          rota.REGIÃO === regiaoAtual.nome // Comparação exata com o nome da região
         );
         
         console.log('Rotas planejadas filtradas para a região atual:', dadosRotasPlanejadas);
@@ -59,7 +59,7 @@ function mostrarMarcadoresRotasPlanejadas() {
   const rotaIcon = L.divIcon({
     className: 'marcador-rota-planejada',
     html: '<div class="marcador-rota-planejada-icon">R</div>',
-    iconSize: [0, 0],
+    iconSize: [24, 24],
     iconAnchor: [12, 12]
   });
   
