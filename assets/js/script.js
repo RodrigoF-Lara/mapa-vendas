@@ -463,5 +463,46 @@ function mostrarResumoEstadoComparativo() {
           <div class="estatistica-valor">
             📦 ${totalQnt} unidades<br>
             💰 ${formatadoFAT}<br>
-            🏙️ ${numCidadesComVendas} cidade
-(Content truncated due to size limit. Use line ranges to read in chunks)
+            🏙️ ${numCidadesComVendas} cidades
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  resumoHTML += `
+      </div>
+    </div>
+  `;
+  
+  // Inserir o resumo visual na div acima do mapa
+  resumoContainer.innerHTML = resumoHTML;
+}
+
+function initApp() {
+  const turfScript = document.createElement('script');
+  turfScript.src = 'https://unpkg.com/@turf/turf@6/turf.min.js';
+  turfScript.onload = function() {
+    initMap();
+    
+    // Configurar o seletor de região
+    const seletorRegiao = document.getElementById('filtro-regiao');
+    if (seletorRegiao) {
+      // Verificar se há uma região selecionada no localStorage
+      const regiaoSalva = localStorage.getItem('regiaoSelecionada');
+      if (regiaoSalva) {
+        seletorRegiao.value = regiaoSalva;
+        carregarRegiao(regiaoSalva);
+      }
+      
+      // Adicionar evento para salvar a seleção
+      seletorRegiao.addEventListener('change', function() {
+        const regiaoId = this.value;
+        if (regiaoId) {
+          localStorage.setItem('regiaoSelecionada', regiaoId);
+        }
+      });
+    }
+  };
+  document.head.appendChild(turfScript);
+}
