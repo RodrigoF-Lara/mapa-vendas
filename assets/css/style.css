@@ -31,7 +31,7 @@ body {
 /* Barra de filtros no topo */
 .top-filter-bar {
   background: #2c3e50;
-  color: white;
+  color: #f9fbfa;
   padding: 10px 15px;
   display: flex;
   justify-content: flex-end;
@@ -173,7 +173,7 @@ body {
 /* Botão de toggle para o resumo */
 .toggle-button {
   position: fixed; /* Alterado de absolute para fixed para manter posição na tela */
-  top: 10px;
+  top: 120px;
   right: 20px; /* Aumentado de 10px para 20px para afastar mais da borda */
   width: 30px;
   height: 30px;
@@ -283,8 +283,9 @@ button {
 
 /* Gráfico acima da tabela - aumentado em altura conforme solicitado */
 .chart-card {
-  height: 40%; /* Aumentado de 30% para 40% */
-  min-height: 280px; /* Aumentado de 220px para 280px */
+  height: 50%; /* Aumentado de 40% para 50% */
+  margin-top: -80px; /* Adicionado para subir o gráfico na tela */
+  min-height: 220px; /* Aumentado de 220px para 280px */
   padding: 12px 15px;
   border-bottom: 1px solid #eee;
 }

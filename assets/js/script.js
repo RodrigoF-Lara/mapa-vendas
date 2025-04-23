@@ -414,15 +414,29 @@ function gerarGraficoMensalMultiplosAnos() {
   });
   
   const layout = {
-    title: 'Máquinas Vendidas por Ano',
+    title: 'Máquinas Vendidas',
     xaxis: { title: 'Mês' },
     yaxis: { title: 'Quantidade' },
     barmode: 'group', // Agrupar barras lado a lado
-    legend: { orientation: 'h', y: -0.2 } // Legenda horizontal abaixo do gráfico
-  };
-  
+    legend: { orientation: 'h', y: -0.2 }, // Legenda horizontal abaixo do gráfico
+      annotations: traces.flatMap((trace, traceIndex) => 
+        trace.y.map((value, index) => ({
+          x: trace.x[index],
+          y: value , // Position the label at the center of the bar
+          text: value.toString(),
+          showarrow: false,
+          font: { size: 12 },
+          xanchor: 'center', // Center the label horizontally
+          yanchor: 'top' // Center the label vertically
+        }))
+      )
+    };
+    
+    Plotly.newPlot('grafico-mensal', traces, layout);
+  }
+
   Plotly.newPlot('grafico-mensal', traces, layout);
-}
+
 
 // Função para mostrar o resumo do estado com comparação entre anos
 function mostrarResumoEstadoComparativo() {
@@ -437,7 +451,7 @@ function mostrarResumoEstadoComparativo() {
   let resumoHTML = `
     <div class="resumo-estado-container">
       <div class="resumo-titulo">
-        <span class="icone-resumo">📍</span> Total do Estado do ${regiaoAtual.nome}
+        <span class="icone-resumo">📍</span> Total da Região ${regiaoAtual.nome}
       </div>
       
       <div class="resumo-estatisticas">
