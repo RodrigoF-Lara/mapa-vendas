@@ -533,4 +533,22 @@ function initApp() {
       }
     });
   }
+  // Adicionar funcionalidade de expandir/recolher o painel lateral
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleButton = document.getElementById('toggle-panel');
+  const appContainer = document.querySelector('.app-container');
+  
+  toggleButton.addEventListener('click', () => {
+    appContainer.classList.toggle('panel-collapsed');
+    
+    // Alterar o ícone do botão
+    const icon = toggleButton.querySelector('.toggle-icon');
+    if (appContainer.classList.contains('panel-collapsed')) {
+      icon.textContent = '⮜'; // Ícone para expandir
+    } else {
+      icon.textContent = '⮞'; // Ícone para recolher
+    }
+  });
+});
+  
 }
