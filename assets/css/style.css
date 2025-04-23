@@ -172,9 +172,9 @@ body {
 
 /* Botão de toggle para o resumo */
 .toggle-button {
-  position: absolute;
+  position: fixed; /* Alterado de absolute para fixed para manter posição na tela */
   top: 10px;
-  right: 10px;
+  right: 20px; /* Aumentado de 10px para 20px para afastar mais da borda */
   width: 30px;
   height: 30px;
   background-color: #e74c3c;
@@ -187,7 +187,7 @@ body {
   cursor: pointer;
   padding: 0;
   margin: 0;
-  z-index: 10;
+  z-index: 1000; /* Aumentado para garantir que fique acima de outros elementos */
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: transform 0.3s ease;
 }
