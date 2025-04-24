@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login - Mapa de Vendas</title>
+  <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Mapa de Vendas</h1>
+        <p>Faça login para continuar</p>
+      </div>
+      
+      <div class="login-form">
+        <div class="input-group">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" placeholder="Digite seu usuário" autocomplete="username">
+          <span class="error-message" id="username-error"></span>
+        </div>
+        
+        <div class="input-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="Digite sua senha" autocomplete="current-password">
+          <span class="error-message" id="password-error"></span>
+        </div>
+        
+        <div class="login-actions">
+          <button id="login-button" class="login-button">Entrar</button>
+        </div>
+        
+        <div class="login-message" id="login-message"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="assets/js/login.js"></script>
+</body>
+</html>
