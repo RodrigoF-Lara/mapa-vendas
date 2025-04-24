@@ -24,15 +24,5 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleButton = document.getElementById('toggle-panel');
   if (toggleButton) {
     toggleButton.addEventListener('click', togglePanel);
-    
-    // Garantir que o botão esteja visível e clicável
-    toggleButton.style.zIndex = "1500";
-    
-    // Verificar se o painel está colapsado ao carregar a página
-    const appContainer = document.querySelector('.app-container');
-    if (appContainer.classList.contains('panel-collapsed')) {
-      // Garantir que o botão esteja visível quando o painel já inicia colapsado
-      toggleButton.style.left = "10px";
-    }
   }
 });
