@@ -288,7 +288,7 @@ button {
 .chart-card {
   height: 50%;
   padding: 12px 15px;
-  padding-left: 90px; /* Aumentado para dar espaço ao botão de toggle */
+  padding-left: 30px; /* Aumentado para dar espaço ao botão de toggle */
   border-bottom: 1px solid #eee;
   position: relative; /* Adicionado para garantir posicionamento correto */
 }
@@ -463,8 +463,8 @@ th {
   position: fixed; /* Alterado para fixed para garantir visibilidade constante */
   top: 50%;
   left: -25px;
-  width: 90px; /* Aumentado para melhor visibilidade */
-  height: 90px; /* Aumentado para melhor visibilidade */
+  width: 30px; /* Aumentado para melhor visibilidade */
+  height: 30px; /* Aumentado para melhor visibilidade */
   background-color: #007bff;
   color: white;
   border: none;
@@ -484,7 +484,7 @@ th {
 }
 
 .toggle-icon {
-  font-size: 46px; /* Aumentado para melhor visibilidade */
+  font-size: 16px; /* Aumentado para melhor visibilidade */
   transform: rotate(0deg);
   transition: transform 0.3s ease;
 }
@@ -509,7 +509,7 @@ th {
 
 /* Garantir que o botão de toggle permaneça visível quando o painel estiver recolhido */
 .panel-collapsed .toggle-panel-button {
-  left: 50px; /* Posição quando o painel está recolhido - CORRIGIDO */
+  left: 10px; /* Posição quando o painel está recolhido - CORRIGIDO */
 }
 
 @media (max-width: 768px) {
