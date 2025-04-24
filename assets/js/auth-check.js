@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Estilizar o elemento
   userElement.style.position = 'fixed';
   userElement.style.top = '50px'; // Aumentado para evitar sobreposição com o dropdown dos anos
-  userElement.style.right = '10px';
+  userElement.style.right = '210px';
   userElement.style.background = 'rgba(255, 255, 255, 0.9)';
   userElement.style.padding = '5px 10px';
   userElement.style.borderRadius = '4px';
