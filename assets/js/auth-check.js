@@ -1,9 +1,12 @@
 // Script para verificar autenticação na página principal
 document.addEventListener('DOMContentLoaded', function() {
+  // Obter o caminho base para redirecionamentos
+  const basePath = getBasePath();
+  
   // Verificar se o usuário está logado
   if (localStorage.getItem('loggedIn') !== 'true') {
     // Redirecionar para a página de login se não estiver logado
-    window.location.href = 'login.html';
+    window.location.href = basePath + 'login.html';
     return;
   }
   
@@ -23,13 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Estilizar o elemento
   userElement.style.position = 'fixed';
-  userElement.style.top = '10px';
+  userElement.style.top = '50px'; // Aumentado para evitar sobreposição com o dropdown dos anos
   userElement.style.right = '10px';
   userElement.style.background = 'rgba(255, 255, 255, 0.9)';
   userElement.style.padding = '5px 10px';
   userElement.style.borderRadius = '4px';
   userElement.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-  userElement.style.zIndex = '1000';
+  userElement.style.zIndex = '999'; // Reduzido para ficar abaixo de outros elementos importantes
   userElement.style.display = 'flex';
   userElement.style.alignItems = 'center';
   userElement.style.gap = '10px';
@@ -65,6 +68,33 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.removeItem('username');
     
     // Redirecionar para a página de login
-    window.location.href = 'login.html';
+    window.location.href = basePath + 'login.html';
   });
 });
+
+// Função para obter o caminho base para redirecionamentos
+function getBasePath() {
+  // Obter o caminho atual
+  const path = window.location.pathname;
+  
+  // Se estamos em um ambiente GitHub Pages ou similar
+  if (path.includes('/mapa-vendas/') || path.includes('/mapa-vendas-main/')) {
+    // Extrair o caminho base até o diretório do projeto
+    const pathParts = path.split('/');
+    let basePath = '/';
+    
+    for (let i = 1; i < pathParts.length; i++) {
+      if (pathParts[i] === 'mapa-vendas' || pathParts[i] === 'mapa-vendas-main') {
+        basePath += pathParts[i] + '/';
+        break;
+      } else if (pathParts[i] !== '') {
+        basePath += pathParts[i] + '/';
+      }
+    }
+    
+    return basePath;
+  }
+  
+  // Para ambiente local ou outros ambientes
+  return '';
+}
