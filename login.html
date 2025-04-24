@@ -5,60 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Login - Mapa de Vendas</title>
   
-  <!-- Usando caminho absoluto a partir da raiz do repositório -->
-  <link rel="stylesheet" href="/mapa-vendas/assets/css/login.css">
+  <!-- Script para ajustar o caminho do CSS baseado no ambiente -->
+  <script>
+    function getBasePath() {
+      const path = window.location.pathname;
+      if (path.includes('/mapa-vendas/') || path.includes('/mapa-vendas-main/')) {
+        const pathParts = path.split('/');
+        let basePath = '/';
+        for (let i = 1; i < pathParts.length; i++) {
+          if (pathParts[i] === 'mapa-vendas' || pathParts[i] === 'mapa-vendas-main') {
+            basePath += pathParts[i] + '/';
+            break;
+          } else if (pathParts[i] !== '') {
+            basePath += pathParts[i] + '/';
+          }
+        }
+        return basePath;
+      }
+      return '';
+    }
+    
+    // Criar link para o CSS dinamicamente
+    document.write('<link rel="stylesheet" href="' + getBasePath() + 'assets/css/login.css">');
+  </script>
   
-  <!-- Fallback com caminho relativo caso o absoluto falhe -->
-  <style>
-    /* Estilos básicos de fallback caso o CSS principal não carregue */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .login-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
-    }
-    .login-header h1 {
-      margin-top: 0;
-      color: #333;
-    }
-    .input-group {
-      margin-bottom: 15px;
-    }
-    .input-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    .input-group input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .login-button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .error-message {
-      color: red;
-      font-size: 12px;
-    }
-  </style>
+  <!-- Fallback para o CSS caso o script falhe -->
+  <noscript>
+    <link rel="stylesheet" href="assets/css/login.css">
+  </noscript>
 </head>
 <body>
   <div class="login-container">
