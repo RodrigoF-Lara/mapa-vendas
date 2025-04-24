@@ -1,140 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Mapa de Vendas RS</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <link rel="stylesheet" href="assets/css/style-fixed-v2.css"/>
- 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
-  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login - Mapa de Vendas</title>
   
-  <!-- Variáveis globais -->
-  <script>
-    // Declaração de variáveis globais para evitar redeclaração
-    let dadosCSV = [];
-    let map;
-    let filtrosAnosSelecionados = []; // Novo: array para múltiplos anos
-    let filtroMesSelecionado = 'todos';
-    let regiaoAtual = null;
-    let mostrarRotasPlanejadas = false; // Nova variável para controlar a exibição das rotas planejadas
-    
-    // Cores para diferentes anos no mapa
-    const coresAnos = {
-      '2023': '#ff6b6b', // Vermelho
-      '2024': '#4ecdc4', // Turquesa
-      '2025': '#ffbe0b', // Amarelo
-      '2026': '#3a86ff', // Azul
-      '2027': '#8338ec'  // Roxo
-    };
-  </script>
+  <!-- Usando caminho absoluto a partir da raiz do repositório -->
+  <link rel="stylesheet" href="/mapa-vendas/assets/css/login.css">
   
-  <!-- Carregar configurações -->
-  <script src="config/regioes-config.js"></script>
-  
-  <!-- Script de verificação de autenticação -->
-  <link rel="stylesheet" href="assets/css/login.css">
-  <script src="assets/js/auth-check.js"></script>
+  <!-- Fallback com caminho relativo caso o absoluto falhe -->
+  <style>
+    /* Estilos básicos de fallback caso o CSS principal não carregue */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-header h1 {
+      margin-top: 0;
+      color: #333;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .login-button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .error-message {
+      color: red;
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
-
-  <div class="regiao-selector">
-    <select id="filtro-regiao" onchange="carregarRegiao(this.value)">
-      <option value="">Selecione a Região</option>
-      <option value="rs_sul">RS Sul</option>
-      <option value="rs_norte">RS Norte</option>
-      <option value="sc">SC</option>
-      <option value="pr">PR</option>
-      <option value="sp">SP</option>
-      <option value="ms">MS</option>
-      <!-- Adicione as outras 19 regiões aqui -->
-    </select>
-  </div>
-  
-  <!-- Filtros no topo -->
-  <div class="top-filter-bar">
-    <div class="filter-controls">
-      <div>
-        <label>Anos:</label>
-        <div id="anos-checkboxes" class="anos-container">
-          <!-- Checkboxes serão adicionados dinamicamente aqui -->
-        </div>
-      </div>
-      <div>
-        <label for="filtro-mes">Mês:</label>
-        <select id="filtro-mes"></select>
-      </div>
-      <!-- Botão Atualizar removido conforme solicitado -->
-    </div>
-  </div>
-  
-  <!-- Legenda de cores para os anos -->
-  <div class="legenda-anos-container">
-    <div class="legenda-titulo">Legenda - Anos:</div>
-    <div id="legenda-anos" class="legenda-items">
-      <!-- Itens de legenda serão adicionados dinamicamente aqui -->
-    </div>
-  </div>
-  
-  <!-- Checkbox para rotas planejadas -->
-  <div class="rotas-planejadas-container">
-    <div class="rotas-checkbox">
-      <input type="checkbox" id="rotas-planejadas" onchange="toggleRotasPlanejadas()">
-      <label for="rotas-planejadas">Mostrar Rotas Planejadas</label>
-    </div>
-    <div class="filtro-rotas">
-      <label for="filtro-rota">Filtrar Rota:</label>
-      <select id="filtro-rota" onchange="filtrarRotas()">
-        <option value="todas">Todas</option>
-        <option value="1">Rota 1</option>
-        <option value="2">Rota 2</option>
-        <option value="3">Rota 3</option>
-        <option value="4">Rota 4</option>
-      </select>
-    </div>
-  </div>
-  
-  <!-- Nova seção para o resumo acima do mapa -->
-  <div class="resumo-top-container">
-    <div class="resumo-header">
-      <div id="resumo-estado"></div>
-      <button id="toggle-resumo" class="toggle-button" title="Recolher/Expandir resumo">
-        <span class="toggle-icon">⮝</span>
-      </button>
-    </div>
-  </div>
-  
-  <div class="app-container">
-    <!-- Mapa garantido na esquerda -->
-    <div class="map-wrapper">
-      <div id="map"></div>
-    </div>
-    
-    <!-- Painel direito com nova hierarquia -->
-    <div class="panel-wrapper">
-      <button id="toggle-panel" class="toggle-panel-button" title="Expandir/Recolher painel">
-        <span class="toggle-icon">⮞</span>
-      </button>
-      <!-- Gráfico acima da tabela -->
-      <div class="chart-card">
-        <h3>Vendas Mensais</h3>
-        <div id="grafico-mensal"></div>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Mapa de Vendas</h1>
+        <p>Faça login para continuar</p>
       </div>
       
-      <!-- Tabela com scroll -->
-      <div class="data-card">
-        <div id="dados-cidade"></div>
+      <div class="login-form">
+        <div class="input-group">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" placeholder="Digite seu usuário" autocomplete="username">
+          <span class="error-message" id="username-error"></span>
+        </div>
+        
+        <div class="input-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="Digite sua senha" autocomplete="current-password">
+          <span class="error-message" id="password-error"></span>
+        </div>
+        
+        <div class="login-actions">
+          <button id="login-button" class="login-button">Entrar</button>
+        </div>
+        
+        <div class="login-message" id="login-message"></div>
       </div>
     </div>
   </div>
-
-
-<script src="assets/js/rotas-planejadas.js"></script>
-<script src="assets/js/toggle-resumo.js"></script>
-<script src="assets/js/toggle-panel-fixed-v2.js"></script>
-<script src="assets/js/script.js"></script>
+  
+  <script src="assets/js/login.js"></script>
 </body>
 </html>
