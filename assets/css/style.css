@@ -454,6 +454,49 @@ th {
   flex: 1; /* Aumentar espaço para a tabela quando o resumo está recolhido */
 }
 
+/* Botão de expandir/recolher */
+.toggle-panel-button {
+  position: absolute;
+  top: 10px;
+  left: -25px;
+  width: 25px;
+  height: 25px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.toggle-panel-button:hover {
+  background-color: #0056b3;
+}
+
+.toggle-icon {
+  font-size: 14px;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.panel-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Ajustar layout ao recolher o painel */
+.panel-collapsed .panel-wrapper {
+  width: 0;
+  overflow: hidden;
+}
+
+.panel-collapsed .map-wrapper {
+  width: 100%;
+}
+
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
@@ -528,47 +571,4 @@ th {
   .resumo-collapsed + .app-container .panel-wrapper {
     height: 45vh;
   }
-
-  /* Botão de expandir/recolher */
-.toggle-panel-button {
-  position: absolute;
-  top: 10px;
-  left: -25px;
-  width: 25px;
-  height: 25px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-
-.toggle-panel-button:hover {
-  background-color: #0056b3;
-}
-
-.toggle-icon {
-  font-size: 14px;
-  transform: rotate(0deg);
-  transition: transform 0.3s ease;
-}
-
-.panel-collapsed .toggle-icon {
-  transform: rotate(180deg);
-}
-
-/* Ajustar layout ao recolher o painel */
-.panel-collapsed .panel-wrapper {
-  width: 0;
-  overflow: hidden;
-}
-
-.panel-collapsed .map-wrapper {
-  width: 100%;
-}
 }
