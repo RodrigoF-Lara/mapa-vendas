@@ -221,6 +221,7 @@ body {
   display: flex;
   flex: 1;
   overflow: hidden;
+  position: relative; /* Adicionado para garantir posicionamento correto */
 }
 
 /* Mapa garantido (54% da tela - reduzido em 10% do original de 60%) */
@@ -228,6 +229,7 @@ body {
   width: 54%;
   height: 100%;
   background: #e9ecef;
+  position: relative; /* Adicionado para garantir posicionamento correto */
 }
 
 #map {
@@ -242,6 +244,7 @@ body {
   flex-direction: column;
   background: white;
   box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  position: relative; /* Adicionado para garantir posicionamento correto */
 }
 
 /* Filtros compactos */
@@ -281,13 +284,13 @@ button {
   margin-top: 20px;
 }
 
-/* Gráfico acima da tabela - aumentado em altura conforme solicitado */
+/* Gráfico acima da tabela - ajustado para não sobrepor o botão de toggle */
 .chart-card {
-  height: 50%; /* Aumentado de 40% para 50% */
-  margin-top: -80px; /* Adicionado para subir o gráfico na tela */
-  min-height: 220px; /* Aumentado de 220px para 280px */
+  height: 50%;
   padding: 12px 15px;
+  padding-left: 30px; /* Aumentado para dar espaço ao botão de toggle */
   border-bottom: 1px solid #eee;
+  position: relative; /* Adicionado para garantir posicionamento correto */
 }
 
 .chart-card h3 {
@@ -305,6 +308,7 @@ button {
 .data-card {
   flex: 1;
   padding: 12px 15px;
+  padding-left: 30px; /* Aumentado para dar espaço ao botão de toggle */
   overflow-y: auto;
 }
 
@@ -454,10 +458,10 @@ th {
   flex: 1; /* Aumentar espaço para a tabela quando o resumo está recolhido */
 }
 
-/* Botão de expandir/recolher */
+/* Botão de expandir/recolher - Corrigido posicionamento e z-index */
 .toggle-panel-button {
   position: absolute;
-  top: 10px;
+  top: 50%;
   left: -25px;
   width: 25px;
   height: 25px;
@@ -470,7 +474,8 @@ th {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  z-index: 1500; /* Aumentado para garantir que fique acima de todos os outros elementos */
+  transform: translateY(-50%); /* Centraliza verticalmente */
 }
 
 .toggle-panel-button:hover {
@@ -491,10 +496,20 @@ th {
 .panel-collapsed .panel-wrapper {
   width: 0;
   overflow: hidden;
+  padding: 0;
+  margin: 0;
+  transition: width 0.3s ease-in-out;
 }
 
 .panel-collapsed .map-wrapper {
   width: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Garantir que o botão de toggle permaneça visível quando o painel estiver recolhido */
+.panel-collapsed .toggle-panel-button {
+  left: 0;
+  transition: left 0.3s ease-in-out;
 }
 
 @media (max-width: 768px) {
@@ -570,5 +585,16 @@ th {
   
   .resumo-collapsed + .app-container .panel-wrapper {
     height: 45vh;
+  }
+  
+  /* Ajuste do botão de toggle para telas pequenas */
+  .toggle-panel-button {
+    top: 10px;
+    left: 10px;
+    transform: none;
+  }
+  
+  .panel-collapsed .toggle-panel-button {
+    left: 10px;
   }
 }
