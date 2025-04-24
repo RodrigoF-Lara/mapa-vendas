@@ -24,5 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleButton = document.getElementById('toggle-panel');
   if (toggleButton) {
     toggleButton.addEventListener('click', togglePanel);
+    
+    // Garantir que o botão esteja visível e clicável
+    toggleButton.style.zIndex = "1500";
   }
 });
