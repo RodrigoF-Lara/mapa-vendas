@@ -42,19 +42,21 @@ body {
 /* Estilos para os checkboxes de anos */
 .anos-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 5px;
-}
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+ }
 
 .ano-checkbox {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.2s;
+  margin: 0 6px 6px 0; /* Espaço entre os anos, remove deslocamento lateral */
+  white-space: nowrap; /* Garante que o conteúdo não quebre linha */
 }
 
 .ano-checkbox:hover {
@@ -104,6 +106,17 @@ body {
   margin-right: 5px;
   display: inline-block;
 }
+.top-filter-bar .legenda-titulo {
+  position: absolute;
+  left: 300px; /* Alinha o título à esquerda */
+  margin-left: 0px; /* Adiciona um pequeno espaçamento da borda esquerda */
+}
+.top-filter-bar .legenda-items {
+  position: absolute;
+  left: 450px; /* Alinha o título à esquerda */
+  margin-left: 0px; /* Adiciona um pequeno espaçamento da borda esquerda */
+}
+
 
 /* Estilos para o checkbox de rotas planejadas */
 .rotas-planejadas-container {
@@ -173,11 +186,11 @@ body {
 /* Botão de toggle para o resumo */
 .toggle-button {
   position: fixed; /* Alterado de absolute para fixed para manter posição na tela */
-  top: 120px;
+  top: 320px;
   right: 20px; /* Aumentado de 10px para 20px para afastar mais da borda */
-  width: 30px;
-  height: 30px;
-  background-color: #e74c3c;
+  width: 40px;
+  height: 40px;
+  background-color: #abaaa9;
   color: white;
   border: none;
   border-radius: 50%;
@@ -189,11 +202,11 @@ body {
   margin: 0;
   z-index: 1000; /* Aumentado para garantir que fique acima de outros elementos */
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
+  transition: transform 1s ease;
 }
 
 .toggle-button:hover {
-  background-color: #c0392b;
+  background-color: #e74c3c;
 }
 
 .toggle-icon {
@@ -204,6 +217,11 @@ body {
 /* Classe para quando o resumo está recolhido */
 .resumo-collapsed .toggle-icon {
   transform: rotate(180deg);
+}
+
+.resumo-collapsed .toggle-button {
+  top: 120px;
+  transition: transform 1s ease;
 }
 
 .resumo-collapsed {
@@ -252,11 +270,13 @@ body {
   display: flex;
   gap: 10px;
   align-items: flex-start;
+  margin-right: 400px;
 }
 
 .filter-controls > div {
   flex: 1;
 }
+
 
 .filter-controls label {
   display: block;
@@ -461,11 +481,11 @@ th {
 /* Botão de expandir/recolher - Corrigido posicionamento e z-index */
 .toggle-panel-button {
   position: fixed; /* Alterado para fixed para garantir visibilidade constante */
-  top: 50%;
-  left: -25px;
-  width: 30px; /* Aumentado para melhor visibilidade */
-  height: 30px; /* Aumentado para melhor visibilidade */
-  background-color: #007bff;
+  top: 65%;
+  left: 1020px;
+  width: 40px; /* Aumentado para melhor visibilidade */
+  height: 40px; /* Aumentado para melhor visibilidade */
+  background-color: #abaaa9;
   color: white;
   border: none;
   border-radius: 50%;
@@ -480,7 +500,7 @@ th {
 }
 
 .toggle-panel-button:hover {
-  background-color: #0056b3;
+  background-color: #e74c3c;
 }
 
 .toggle-icon {
@@ -491,7 +511,26 @@ th {
 
 .panel-collapsed .toggle-icon {
   transform: rotate(180deg);
+  
 }
+
+
+
+.panel-collapsed .toggle-panel-button {
+  position: fixed;
+  top: 65%;
+  left: 1850px !important; /* Força a posição para 1020px */
+  transform: translateY(-50%);
+  transition: left 0.3s ease-in-out;
+}
+/* Aumentar o zoom do mapa ao recolher o painel - sem sobrepor o painel */
+.panel-collapsed #map {
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  transform: scale(1.8);
+  z-index: 1;
+
+} 
+
 
 /* Ajustar layout ao recolher o painel */
 .panel-collapsed .panel-wrapper {

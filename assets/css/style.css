@@ -541,7 +541,10 @@ th {
   
   .legenda-anos-container {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: left;
+  }
+.top-filter-bar.legenda-anos-container {
+     margin-left: 5000px;
   }
   
   .legenda-items {

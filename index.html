@@ -14,28 +14,23 @@
   
   <!-- Variáveis globais -->
   <script>
-    // Declaração de variáveis globais para evitar redeclaração
     let dadosCSV = [];
     let map;
-    let filtrosAnosSelecionados = []; // Novo: array para múltiplos anos
+    let filtrosAnosSelecionados = [];
     let filtroMesSelecionado = 'todos';
     let regiaoAtual = null;
-    let mostrarRotasPlanejadas = false; // Nova variável para controlar a exibição das rotas planejadas
+    let mostrarRotasPlanejadas = false;
     
-    // Cores para diferentes anos no mapa
     const coresAnos = {
-      '2023': '#ff6b6b', // Vermelho
-      '2024': '#4ecdc4', // Turquesa
-      '2025': '#ffbe0b', // Amarelo
-      '2026': '#3a86ff', // Azul
-      '2027': '#8338ec'  // Roxo
+      '2023': '#ff6b6b',
+      '2024': '#4ecdc4',
+      '2025': '#ffbe0b',
+      '2026': '#3a86ff',
+      '2027': '#8338ec'
     };
   </script>
   
-  <!-- Carregar configurações -->
   <script src="config/regioes-config.js"></script>
-  
-  <!-- Script de verificação de autenticação -->
   <script src="assets/js/auth-check.js"></script>
 </head>
 <body>
@@ -49,36 +44,28 @@
       <option value="pr">PR</option>
       <option value="sp">SP</option>
       <option value="ms">MS</option>
-      <!-- Adicione as outras 19 regiões aqui -->
     </select>
   </div>
   
-  <!-- Filtros no topo -->
   <div class="top-filter-bar">
+    <div class="legenda-titulo">Legenda - Anos:</div>
+    <div id="legenda-anos" class="legenda-items"></div>
     <div class="filter-controls">
       <div>
         <label>Anos:</label>
-        <div id="anos-checkboxes" class="anos-container">
-          <!-- Checkboxes serão adicionados dinamicamente aqui -->
-        </div>
+        <div id="anos-checkboxes" class="anos-container"></div>
       </div>
       <div>
         <label for="filtro-mes">Mês:</label>
         <select id="filtro-mes"></select>
       </div>
-      <!-- Botão Atualizar removido conforme solicitado -->
     </div>
   </div>
   
-  <!-- Legenda de cores para os anos -->
   <div class="legenda-anos-container">
-    <div class="legenda-titulo">Legenda - Anos:</div>
-    <div id="legenda-anos" class="legenda-items">
-      <!-- Itens de legenda serão adicionados dinamicamente aqui -->
-    </div>
+    
   </div>
   
-  <!-- Checkbox para rotas planejadas -->
   <div class="rotas-planejadas-container">
     <div class="rotas-checkbox">
       <input type="checkbox" id="rotas-planejadas" onchange="toggleRotasPlanejadas()">
@@ -96,40 +83,34 @@
     </div>
   </div>
   
-  <!-- Nova seção para o resumo acima do mapa -->
   <div class="resumo-top-container">
     <div class="resumo-header">
       <div id="resumo-estado"></div>
       <button id="toggle-resumo" class="toggle-button" title="Recolher/Expandir resumo">
-        <span class="toggle-icon">▲</span>
+        <span class="toggle-icon">⮝</span>
       </button>
     </div>
   </div>
   
   <div class="app-container">
-    <!-- Mapa garantido na esquerda -->
     <div class="map-wrapper">
       <div id="map"></div>
     </div>
     
-    <!-- Painel direito com nova hierarquia -->
     <div class="panel-wrapper">
       <button id="toggle-panel" class="toggle-panel-button" title="Expandir/Recolher painel">
         <span class="toggle-icon">⮞</span>
       </button>
-      <!-- Gráfico acima da tabela -->
       <div class="chart-card">
         <h3>Vendas Mensais</h3>
         <div id="grafico-mensal"></div>
       </div>
       
-      <!-- Tabela com scroll -->
       <div class="data-card">
         <div id="dados-cidade"></div>
       </div>
     </div>
   </div>
-
 
 <script src="assets/js/rotas-planejadas.js"></script>
 <script src="assets/js/toggle-resumo.js"></script>

@@ -25,23 +25,26 @@ document.addEventListener('DOMContentLoaded', function() {
   // Adicionar ao corpo do documento
   document.body.appendChild(userElement);
   
-  // Estilizar o elemento
+  // Estilizar o elemento para ter menos altura
   userElement.style.position = 'fixed';
-  userElement.style.top = '50px'; // Aumentado para evitar sobreposição com o dropdown dos anos
-  userElement.style.right = '210px';
+  userElement.style.top = '20px';
+  userElement.style.right = '25px';
   userElement.style.background = 'rgba(255, 255, 255, 0.9)';
-  userElement.style.padding = '5px 10px';
+  userElement.style.padding = '2px 5px'; // Reduzir o padding vertical
   userElement.style.borderRadius = '4px';
   userElement.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-  userElement.style.zIndex = '999'; // Reduzido para ficar abaixo de outros elementos importantes
+  userElement.style.zIndex = '999';
   userElement.style.display = 'flex';
   userElement.style.alignItems = 'center';
-  userElement.style.gap = '10px';
+  userElement.style.gap = '10px'; // Reduzir o gap entre elementos
+  userElement.style.fontSize = '20px'; // Diminuir o tamanho da fonte
+  userElement.style.lineHeight = '0.8'; // Ajustar a altura da linha
   
   // Estilizar o nome de usuário
   const usernameSpan = userElement.querySelector('.username');
   usernameSpan.style.fontWeight = 'bold';
   usernameSpan.style.color = '#2c3e50';
+  usernameSpan.style.marginTop= '-5px'; // Ajustar a margem superior
   
   // Estilizar o botão de logout
   const logoutButton = document.getElementById('logout-button');
@@ -52,6 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
   logoutButton.style.padding = '3px 8px';
   logoutButton.style.cursor = 'pointer';
   logoutButton.style.fontSize = '12px';
+  logoutButton.style.display = 'flex';
+  logoutButton.style.alignItems = 'center';
+  logoutButton.style.height = '24px'; // Ajuste para centralizar verticalmente
+  // Adicionar margem superior para ajustar a posição no container
+logoutButton.style.marginTop = '0px'; // Ajuste fino para mover o botão para cima
   
   // Adicionar evento de hover ao botão
   logoutButton.addEventListener('mouseover', function() {
