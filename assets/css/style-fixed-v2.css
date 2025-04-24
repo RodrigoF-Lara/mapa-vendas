@@ -43,9 +43,8 @@ body {
 .anos-container {
   display: flex;
   flex-wrap: wrap;
-  gap:18px;
+  gap: 8px;
   margin-top: 5px;
-  margin-right: 80px;
 }
 
 .ano-checkbox {
@@ -174,11 +173,11 @@ body {
 /* Botão de toggle para o resumo */
 .toggle-button {
   position: fixed; /* Alterado de absolute para fixed para manter posição na tela */
-  top: 350px;
-  right: 30px; /* Aumentado de 10px para 20px para afastar mais da borda */
-  width: 40px;
-  height: 40px;
-  background-color: #ff1500;
+  top: 120px;
+  right: 20px; /* Aumentado de 10px para 20px para afastar mais da borda */
+  width: 30px;
+  height: 30px;
+  background-color: #e74c3c;
   color: white;
   border: none;
   border-radius: 50%;
@@ -189,29 +188,22 @@ body {
   padding: 0;
   margin: 0;
   z-index: 1000; /* Aumentado para garantir que fique acima de outros elementos */
-  box-shadow: 0 0px 0px rgba(0,0,0,0.2);
-  transform: translateY(-50%); /* Centraliza verticalmente */
-  transition: left 0.3s ease-in-out; /* Transição suave para o movimento lateral */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
 .toggle-button:hover {
-  background-color: #747e89;
+  background-color: #c0392b;
 }
 
 .toggle-icon {
-  font-size: 30px;
+  font-size: 14px;
   transition: transform 0.3s ease;
 }
 
 /* Classe para quando o resumo está recolhido */
 .resumo-collapsed .toggle-icon {
   transform: rotate(180deg);
-  
-}
-/* Classe para quando o resumo está recolhido */
-.resumo-collapsed .toggle-button {
-  top:215px;
-  
 }
 
 .resumo-collapsed {
@@ -281,7 +273,7 @@ body {
 }
 
 button {
-  padding: 6x 12px;
+  padding: 6px 12px;
   background: #3498db;
   color: white;
   border: none;
@@ -344,19 +336,19 @@ th {
 .resumo-estado-container {
   background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 8px; /* Aumentado de 10px para 12px */
-  margin-bottom: 8px;
-  border-left: 2px solid #e74c3c;
+  padding: 12px; /* Aumentado de 10px para 12px */
+  margin-bottom: 10px;
+  border-left: 4px solid #e74c3c;
   flex: 1;
-  min-width: 200px;
+  min-width: 250px;
   max-width: 100%;
 }
 
 .resumo-titulo {
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: bold;
   color: #e74c3c;
-  margin-bottom: 5px; /* Aumentado de 10px para 12px */
+  margin-bottom: 12px; /* Aumentado de 10px para 12px */
   display: flex;
   align-items: center;
 }
@@ -370,17 +362,17 @@ th {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 8px; /* Aumentado de 10px para 12px */
+  gap: 12px; /* Aumentado de 10px para 12px */
 }
 
 .estatistica-item {
   display: flex;
   align-items: center;
-  padding: 6px 10px; /* Aumentado de 6px 10px para 8px 12px */
+  padding: 8px 12px; /* Aumentado de 6px 10px para 8px 12px */
   border: 1px solid #ddd;
   border-radius: 6px;
   background: white;
-  min-width: 10px;
+  min-width: 150px;
   flex: 1;
   font-size: 0.9rem;
 }
@@ -413,7 +405,7 @@ th {
 }
 
 .table-container {
-  margin-top: 10px;
+  margin-top: 15px;
   overflow-x: auto;
 }
 
@@ -437,7 +429,7 @@ th {
 
 /* Estilo para marcadores de rotas planejadas */
 .marcador-rota-planejada {
-  border: 2px solid #2234ff;
+  border: 2px solid #ff5722;
   border-radius: 50%;
   background-color: rgba(255, 87, 34, 0.2);
   display: flex;
@@ -469,11 +461,11 @@ th {
 /* Botão de expandir/recolher - Corrigido posicionamento e z-index */
 .toggle-panel-button {
   position: fixed; /* Alterado para fixed para garantir visibilidade constante */
-  top: 60%;
-  left: 1025px;
-  width: 50px; /* Aumentado para melhor visibilidade */
-  height: 50px; /* Aumentado para melhor visibilidade */
-  background-color: #ff1500;
+  top: 50%;
+  left: -25px;
+  width: 90px; /* Aumentado para melhor visibilidade */
+  height: 90px; /* Aumentado para melhor visibilidade */
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 50%;
@@ -481,18 +473,18 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1500; /* Aumentado para garantir que fique acima de todos os outros elementos */
   transform: translateY(-50%); /* Centraliza verticalmente */
   transition: left 0.3s ease-in-out; /* Transição suave para o movimento lateral */
 }
 
 .toggle-panel-button:hover {
-  background-color: #747e89;
+  background-color: #0056b3;
 }
 
 .toggle-icon {
-  font-size: 30px; /* Aumentado para melhor visibilidade */
+  font-size: 46px; /* Aumentado para melhor visibilidade */
   transform: rotate(0deg);
   transition: transform 0.3s ease;
 }
@@ -517,33 +509,7 @@ th {
 
 /* Garantir que o botão de toggle permaneça visível quando o painel estiver recolhido */
 .panel-collapsed .toggle-panel-button {
-  left: 1850px; /* Posição quando o painel está recolhido - CORRIGIDO */
-  transform: rotate(180deg);
-}
-
-#filtro-mes {
-  width: 100%;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #ffffff;
-  color: #2c3e50;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  appearance: none;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg fill="%232c3e50" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px 16px;
-  margin-right: 500px; /* aumenta o afastamento da margem direita */
-  max-width: 250px;   /* opcional: limita a largura máxima */
-  box-sizing: border-box;
-}
-
-#filtro-mes:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+  left: 50px; /* Posição quando o painel está recolhido - CORRIGIDO */
 }
 
 @media (max-width: 768px) {
