@@ -460,11 +460,11 @@ th {
 
 /* Botão de expandir/recolher - Corrigido posicionamento e z-index */
 .toggle-panel-button {
-  position: absolute;
+  position: fixed; /* Alterado para fixed para garantir visibilidade constante */
   top: 50%;
   left: -25px;
-  width: 25px;
-  height: 25px;
+  width: 30px; /* Aumentado para melhor visibilidade */
+  height: 30px; /* Aumentado para melhor visibilidade */
   background-color: #007bff;
   color: white;
   border: none;
@@ -476,6 +476,7 @@ th {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1500; /* Aumentado para garantir que fique acima de todos os outros elementos */
   transform: translateY(-50%); /* Centraliza verticalmente */
+  transition: left 0.3s ease-in-out; /* Transição suave para o movimento lateral */
 }
 
 .toggle-panel-button:hover {
@@ -483,7 +484,7 @@ th {
 }
 
 .toggle-icon {
-  font-size: 14px;
+  font-size: 16px; /* Aumentado para melhor visibilidade */
   transform: rotate(0deg);
   transition: transform 0.3s ease;
 }
@@ -508,8 +509,7 @@ th {
 
 /* Garantir que o botão de toggle permaneça visível quando o painel estiver recolhido */
 .panel-collapsed .toggle-panel-button {
-  left: 0;
-  transition: left 0.3s ease-in-out;
+  left: 10px; /* Posição quando o painel está recolhido - CORRIGIDO */
 }
 
 @media (max-width: 768px) {
