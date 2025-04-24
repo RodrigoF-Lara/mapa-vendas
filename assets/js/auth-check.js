@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Verificar se o usuário está logado
   if (localStorage.getItem('loggedIn') !== 'true') {
     // Redirecionar para a página de login se não estiver logado
+    <link rel="stylesheet" href="assets/css/login.css">
     window.location.href = basePath + 'login.html';
     return;
   }
