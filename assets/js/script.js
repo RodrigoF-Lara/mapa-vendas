@@ -27,22 +27,28 @@ function initMap() {
 function carregarRegiao(regiaoId) {
   console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
-  
+
   regiaoAtual = configuracoesRegioes[regiaoId];
-  
+
   if (map) {
     map.remove(); // Destruir o mapa existente
   }
-  
+
   // Reiniciar variáveis
   dadosCSV = [];
   filtrosAnosSelecionados = []; // Inicializa array vazio para anos selecionados
   filtroMesSelecionado = 'todos';
-  
+
+  // Limpar a tabela de vendas
+  const tabelaContainer = document.getElementById('dados-cidade');
+  if (tabelaContainer) {
+    tabelaContainer.innerHTML = '<p>Selecione uma cidade para visualizar os dados.</p>';
+  }
+
   // Criar novo mapa
   initMap();
   carregarDadosAPI();
-  
+
   // Carregar dados das rotas planejadas
   if (typeof carregarDadosRotasPlanejadas === 'function') {
     carregarDadosRotasPlanejadas();
@@ -368,16 +374,27 @@ function exibirDadosNaTabela(vendas, ano) {
 function formatarData(dataString) {
   if (!dataString) return ''; // Retorna vazio se não houver data
 
-  // Assumindo que a data está no formato YYYY-MM-DD ou um formato de timestamp
-  const data = new Date(dataString);
-  
-  if (isNaN(data.getTime())) {
-    // Se a data não for válida, retorna a string original
-    console.error("Data inválida:", dataString);
-    return dataString;
+  // Verificar se o formato é DD/MM/YYYY
+  const regexData = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+  const match = dataString.match(regexData);
+
+  if (match) {
+    // Extrair dia, mês e ano
+    const dia = parseInt(match[1], 10);
+    const mes = parseInt(match[2], 10) - 1; // Meses no JavaScript são baseados em zero
+    const ano = parseInt(match[3], 10);
+
+    // Criar um objeto Date válido
+    const data = new Date(ano, mes, dia);
+
+    // Verificar se a data é válida
+    if (!isNaN(data.getTime())) {
+      return data.toLocaleDateString('pt-BR'); // Retorna no formato DD/MM/YYYY
+    }
   }
 
-  return data.toLocaleDateString('pt-BR'); // Formatação em pt-BR
+  console.error("Data inválida:", dataString);
+  return dataString; // Retorna a string original se não for válida
 }
 
 // Função para gerar o gráfico mensal com múltiplos anos
@@ -435,7 +452,7 @@ function gerarGraficoMensalMultiplosAnos() {
     Plotly.newPlot('grafico-mensal', traces, layout);
   }
 
-  Plotly.newPlot('grafico-mensal', traces, layout);
+ 
 
 
 // Função para mostrar o resumo do estado com comparação entre anos

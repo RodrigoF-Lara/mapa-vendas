@@ -69,7 +69,8 @@ function mostrarMarcadoresRotasPlanejadas() {
     ? dadosRotasPlanejadas 
     : dadosRotasPlanejadas.filter(rota => rota.ROTA === `Rota ${filtroRotaSelecionada}`);
   
-  console.log(`Rotas filtradas (${filtroRotaSelecionada}):`, rotasFiltradas);
+  //console.log(`Rotas filtradas (${filtroRotaSelecionada}):`, rotasFiltradas);
+  //console.log("Rotas filtradas:", rotasFiltradas);
   
   // Para cada cidade nas rotas planejadas filtradas, encontrar o feature correspondente no GeoJSON e adicionar um marcador
   rotasFiltradas.forEach(rota => {
@@ -81,48 +82,62 @@ function mostrarMarcadoresRotasPlanejadas() {
       .then(geojson => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         
-        if (feature) {
-          // Calcular o centroide da cidade
-          const centroid = turf.centroid(feature).geometry.coordinates;
-          
-          // Criar o popup com informações da rota
-          const popupContent = `
-            <strong>${feature.properties.NM_MUN}</strong><br>
-            <strong>🚗 Rota:</strong> ${rota.ROTA}<br>
-            <strong>🏙️ Região:</strong> ${rota.REGIÃO}<br>
-          `;
-          
-          // Adicionar o marcador ao mapa
-          const marker = L.marker([centroid[1], centroid[0]], { 
-            icon: rotaIcon,
-            zIndexOffset: 1000 // Para garantir que fique acima de outros marcadores
-          })
-            .bindPopup(popupContent)
-            .addTo(map);
-          
-          // Armazenar o marcador para poder removê-lo depois
-          marcadoresRotasPlanejadas.push(marker);
-          
-          // Adicionar contorno preto à cidade
-          const contorno = L.geoJSON(feature, {
-            style: {
-              color: '#000000', // Cor preta para o contorno
-              weight: 3, // Espessura da linha
-              opacity: 1, // Opacidade total
-              fillColor: '#ff5722', // Cor de preenchimento laranja
-              fillOpacity: 0.1, // Preenchimento quase transparente
-              dashArray: '5, 5' // Linha tracejada para destacar
-            }
-          }).addTo(map);
-          
-          // Adicionar o mesmo popup ao contorno
-          contorno.bindPopup(popupContent);
-          
-          // Armazenar o contorno para poder removê-lo depois
-          contornosRotasPlanejadas.push(contorno);
+        if (!feature) {
+          console.warn('Cidade não encontrada no GeoJSON:', rota.MUNICIPIO, 'COD_IBGE:', codigoIBGE);
+        }
+        
+        if (feature && feature.geometry && feature.geometry.coordinates) {
+          try {
+            // Calcular o centroide da cidade
+            const centroid = turf.centroid(feature).geometry.coordinates;
+        
+            // Criar o popup com informações da rota
+            const popupContent = `
+              <strong>${feature.properties.NM_MUN}</strong><br>
+              <strong>🚗 Rota:</strong> ${rota.ROTA}<br>
+              <strong>🏙️ Região:</strong> ${rota.REGIÃO}<br>
+            `;
+        
+            // Adicionar o marcador ao mapa
+            const marker = L.marker([centroid[1], centroid[0]], { 
+              icon: rotaIcon,
+              zIndexOffset: 1000 // Para garantir que fique acima de outros marcadores
+            })
+              .bindPopup(popupContent)
+              .addTo(map);
+        
+            // Armazenar o marcador para poder removê-lo depois
+            marcadoresRotasPlanejadas.push(marker);
+        
+            // Adicionar contorno preto à cidade
+            const contorno = L.geoJSON(feature, {
+              style: {
+                color: '#000000', // Cor preta para o contorno
+                weight: 3, // Espessura da linha
+                opacity: 1, // Opacidade total
+                fillColor: '#ff5722', // Cor de preenchimento laranja
+                fillOpacity: 0.1, // Preenchimento quase transparente
+                dashArray: '5, 5' // Linha tracejada para destacar
+              }
+            }).addTo(map);
+        
+            // Adicionar o mesmo popup ao contorno
+            contorno.bindPopup(popupContent);
+        
+            // Armazenar o contorno para poder removê-lo depois
+            contornosRotasPlanejadas.push(contorno);
+          } catch (error) {
+            console.warn('Erro ao processar a rota:', rota.MUNICIPIO, 'COD_IBGE:', rota.COD_IBGE); // Adicionado aqui
+            console.error('Feature inválida ou sem coordenadas:', feature);
+
+          }
+        } else {
+          console.log("Rotas filtradas:", rotasFiltradas);
+          console.error('Feature inválida ou sem coordenadas:', feature);
         }
       })
       .catch(error => {
+        console.log("Rotas filtradas:", rotasFiltradas);
         console.error('Falha ao carregar GeoJSON para rotas planejadas:', error);
       });
   });
