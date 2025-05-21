@@ -16,7 +16,9 @@ body {
   top: 10px;
   left: 10px;
   z-index: 1000;
+
   background: rgb(248, 246, 246);
+
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -166,6 +168,7 @@ body {
 .resumo-top-container {
   background: white;
   border-bottom: 1px solid #ddd;
+
   transition: max-height 10s ease-in-out, padding 10s ease-in-out;
   overflow: hidden;
 }
@@ -186,6 +189,7 @@ body {
 /* Botão de toggle para o resumo */
 .toggle-button {
   position: fixed; /* Alterado de absolute para fixed para manter posição na tela */
+
   top: 310px;
   right: 05px; /* Aumentado de 10px para 20px para afastar mais da borda */
   width: 40px;
@@ -201,6 +205,7 @@ body {
   padding: 0;
   margin: 0;
   z-index: 1000; /* Aumentado para garantir que fique acima de outros elementos */
+
     /* Círculo branco ao redor */
   box-shadow: 0 0 0 5px white, 
               /* Segundo: borda preta externa do branco */
@@ -211,6 +216,7 @@ body {
 
 .toggle-button:hover {
   background-color: #2b1dc0;
+
 }
 
 .toggle-icon {
@@ -224,6 +230,7 @@ body {
 }
 
 .resumo-collapsed .toggle-button {
+
   top: 130px;
   transition: transform 1s ease;
 }
@@ -484,6 +491,7 @@ th {
 
 /* Botão de expandir/recolher - Corrigido posicionamento e z-index */
 .toggle-panel-button {
+
   position: absolute;
   top: 50%;
   right: -15px;
@@ -498,6 +506,7 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
+
      /* Círculo branco ao redor */
   box-shadow: 0 0 0 5px white, 
               /* Segundo: borda preta externa do branco */
@@ -525,6 +534,7 @@ th {
 
 
 .panel-collapsed .toggle-panel-button {
+
   transform: rotate(180deg);
   transition: left 0.5s;
   right: 05px;
@@ -532,6 +542,7 @@ th {
 /* Aumentar o zoom do mapa ao recolher o painel - sem sobrepor o painel */
 .panel-collapsed #map {
   transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+
   transform: scale(1.2);
   z-index: 1;
 
@@ -551,6 +562,7 @@ th {
   width: 100%;
   transition: width 0.3s ease-in-out;
 }
+
 
 
 
@@ -612,7 +624,7 @@ th {
   .toggle-button {
     width: 26px;
     height: 26px;
-    top: 8px;
+
     right: -10px;
   }
   
@@ -635,5 +647,5 @@ th {
     left: 10px;
     transform: none;
   }
-  
+
 }

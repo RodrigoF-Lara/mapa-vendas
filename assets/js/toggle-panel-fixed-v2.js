@@ -25,11 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (toggleButton) {
     toggleButton.addEventListener('click', togglePanel);
     
+
        // Verificar se o painel está colapsado ao carregar a página
     const appContainer = document.querySelector('.app-container');
     if (appContainer.classList.contains('panel-collapsed')) {
       // Garantir que o botão esteja visível quando o painel já inicia colapsado
       
-    }
+ }
   }
 });

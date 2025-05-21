@@ -107,8 +107,9 @@ body {
 
 /* Estilos para o checkbox de rotas planejadas */
 .rotas-planejadas-container {
+
   background: rgb(255, 255, 255);
-  padding: 8px 15px;
+ padding: 8px 15px;
   border-bottom: 1px solid #ddd;
   display: flex;
   align-items: center;
@@ -151,6 +152,7 @@ body {
 
 /* Container para o resumo acima do mapa */
 .resumo-top-container {
+
   background: rgb(181, 37, 37);
   border-bottom: 1px solid #ddd;
   transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
@@ -228,6 +230,7 @@ body {
   width: 54%;
   height: 100%;
   background: #e9ecef;
+
   position: relative; /* Adicionado */
 }
 
