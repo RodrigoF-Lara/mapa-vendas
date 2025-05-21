@@ -1,0 +1,579 @@
+/* Reset e configurações básicas */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Seletor de região */
+.regiao-selector {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#filtro-regiao {
+  padding: 6px 12px;
+  min-width: 200px;
+  font-size: 14px;
+}
+
+/* Barra de filtros no topo */
+.top-filter-bar {
+  background: #2c3e50;
+  color: #f9fbfa;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 900;
+}
+
+/* Estilos para os checkboxes de anos */
+.anos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.ano-checkbox {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ano-checkbox:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ano-checkbox input {
+  margin-right: 5px;
+}
+
+.ano-checkbox-label {
+  font-size: 0.85rem;
+}
+
+/* Legenda de cores para os anos */
+.legenda-anos-container {
+  background: white;
+  padding: 8px 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.legenda-titulo {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.legenda-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+}
+
+.legenda-cor {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+/* Estilos para o checkbox de rotas planejadas */
+.rotas-planejadas-container {
+  background: rgb(255, 255, 255);
+  padding: 8px 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rotas-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.rotas-checkbox input {
+  margin-right: 8px;
+}
+
+.rotas-checkbox label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.filtro-rotas {
+  display: flex;
+  align-items: center;
+}
+
+.filtro-rotas label {
+  font-size: 0.9rem;
+  margin-right: 8px;
+  color: #2c3e50;
+}
+
+.filtro-rotas select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+/* Container para o resumo acima do mapa */
+.resumo-top-container {
+  background: rgb(181, 37, 37);
+  border-bottom: 1px solid #ddd;
+  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.resumo-header {
+  position: relative;
+  width: 100%;
+  padding: 10px 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+#resumo-estado {
+  flex: 1;
+}
+
+/* Botão de toggle para o resumo */
+.toggle-button {
+  position: fixed; /* Alterado de absolute para fixed para manter posição na tela */
+  top: 120px;
+  right: 20px; /* Aumentado de 10px para 20px para afastar mais da borda */
+  width: 30px;
+  height: 30px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  z-index: 1000; /* Aumentado para garantir que fique acima de outros elementos */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #c0392b;
+}
+
+.toggle-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+/* Classe para quando o resumo está recolhido */
+.resumo-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.resumo-collapsed {
+  max-height: 40px;
+  padding-bottom: 0;
+}
+
+/* Esconder conteúdo quando recolhido */
+.resumo-collapsed .resumo-estado-container {
+  display: none;
+}
+
+/* Container principal */
+.app-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Mapa garantido (54% da tela - reduzido em 10% do original de 60%) */
+.map-wrapper {
+  width: 54%;
+  height: 100%;
+  background: #e9ecef;
+  position: relative; /* Adicionado */
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Painel direito (46% da tela - aumentado para compensar a redução do mapa) */
+.panel-wrapper {
+  width: 46%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+}
+
+/* Filtros compactos */
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.filter-controls > div {
+  flex: 1;
+}
+
+.filter-controls label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+}
+
+.filter-controls select {
+  width: 100%;
+  padding: 6px;
+  font-size: 0.85rem;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 6px 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: 20px;
+}
+
+/* Gráfico acima da tabela - aumentado em altura conforme solicitado */
+.chart-card {
+  height: 50%; /* Aumentado de 40% para 50% */
+  margin-top: -80px; /* Adicionado para subir o gráfico na tela */
+  min-height: 220px; /* Aumentado de 220px para 280px */
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.chart-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+#grafico-mensal {
+  height: calc(100% - 25px);
+  width: 100%;
+}
+
+/* Tabela (reduzida para compensar o aumento do gráfico) */
+.data-card {
+  flex: 1;
+  padding: 12px 15px;
+  overflow-y: auto;
+}
+
+/* Estilos da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+/* Estilos para o resumo do estado - ajustado para melhor visualização */
+.resumo-estado-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px; /* Aumentado de 10px para 12px */
+  margin-bottom: 10px;
+  border-left: 4px solid #e74c3c;
+  flex: 1;
+  min-width: 250px;
+  max-width: 100%;
+}
+
+.resumo-titulo {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 12px; /* Aumentado de 10px para 12px */
+  display: flex;
+  align-items: center;
+}
+
+.icone-resumo {
+  font-size: 1.2rem;
+  margin-right: 6px;
+}
+
+.resumo-estatisticas {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px; /* Aumentado de 10px para 12px */
+}
+
+.estatistica-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px; /* Aumentado de 6px 10px para 8px 12px */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  min-width: 150px;
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.estatistica-item-ano {
+  border-left-width: 4px;
+}
+
+.icone-estatistica {
+  font-size: 1.4rem;
+  margin-right: 10px;
+  min-width: 25px;
+  text-align: center;
+}
+
+.estatistica-info {
+  flex: 1;
+}
+
+.estatistica-label {
+  font-weight: bold;
+  margin-bottom: 3px; /* Aumentado de 2px para 3px */
+  font-size: 0.8rem;
+}
+
+.estatistica-valor {
+  font-size: 0.95rem;
+  color: #2c3e50;
+  line-height: 1.4; /* Adicionado para melhorar a legibilidade */
+}
+
+.table-container {
+  margin-top: 15px;
+  overflow-x: auto;
+}
+
+/* Estilos para comparação de anos */
+.comparacao-anos-tabela {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.comparacao-anos-tabela th {
+  text-align: center;
+}
+
+.comparacao-anos-tabela td {
+  text-align: center;
+}
+
+.comparacao-anos-tabela .header-ano {
+  font-weight: bold;
+}
+
+/* Estilo para marcadores de rotas planejadas */
+.marcador-rota-planejada {
+  border: 2px solid #ff5722;
+  border-radius: 50%;
+  background-color: rgba(255, 87, 34, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
+}
+
+.marcador-rota-planejada-icon {
+  color: #ff5722;
+  font-size: 1px;
+  font-weight: bold;
+}
+
+/* Ajustes para quando o resumo está recolhido */
+.resumo-collapsed + .app-container .map-wrapper,
+.resumo-collapsed + .app-container .panel-wrapper {
+  height: calc(100vh - 160px); /* Ajustar altura quando o resumo está recolhido */
+}
+
+.resumo-collapsed + .app-container .chart-card {
+  height: 45%; /* Aumentar altura do gráfico quando o resumo está recolhido */
+}
+
+.resumo-collapsed + .app-container .data-card {
+  flex: 1; /* Aumentar espaço para a tabela quando o resumo está recolhido */
+}
+
+/* Botão de expandir/recolher */
+.toggle-panel-button {
+  position:absolute;
+  top: 10px;
+  right: 10px; /* Alterado de left:-25px para right:10px */
+  left: 10px;  /* Garante que left não interfira */
+  width: 25px;
+  height: 25px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.toggle-panel-button:hover {
+  background-color: #0056b3;
+}
+
+.toggle-icon {
+  font-size: 14px;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.panel-collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Ajustar layout ao recolher o painel */
+.panel-collapsed .panel-wrapper {
+  width: 0;
+  overflow: hidden;
+}
+
+.panel-collapsed .map-wrapper {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .map-wrapper, .panel-wrapper {
+    width: 100%;
+    height: auto;
+  }
+  
+  .map-wrapper {
+    height: 50vh;
+  }
+  
+  .panel-wrapper {
+    height: 50vh;
+  }
+  
+  .filter-controls {
+    flex-wrap: wrap;
+  }
+  
+  .filter-controls > div {
+    min-width: 45%;
+  }
+
+  .regiao-selector {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .resumo-estatisticas {
+    flex-direction: column;
+  }
+  
+  .legenda-anos-container {
+    flex-direction: column;
+    align-items: left;
+  }
+.top-filter-bar.legenda-anos-container {
+     margin-left: 5000px;
+  }
+  
+  .legenda-items {
+    margin-top: 5px;
+  }
+  
+  .rotas-planejadas-container {
+    padding: 6px 10px;
+  }
+  
+  .toggle-button {
+    width: 26px;
+    height: 26px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .toggle-icon {
+    font-size: 12px;
+  }
+  
+  /* Ajustes para quando o resumo está recolhido em telas pequenas */
+  .resumo-collapsed + .app-container .map-wrapper {
+    height: 55vh;
+  }
+  
+  .resumo-collapsed + .app-container .panel-wrapper {
+    height: 45vh;
+  }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Indicadores Agronegócio - TO</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    canvas { max-width: 1000px; margin: auto; }
+    h2 { text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Evolução da Armazenagem, Produção de Grãos e Máquinas – TO (2019-2025)</h2>
+  <canvas id="agronegocioChart"></canvas>
+
+  <script>
+    const ctx = document.getElementById('agronegocioChart').getContext('2d');
+
+    const data = {
+      labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+      datasets: [
+        {
+          label: 'Armazenagem (mil t)',
+          data: [3043.593, 3210.453, 3237.583, 3366.683, 3658.383, 3676.823, 3676.823],
+          borderColor: 'blue',
+          backgroundColor: 'blue',
+          yAxisID: 'y',
+          tension: 0.3
+        },
+        {
+          label: 'Produção Grãos (mil t)',
+          data: [5078.0, 5853.4, 5529.1, 6567.2, 7612.9, 7692.2, 8908.2],
+          borderColor: 'orange',
+          backgroundColor: 'orange',
+          yAxisID: 'y',
+          tension: 0.3
+        },
+        {
+          label: 'Máquinas (unid.)',
+          data: [21, 64, 50, 109, 83, 31, 57],
+          borderColor: 'gray',
+          backgroundColor: 'gray',
+          yAxisID: 'y1',
+          tension: 0.3
+        }
+      ]
+    };
+
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        stacked: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'TO - Indicadores de Armazenagem, Produção e Máquinas'
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: {
+              display: true,
+              text: 'Mil Toneladas'
+            }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            title: {
+              display: true,
+              text: 'Máquinas (unidades)'
+            },
+            grid: {
+              drawOnChartArea: false
+            }
+          }
+        }
+      }
+    };
+
+    new Chart(ctx, config);
+  </script>
+</body>
+</html>
