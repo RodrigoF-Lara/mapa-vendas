@@ -168,8 +168,7 @@ body {
 .resumo-top-container {
   background: white;
   border-bottom: 1px solid #ddd;
-
-  transition: max-height 10s ease-in-out, padding 10s ease-in-out;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s, margin 0.4s;
   overflow: hidden;
 }
 
@@ -259,6 +258,7 @@ body {
   height: 100%;
   background: #e9ecef;
   position: relative; /* Adicionado para garantir posicionamento correto */
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 
 #map {
@@ -274,6 +274,7 @@ body {
   background: white;
   box-shadow: -2px 0 8px rgba(0,0,0,0.1);
   position: relative; /* Adicionado para garantir posicionamento correto */
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s, margin 0.4s;
 }
 
 /* Filtros compactos */
@@ -373,6 +374,8 @@ th {
   flex: 1;
   min-width: 250px;
   max-width: 100%;
+  
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s, margin 0.4s;
 }
 
 .resumo-titulo {
@@ -403,7 +406,8 @@ th {
   border: 1px solid #ddd;
   border-radius: 6px;
   background: white;
-  min-width: 150px;
+  min-width: 50px;
+  max-width: 200 px;
   flex: 1;
   font-size: 0.9rem;
 }
@@ -542,7 +546,6 @@ th {
 /* Aumentar o zoom do mapa ao recolher o painel - sem sobrepor o painel */
 .panel-collapsed #map {
   transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-
   transform: scale(1.2);
   z-index: 1;
 
