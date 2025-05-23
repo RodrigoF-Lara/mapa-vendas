@@ -52,7 +52,7 @@ function initMap() {
     zoom: 6
   };
 
-  map = L.map('map').setView(config.view, config.zoom);
+  map = L.map('map').setView([-11.140, -53.275], 2);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
@@ -582,7 +582,7 @@ function adicionarContornoGeojson(path, style = {}) {
 // Função para carregar todos os contornos desejados
 function carregarTodosContornos() {
   if (map) map.remove();
-  map = L.map('map').setView([-31.5, -53.5], 7);
+  map = L.map('map').setView([-19.140,-53.275], 4);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
@@ -674,6 +674,10 @@ function mostrarTotalMaquinasVendidasPorRegiao() {
   }
   window.markerTotalRegioes = [];
 
+  // Pega o zoom atual do mapa
+  const zoomAtual = map.getZoom();
+  const mostrarNome = zoomAtual >= 6;
+
   regioesInfo.forEach(regiao => {
     let total = 0;
     dadosCSV.forEach(item => {
@@ -687,39 +691,48 @@ function mostrarTotalMaquinasVendidasPorRegiao() {
     });
     console.log(`Região: ${regiao.nome} | Total máquinas: ${total}`);
 
+    // Monta o HTML do marcador conforme o zoom
+    const html = mostrarNome
+      ? `
+        <span class="regiao-nome" style="color:${regiao.cor}; font-weight:bold; white-space:nowrap; font-size:1.2em; display:inline-block; transform:scale(1) translate(0px, -10px); transform-origin:center center;">
+          ${regiao.nome.replace('_', ' ')}
+        </span>
+        <span class="regiao-total" style="color:${regiao.cor}; font-weight:bold; margin-left:6px; font-size:1.5em; display:inline-block; transform:scale(1) translate(0px, -10px); transform-origin:center center;">
+          ${total}
+        </span>
+      `
+      : `
+        <span class="regiao-total" style="color:${regiao.cor}; font-weight:bold; font-size:1.5em; display:inline-block; transform:scale(1) translate(0px, -10px); transform-origin:center center;">
+          ${total}
+        </span>
+      `;
+
     const marker = L.marker(regiao.centro, {
-  icon: L.divIcon({
-    className: 'total-rs-marker',
-    html: `
-      <span class="regiao-nome" style="color:${regiao.cor}; font-weight:bold; white-space:nowrap; font-size:1.2em; display:inline-block; transform:scale(1) translate(0px, -10px); transform-origin:center center;">
-        ${regiao.nome.replace('_', ' ')}
-      </span>
-      <span class="regiao-total" style="color:${regiao.cor}; font-weight:bold; margin-left:6px; font-size:1.5em; display:inline-block; transform:scale(1) translate(0px, -10px); transform-origin:center center;">
-        ${total}
-      </span>
-    `,
-    iconAnchor: [0, 0]
-  })
-}).addTo(map);
+      icon: L.divIcon({
+        className: 'total-rs-marker',
+        html: html,
+        iconAnchor: [0, 0]
+      })
+    }).addTo(map);
 
     setTimeout(() => {
-  const el = marker.getElement();
-  if (el) {
-    const nome = el.querySelector('.regiao-nome');
-    const total = el.querySelector('.regiao-total');
-    if (nome) {
-  console.log('INICIAL .regiao-nome:', window.getComputedStyle(nome));
-  console.log('INICIAL .regiao-nome:', {
-    fontSize: window.getComputedStyle(nome).fontSize,
-    marginLeft: window.getComputedStyle(nome).marginLeft,
-    transform: window.getComputedStyle(nome).transform
-  });
-}
-    if (total) {
-      console.log('INICIAL .regiao-total:', window.getComputedStyle(total));
-    }
-  }
-}, 200); // Pequeno delay para garantir que o DOM foi atualizado
+      const el = marker.getElement();
+      if (el) {
+        const nome = el.querySelector('.regiao-nome');
+        const total = el.querySelector('.regiao-total');
+        if (nome) {
+          console.log('INICIAL .regiao-nome:', window.getComputedStyle(nome));
+          console.log('INICIAL .regiao-nome:', {
+            fontSize: window.getComputedStyle(nome).fontSize,
+            marginLeft: window.getComputedStyle(nome).marginLeft,
+            transform: window.getComputedStyle(nome).transform
+          });
+        }
+        if (total) {
+          console.log('INICIAL .regiao-total:', window.getComputedStyle(total));
+        }
+      }
+    }, 200); // Pequeno delay para garantir que o DOM foi atualizado
 
     // Guarde referência para atualizar depois
     marker._regiaoNome = regiao.nome.replace('_', ' ');

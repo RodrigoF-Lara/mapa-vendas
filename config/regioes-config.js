@@ -81,10 +81,10 @@ const configuracoesRegioes = {
   'mt_leste': {
     id: 'mt_leste',
     nome: 'MT LESTE',
-    centro: [-13.558,-52.901], // Adicione esta linha
+    centro: [-13.493,-52.966], // Adicione esta linha
     planilhaId: '15tV0TsG2RUkEI3WI4C0epHq7rQF9lovA37FnM0mmbGQ',
     geojsonPath: 'data/geojson/municipios-MT_LESTE.geojson',
-    view: [-13.558,-52.901],
+    view: [-13.493,-52.966],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
     imagem: 'data/rc/Grazian.png',
@@ -94,10 +94,10 @@ const configuracoesRegioes = {
   'mt_centro': {
     id: 'mt_centro',
     nome: 'MT CENTRO',
-    centro: [],
-    planilhaId: '',
+    centro: [-13.140,-55.812],
+    planilhaId: '1EYT5gf07pKww6w3YMr_Dzlvv2hMDSe758z2L80Xps1s',
     geojsonPath: 'data/geojson/municipios-MT_CENTRO.geojson',
-    view: [],
+    view: [-13.140,-55.812],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
     imagem: 'data/rc/Grazian.png',
@@ -106,11 +106,11 @@ const configuracoesRegioes = {
 
   'mt_oeste_ro': {
     id: 'mt_oeste_ro',
-    nome: 'MT OESTE RO',
-    centro: [],
-    planilhaId: '',
+    nome: 'MT OESTE_RO',
+    centro: [-11.738,-60.555],
+    planilhaId: '1zHTb1tizDoJtkUwHvEKhDpl05byjUwimchAg72JkpKg',
     geojsonPath: 'data/geojson/municipios-MT_OESTE_RO.geojson',
-    view: [],
+    view: [-11.738,-60.555],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
     imagem: 'data/rc/Grazian.png',
