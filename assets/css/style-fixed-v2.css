@@ -10,16 +10,8 @@ body {
   flex-direction: column;
 }
 
-.total-rs-marker {
-  background: none !important;
-  border: none !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-   
-}
-.total-rs-marker .regiao-total {
-  font-size: 2em !important;
-}
+
+
 /* Seletor de região */
 .regiao-selector {
   position: absolute;

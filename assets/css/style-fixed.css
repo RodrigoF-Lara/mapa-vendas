@@ -10,6 +10,14 @@ body {
   flex-direction: column;
 }
 
+.total-rs-marker .regiao-nome {
+  font-size: 1.2em;
+}
+.total-rs-marker .regiao-total {
+  font-size: 1.5em;
+}
+
+
 /* Seletor de região */
 .regiao-selector {
   position: absolute;

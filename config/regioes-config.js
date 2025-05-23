@@ -68,7 +68,7 @@ const configuracoesRegioes = {
   'ms': {
     id: 'ms',
     nome: 'MS',
-    centro: [-20.4697, -54.6201], // Adicione esta linha
+    centro: [-20.3726,-54.8518], // Adicione esta linha
     planilhaId: '1UCqKvj-R5QRhRaHo6bsLGhWRiLvlw2txPQsPeHG1-rE',
     geojsonPath: 'data/geojson/municipios-MS.geojson',
     view: [-20.4697, -54.6201],
@@ -76,6 +76,45 @@ const configuracoesRegioes = {
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
     imagem: 'data/rc/Grazian.png',
     cidadesRC: {'5003702': 'GRAZIAN'}
+  },
+
+  'mt_leste': {
+    id: 'mt_leste',
+    nome: 'MT LESTE',
+    centro: [-13.558,-52.901], // Adicione esta linha
+    planilhaId: '15tV0TsG2RUkEI3WI4C0epHq7rQF9lovA37FnM0mmbGQ',
+    geojsonPath: 'data/geojson/municipios-MT_LESTE.geojson',
+    view: [-13.558,-52.901],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Grazian.svg',
+    imagem: 'data/rc/Grazian.png',
+    cidadesRC: {'5107040': 'GLESON'}
+  },
+
+  'mt_centro': {
+    id: 'mt_centro',
+    nome: 'MT CENTRO',
+    centro: [],
+    planilhaId: '',
+    geojsonPath: 'data/geojson/municipios-MT_CENTRO.geojson',
+    view: [],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Grazian.svg',
+    imagem: 'data/rc/Grazian.png',
+    cidadesRC: {'5105259': 'JOAO'}
+  },
+
+  'mt_oeste_ro': {
+    id: 'mt_oeste_ro',
+    nome: 'MT OESTE RO',
+    centro: [],
+    planilhaId: '',
+    geojsonPath: 'data/geojson/municipios-MT_OESTE_RO.geojson',
+    view: [],
+    zoom: 7,
+    marcadorIcone: 'data/rc/marcador_Grazian.svg',
+    imagem: 'data/rc/Grazian.png',
+    cidadesRC: {'5102637': 'RODRIGO'}
   }
 };
 
