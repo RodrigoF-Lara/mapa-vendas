@@ -2,6 +2,34 @@
 // As variáveis dadosCSV, map, filtrosAnosSelecionados, filtroMesSelecionado e regiaoAtual
 // já são acessíveis pois o arquivo regioes-config.js é carregado antes
 
+const planilhaGeralId = '1F2qUf0pvHFy1ccz384AuVWmb_qnFvHunhitrefoxRbs';
+
+function carregarDadosGeral(callback) {
+  const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${planilhaGeralId}/values/A1:Z1000?key=${apiKey}`;
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.values) {
+        const headers = data.values[0];
+        dadosCSV = data.values.slice(1).map(row => {
+          return headers.reduce((obj, header, index) => {
+            obj[header] = row[index] || '';
+            return obj;
+          }, {});
+        });
+        if (callback) callback();
+      } else {
+        dadosCSV = [];
+        if (callback) callback();
+      }
+    })
+    .catch(() => {
+      dadosCSV = [];
+      if (callback) callback();
+    });
+}
+
 // Inicializa o ícone do marcador
 const rcIcon = L.icon({
   iconUrl: 'data/rc/marcador_Jeison.svg', // Ícone do RC
@@ -9,6 +37,13 @@ const rcIcon = L.icon({
   iconAnchor: [12, 41], // Ponto de ancoragem do ícone (ajuste conforme necessário)
   popupAnchor: [1, -34] // Ponto de ancoragem do popup (ajuste conforme necessário)
 });
+
+// Cole aqui:
+const regioesInfo = Object.values(configuracoesRegioes).map(regiao => ({
+  nome: regiao.nome,
+  centro: regiao.centro,
+  cor: regiao.cor
+}));
 
 // Inicializa o mapa
 function initMap() {
@@ -25,6 +60,10 @@ function initMap() {
 
 // Carregar a região
 function carregarRegiao(regiaoId) {
+  if (!regiaoId || !configuracoesRegioes[regiaoId]) {
+    console.log('carregarRegiao: regiaoId vazio ou inválido, abortando.');
+    return;
+  }
   console.log('Carregando região:', regiaoId);
   if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
 
@@ -67,7 +106,7 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
-        console.log('Dados da API:', data.values); // Verifique os dados carregados
+        console.log('Dados da API:', data.values); // <-- LOG AQUI
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -75,8 +114,10 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        popularFiltros(); // Chama para popular os filtros de ano e mês
-        atualizarVisualizacao(); // Atualiza o mapa, gráfico e resumo
+        // LOG: Veja os primeiros itens já convertidos
+        console.log('Primeiros itens do dadosCSV:', dadosCSV.slice(0, 5));
+        popularFiltros();
+        atualizarVisualizacao();
       } else {
         console.error('Nenhum dado encontrado na planilha.');
       }
@@ -86,23 +127,16 @@ function carregarDadosAPI() {
 
 // Função para popular os checkboxes de anos e o dropdown de meses
 function popularFiltros() {
-  // Obter anos únicos dos dados
   const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
+  console.log('popularFiltros - anos encontrados:', anos);
   const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
-  
-  // Selecionar o ano atual ou o último ano disponível por padrão
-  const anoAtual = new Date().getFullYear().toString();
-  const anoDefault = anos.includes(anoAtual) ? anoAtual : anos[anos.length - 1];
-  
-  // Adicionar o ano padrão ao array de anos selecionados
-  if (anoDefault) {
-    filtrosAnosSelecionados = [anoDefault];
-  }
-  
-  // Popular os checkboxes de anos
+
+  let anoDefault = anos.includes('2025') ? '2025' : (anos.length > 0 ? anos[anos.length - 1] : null);
+  filtrosAnosSelecionados = anoDefault ? [anoDefault] : [];
+
   const anosContainer = document.getElementById('anos-checkboxes');
   anosContainer.innerHTML = '';
-  
+
   anos.forEach(ano => {
     const isChecked = filtrosAnosSelecionados.includes(ano);
     const checkboxDiv = document.createElement('div');
@@ -112,43 +146,37 @@ function popularFiltros() {
       <label for="ano-${ano}" class="ano-checkbox-label">${ano}</label>
     `;
     anosContainer.appendChild(checkboxDiv);
-    
-    // Adicionar evento de change para o checkbox
+
     const checkbox = checkboxDiv.querySelector(`#ano-${ano}`);
     checkbox.addEventListener('change', function() {
       if (this.checked) {
-        // Adicionar ao array se não existir
-        if (!filtrosAnosSelecionados.includes(ano)) {
-          filtrosAnosSelecionados.push(ano);
-        }
+        filtrosAnosSelecionados.push(ano);
       } else {
-        // Remover do array
         filtrosAnosSelecionados = filtrosAnosSelecionados.filter(a => a !== ano);
+        if (filtrosAnosSelecionados.length === 0 && anos.length > 0) {
+          filtrosAnosSelecionados = [anos[anos.length - 1]];
+          anosContainer.querySelector(`#ano-${anos[anos.length - 1]}`).checked = true;
+        }
       }
-      
-      // Atualizar a legenda de cores
       atualizarLegendaAnos();
-      
-      // Atualizar automaticamente a visualização quando o checkbox for alterado
       atualizarVisualizacao();
     });
   });
-  
-  // Popular o dropdown de meses
+
   const selectMes = document.getElementById('filtro-mes');
   selectMes.innerHTML = `<option value="todos">Todos</option>` +
     meses.map(mes => `<option value="${mes}">${mes}</option>`).join('');
-  
   filtroMesSelecionado = 'todos';
-  
+  selectMes.value = 'todos';
+
   selectMes.addEventListener('change', () => {
     filtroMesSelecionado = selectMes.value;
-    // Atualizar automaticamente a visualização quando o mês for alterado
     atualizarVisualizacao();
   });
-  
-  // Inicializar a legenda de cores
+
   atualizarLegendaAnos();
+  // REMOVA esta linha:
+  // atualizarVisualizacao();
 }
 
 // Função para atualizar a legenda de cores dos anos
@@ -177,41 +205,48 @@ function atualizarLegendaAnos() {
 
 // Função principal para atualizar toda a visualização
 function atualizarVisualizacao() {
-  if (!map) {
-    return;
-  }
-  
+  if (!map) return;
+
   // Limpar o mapa mantendo apenas a camada base
   map.eachLayer(layer => {
     if (layer instanceof L.TileLayer) return;
     map.removeLayer(layer);
   });
-  
+
   // Se não houver anos selecionados, apenas mostrar o mapa em branco
   if (filtrosAnosSelecionados.length === 0) {
-    // Atualizar o resumo do estado mesmo sem anos selecionados
     const resumoContainer = document.getElementById('resumo-estado');
     if (resumoContainer) {
       resumoContainer.innerHTML = '<p>Selecione pelo menos um ano para visualizar dados no mapa.</p>';
     }
-    
-    // Mostrar marcadores de rotas planejadas se estiver ativado, mesmo sem anos selecionados
     if (typeof mostrarRotasPlanejadas !== 'undefined' && mostrarRotasPlanejadas && typeof mostrarMarcadoresRotasPlanejadas === 'function') {
       mostrarMarcadoresRotasPlanejadas();
     }
+    mostrarTotalMaquinasVendidasPorRegiao();
+    // Limpar gráfico
+    if (document.getElementById('grafico-mensal')) {
+      document.getElementById('grafico-mensal').innerHTML = '';
+    }
     return;
   }
-  
-  // Carregar o GeoJSON com as cores por ano
-  carregarGeoJSONMultiplosAnos();
-  
-  // Atualizar o gráfico mensal
-  gerarGraficoMensalMultiplosAnos();
-  
-  // Mostrar o resumo do estado com comparação entre anos
-  mostrarResumoEstadoComparativo();
-  
-  // Mostrar marcadores de rotas planejadas se estiver ativado
+
+  if (regiaoAtual) {
+    carregarGeoJSONMultiplosAnos();
+    gerarGraficoMensalMultiplosAnos();
+    mostrarResumoEstadoComparativo();
+  } else {
+    // Se não houver região, só mostra os totais gerais
+    mostrarTotalMaquinasVendidasPorRegiao();
+    // Limpar resumo e gráfico e mostrar mensagem opcional
+    const resumoContainer = document.getElementById('resumo-estado');
+    if (resumoContainer) {
+      resumoContainer.innerHTML = '<p>Selecione uma região para ver detalhes do resumo.</p>';
+    }
+    if (document.getElementById('grafico-mensal')) {
+      document.getElementById('grafico-mensal').innerHTML = '';
+    }
+  }
+
   if (typeof mostrarRotasPlanejadas !== 'undefined' && mostrarRotasPlanejadas && typeof mostrarMarcadoresRotasPlanejadas === 'function') {
     mostrarMarcadoresRotasPlanejadas();
   }
@@ -524,48 +559,138 @@ function mostrarResumoEstadoComparativo() {
   // Inserir o resumo visual na div acima do mapa
   resumoContainer.innerHTML = resumoHTML;
 }
+// ...existing code...
+
+// Função genérica para adicionar um contorno
+function adicionarContornoGeojson(path, style = {}) {
+  fetch(path)
+    .then(response => response.json())
+    .then(geojson => {
+      L.geoJSON(geojson, {
+        style: Object.assign({
+          color: '#3a86ff',
+          weight: 3,
+          fillOpacity: 0.1
+        }, style)
+      }).addTo(map);
+    })
+    .catch(error => {
+      console.error('Erro ao carregar contorno:', path, error);
+    });
+}
+
+// Função para carregar todos os contornos desejados
+function carregarTodosContornos() {
+  if (map) map.remove();
+  map = L.map('map').setView([-31.5, -53.5], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  adicionarContornoGeojson('data/geojson/RS_SUL_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/RS_NORTE_CONTORNO.geojson', { color: '#ff6600' });
+  // ...adicione outros contornos aqui
+
+  mostrarTotalMaquinasVendidasPorRegiao();
+}
+
+function mostrarTotalMaquinasVendidasPorRegiao() {
+   console.log('Chamou mostrarTotalMaquinasVendidasPorRegiao');
+  console.log('filtrosAnosSelecionados:', filtrosAnosSelecionados);
+  console.log('filtroMesSelecionado:', filtroMesSelecionado);
+  console.log('Primeiros itens do dadosCSV:', dadosCSV.slice(0, 5));
+
+  if (window.markerTotalRegioes) {
+    window.markerTotalRegioes.forEach(marker => map.removeLayer(marker));
+  }
+  window.markerTotalRegioes = [];
+
+  regioesInfo.forEach(regiao => {
+    let total = 0;
+    dadosCSV.forEach(item => {
+      if (
+        item['REGIÃO'] === regiao.nome &&
+        (filtrosAnosSelecionados.length === 0 || filtrosAnosSelecionados.includes(item.ANO)) &&
+        (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+      ) {
+        total += parseFloat(item.QNT || 0);
+      }
+    });
+     console.log(`Região: ${regiao.nome} | Total máquinas: ${total}`);
+
+    const marker = L.marker(regiao.centro, {
+      icon: L.divIcon({
+        className: 'total-rs-marker',
+        html: `
+          <div style="color:${regiao.cor}">
+            <span>${regiao.nome.replace('_', ' ')}</span><br>
+            <span>Total Máquinas:</span><br>
+            <span style="font-size:1.5em">${total}</span>
+          </div>
+        `,
+        iconAnchor: [60, 24]
+      })
+    }).addTo(map);
+
+    window.markerTotalRegioes.push(marker);
+  });
+}
+
 
 function initApp() {
-  // Inicializar o mapa mesmo sem região selecionada
-  initMap();
-  
-  // Configurar o seletor de região
   const seletorRegiao = document.getElementById('filtro-regiao');
   if (seletorRegiao) {
-    // Verificar se há uma região selecionada no localStorage
     const regiaoSalva = localStorage.getItem('regiaoSelecionada');
     if (regiaoSalva) {
       seletorRegiao.value = regiaoSalva;
       carregarRegiao(regiaoSalva);
     } else {
-      // Mesmo sem região selecionada, atualizar a visualização para mostrar o mapa em branco
-      atualizarVisualizacao();
+      // Carregar dados gerais e só então mostrar contornos e filtros
+      carregarDadosGeral(() => {
+  console.log('Dados gerais carregados:', dadosCSV.length, 'itens');
+  carregarTodosContornos();
+  popularFiltros();
+  atualizarVisualizacao(); // <-- Adicione esta linha!
+  console.log('Anos disponíveis:', [...new Set(dadosCSV.map(item => item.ANO))]);
+  console.log('Anos selecionados:', filtrosAnosSelecionados);
+});
     }
-    
-    // Adicionar evento para salvar a seleção
+
     seletorRegiao.addEventListener('change', function() {
-      const regiaoId = this.value;
-      if (regiaoId) {
-        localStorage.setItem('regiaoSelecionada', regiaoId);
-      }
+  const regiaoId = this.value;
+  if (regiaoId) {
+    localStorage.setItem('regiaoSelecionada', regiaoId);
+    carregarRegiao(regiaoId);
+  } else {
+    localStorage.removeItem('regiaoSelecionada');
+    carregarDadosGeral(() => {
+      carregarTodosContornos();
+      popularFiltros();
     });
   }
+});
+  } else {
+    // Caso não exista seletor de região, carregar dados gerais ao abrir
+    carregarDadosGeral(() => {
+      carregarTodosContornos();
+      popularFiltros();
+    });
+  }
+
   // Adicionar funcionalidade de expandir/recolher o painel lateral
-document.addEventListener('DOMContentLoaded', () => {
-  const toggleButton = document.getElementById('toggle-panel');
-  const appContainer = document.querySelector('.app-container');
-  
-  toggleButton.addEventListener('click', () => {
-    appContainer.classList.toggle('panel-collapsed');
-    
-    // Alterar o ícone do botão
-    const icon = toggleButton.querySelector('.toggle-icon');
-    if (appContainer.classList.contains('panel-collapsed')) {
-      icon.textContent = '⮜'; // Ícone para expandir
-    } else {
-      icon.textContent = '⮞'; // Ícone para recolher
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleButton = document.getElementById('toggle-panel');
+    const appContainer = document.querySelector('.app-container');
+    if (toggleButton && appContainer) {
+      toggleButton.addEventListener('click', () => {
+        appContainer.classList.toggle('panel-collapsed');
+        // Alterar o ícone do botão
+        const icon = toggleButton.querySelector('.toggle-icon');
+        if (icon) {
+          icon.textContent = appContainer.classList.contains('panel-collapsed') ? '⮜' : '⮞';
+        }
+      });
     }
   });
-});
-  
 }
+document.addEventListener('DOMContentLoaded', initApp);

@@ -10,6 +10,12 @@ body {
   flex-direction: column;
 }
 
+.total-rs-marker {
+  pointer-events: none;
+  text-align: center;
+  
+}
+
 /* Seletor de região */
 .regiao-selector {
   position: absolute;
