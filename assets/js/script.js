@@ -587,11 +587,93 @@ function carregarTodosContornos() {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
+  //MAPAS DE CONTORNO REGIAO SUL
+
   adicionarContornoGeojson('data/geojson/RS_SUL_CONTORNO.geojson', { color: '#3a86ff' });
   adicionarContornoGeojson('data/geojson/RS_NORTE_CONTORNO.geojson', { color: '#ff6600' });
+  adicionarContornoGeojson('data/geojson/SC_CONTORNO.geojson', { color: '#ff6600' });
+  adicionarContornoGeojson('data/geojson/PR_CONTORNO.geojson', { color: '#ff6600' });
+  adicionarContornoGeojson('data/geojson/SP_CONTORNO.geojson', { color: '#ff6600' });
+  adicionarContornoGeojson('data/geojson/MS_CONTORNO.geojson', { color: '#ff6600' });
+  
+  
+  //MAPAS DE CONTORNO REGIAO OESTE
+
+  adicionarContornoGeojson('data/geojson/MT_LEST_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/MT_CENTRO_CONTORNO.geojson', { color: '#ff6600' });
+  adicionarContornoGeojson('data/geojson/MT_OESTE_RO_CONTORNO.geojson', { color: '#ff6600' });
   // ...adicione outros contornos aqui
 
   mostrarTotalMaquinasVendidasPorRegiao();
+
+  // --- ADICIONE ESTE BLOCO ---
+ map.on('zoomend', () => {
+  const zoom = map.getZoom();
+  let scale = 1;
+  let translateY = 0;
+  let translateX = 0; // <-- adicione esta linha
+  let mostrarNome = zoom >= 6; // Ajuste o nível conforme desejar
+
+   if (zoom < 4) {
+    scale = 0.5;
+    translateY = -28;
+    translateX = -28;
+   } else if (zoom < 5) {
+    scale = 0.7;
+    translateY = -18;
+    translateX = -18;
+   } else if (zoom < 7) {
+    scale = 0.9;
+    translateY = -18;
+  } else if (zoom < 8) {
+    scale = 1;
+    translateY = -10;
+  } else if (zoom < 9) {
+    scale = 1.1;
+    translateY = -5;
+  } else {
+    scale = 1;
+    translateY = 0;
+  }
+
+  if (window.markerTotalRegioes) {
+    console.log('Atualizando marcadores com zoom:', zoom);
+    window.markerTotalRegioes.forEach(marker => {
+      const el = marker.getElement();
+      if (el) {
+        // Troca o conteúdo do marcador conforme o zoom
+        if (mostrarNome) {
+          el.innerHTML = `
+            <span class="regiao-nome" style="color:${marker._regiaoCor}; font-weight:bold; white-space:nowrap;">
+              ${marker._regiaoNome}
+            </span>
+            <span class="regiao-total" style="color:${marker._regiaoCor}; font-weight:bold; margin-left:6px;">
+              ${marker._regiaoTotal}
+            </span>
+          `;
+        } else {
+          el.innerHTML = `
+            <span class="regiao-total" style="color:${marker._regiaoCor}; font-weight:bold;">
+              ${marker._regiaoTotal}
+            </span>
+          `;
+        }
+        // Aplica o scale e translateY em todos os spans
+        el.querySelectorAll('span').forEach(span => {
+          span.style.display = 'inline-block';
+          span.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+          span.style.transformOrigin = 'center center';
+        });
+        el.querySelectorAll('span').forEach(span => {
+        span.style.display = 'inline-block';
+        span.style.transform = `scale(${scale}) translate(${translateX || 0}px, ${translateY || 0}px)`;
+        span.style.transformOrigin = 'center center';
+      });
+      }
+    });
+  }
+});
+  // --- FIM DO BLOCO ---
 }
 
 function mostrarTotalMaquinasVendidasPorRegiao() {
@@ -619,19 +701,25 @@ function mostrarTotalMaquinasVendidasPorRegiao() {
      console.log(`Região: ${regiao.nome} | Total máquinas: ${total}`);
 
     const marker = L.marker(regiao.centro, {
-      icon: L.divIcon({
-        className: 'total-rs-marker',
-        html: `
-          <div style="color:${regiao.cor}">
-            <span>${regiao.nome.replace('_', ' ')}</span><br>
-            <span>Total Máquinas:</span><br>
-            <span style="font-size:1.5em">${total}</span>
-          </div>
-        `,
-        iconAnchor: [60, 24]
-      })
-    }).addTo(map);
+  icon: L.divIcon({
+    className: 'total-rs-marker',
+    html: `
+      <span class="regiao-nome" style="color:${regiao.cor}; font-weight:bold; white-space:nowrap;">
+        ${regiao.nome.replace('_', ' ')}
+      </span>
+      <span class="regiao-total" style="color:${regiao.cor}; font-weight:bold; margin-left:6px;">
+        ${total}
+      </span>
+    `,
+    iconAnchor: [0, 0]
+  })
+}).addTo(map);
 
+// Guarde referência para atualizar depois
+    marker._regiaoNome = regiao.nome.replace('_', ' ');
+    marker._regiaoTotal = total;
+    marker._regiaoCor = regiao.cor;
+    window.markerTotalRegioes.push(marker);
     window.markerTotalRegioes.push(marker);
   });
 }

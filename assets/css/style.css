@@ -11,9 +11,10 @@ body {
 }
 
 .total-rs-marker {
-  pointer-events: none;
-  text-align: center;
-  
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Seletor de região */

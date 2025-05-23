@@ -3,7 +3,7 @@ const configuracoesRegioes = {
   'rs_sul': {
     id: 'rs_sul',
     nome: 'RS SUL',
-    centro: [-30.0346, -51.2177], // Adicione esta linha
+    centro: [-30.787,-53.747], // Adicione esta linha
     planilhaId: '1R7cj2ajVFQTRSWLNKdY1d1JNVhAjfFfsMvIWKeIhwiA',
     geojsonPath: 'data/geojson/municipios-RS_Sul.geojson',
     view: [-30.0346, -51.2177],
@@ -16,7 +16,7 @@ const configuracoesRegioes = {
 'rs_norte': {
     id: 'rs_norte',
     nome: 'RS NORTE',
-    centro: [-29.5000, -53.0000], // Adicione esta linha
+    centro: [-28.708,-52.934], // Adicione esta linha
     planilhaId: '1zxsWdSrPsPV6zqvNk0cv8zUosvntcZPGBMT9oLiB21s',
     geojsonPath: 'data/geojson/municipios-RS_Norte.geojson',
     view: [-29.5000, -53.0000],
@@ -42,7 +42,7 @@ const configuracoesRegioes = {
   'pr': {
     id: 'pr',
     nome: 'PR',
-    centro: [-24.7935, -50.0000], // Adicione esta linha
+    centro: [-24.6603,-51.6271], // Adicione esta linha
     planilhaId: '1_DlY-t96oZ5HMctUv40MjZSFPQNBkr0XmGglUQ5kBn0',
     geojsonPath: 'data/geojson/municipios-PR.geojson',
     view: [-24.7935, -50.0000],
@@ -55,7 +55,7 @@ const configuracoesRegioes = {
   'sp': {
     id: 'sp',
     nome: 'SP',
-    centro: [-22.1500, -48.0000], // Adicione esta linha
+    centro: [-22.2933,-48.7120], // Adicione esta linha
     planilhaId: '1iIyNSJSvZO53txewSIdgulgOQr9LkKVlKC4jYdleH1U',
     geojsonPath: 'data/geojson/municipios-SP.geojson',
     view: [-22.1500, -48.0000],
