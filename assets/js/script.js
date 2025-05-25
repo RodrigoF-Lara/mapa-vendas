@@ -588,18 +588,34 @@ function carregarTodosContornos() {
   }).addTo(map);
 
   // MAPAS DE CONTORNO REGIAO SUL
+  adicionarContornoGeojson('data/geojson/COORD_SUL_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/RS_SUL_CONTORNO.geojson', { color: '#3a86ff' });
-  adicionarContornoGeojson('data/geojson/RS_NORTE_CONTORNO.geojson', { color: '#ff6600' });
-  adicionarContornoGeojson('data/geojson/SC_CONTORNO.geojson', { color: '#ff6600' });
-  adicionarContornoGeojson('data/geojson/PR_CONTORNO.geojson', { color: '#ff6600' });
-  adicionarContornoGeojson('data/geojson/SP_CONTORNO.geojson', { color: '#ff6600' });
-  adicionarContornoGeojson('data/geojson/MS_CONTORNO.geojson', { color: '#ff6600' });
-  adicionarContornoGeojson('data/geojson/MT_LESTE_CONTORNO.geojson', { color: '#ff6600' });
+  adicionarContornoGeojson('data/geojson/RS_NORTE_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/SC_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/PR_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/SP_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/MS_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/MT_LESTE_CONTORNO.geojson', { color: '#3a86ff' });
 
   // MAPAS DE CONTORNO REGIAO OESTE
-  adicionarContornoGeojson('data/geojson/MT_LEST_CONTORNO.geojson', { color: '#3a86ff' });
+  adicionarContornoGeojson('data/geojson/COORD_OESTE_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/MT_LESTE_CONTORNO.geojson', { color: '#ff6600' });
   adicionarContornoGeojson('data/geojson/MT_CENTRO_CONTORNO.geojson', { color: '#ff6600' });
   adicionarContornoGeojson('data/geojson/MT_OESTE_RO_CONTORNO.geojson', { color: '#ff6600' });
+
+  // MAPAS DE CONTORNO REGIAO NORTE
+  adicionarContornoGeojson('data/geojson/COORD_NORTE_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/BA_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/ES_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/TO_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/MA_PI_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/GO_MG_NORTE_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/GO_MG_SUL_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/SEALBA_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/PA_GRAO_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/PA_CONTORNO.geojson', { color: '#00b050' });
+  adicionarContornoGeojson('data/geojson/RR_CONTORNO.geojson', { color: '#00b050' });
+
 
   mostrarTotalMaquinasVendidasPorRegiao();
 
