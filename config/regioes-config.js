@@ -175,7 +175,7 @@ const configuracoesRegioes = {
     nome: 'GO_MG NORTE',
     centro: [-17.000,-45.000],
     planilhaId: '1f12ESE7EdVcpa9W6T2VlgcDr-1nydFZqQYHUUicgU2w',
-    geojsonPath: 'data/geojson/municipios-GO_MG_NORTE.geojson',
+    geojsonPath: 'data/geojson/municipios-GO_MG NORTE.geojson',
     view: [-7.000,-45.000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
@@ -188,8 +188,8 @@ const configuracoesRegioes = {
     nome: 'GO_MG SUL',
     centro: [-18.500,-49.000],
     planilhaId: '1UTMM8bIpG2mWARFVhS5HkjVDiC1Z5BkYds-cP30XR9Q',
-    geojsonPath: 'data/geojson/municipios-GO_MG_SUL.geojson',
-    view: [-7.000,-45.000],
+    geojsonPath: 'data/geojson/municipios-GO_MG SUL.geojson',
+    view: [-18.500,-49.000],
     zoom: 7,
     marcadorIcone: 'data/rc/marcador_Grazian.svg',
     imagem: 'data/rc/Grazian.png',
@@ -247,6 +247,13 @@ const configuracoesRegioes = {
     imagem: 'data/rc/Grazian.png',
     cidadesRC: {'5102637': 'NABOR'}
   },
+};
+
+const centrosCoordenacoes = {
+  'SUL': [-22, -54],         // Sul
+  'OESTE': [-13, -60],       // Oeste
+  'NORTE': [-10, -50],        // Norte
+  'EXPORTAÇÃO': [1, -38]   // Exportação (ajuste conforme necessário)
 };
 
 // Esta função não é mais usada diretamente, foi substituída por mostrarResumoEstadoComparativo()

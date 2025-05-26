@@ -3,6 +3,10 @@
 // já são acessíveis pois o arquivo regioes-config.js é carregado antes
 
 const planilhaGeralId = '1F2qUf0pvHFy1ccz384AuVWmb_qnFvHunhitrefoxRbs';
+let outrosContornos = [];
+let markerTotalGrandesRegioes = [];
+
+let contornoSul, contornoOeste, contornoNorte;
 
 function carregarDadosGeral(callback) {
   const apiKey = 'AIzaSyAOPTDOnQXBBPj_hp0zzLBDL90KdV8Dzu0';
@@ -30,6 +34,141 @@ function carregarDadosGeral(callback) {
     });
 }
 
+function atualizarContornosGrandesRegioes() {
+  if (!map) return;
+
+  const zoom = map.getZoom();
+  console.log('atualizarContornosGrandesRegioes chamada. Zoom atual:', zoom);
+
+  if (zoom <= 3) {
+    console.log('Zoom <= 3. Adicionando contornos das grandes regiões.');
+
+    if (!contornoSul) {
+      console.log('Adicionando contorno SUL.');
+      fetch('data/geojson/COORD_SUL_CONTORNO.geojson')
+        .then(r => r.json())
+        .then(geojson => {
+          contornoSul = L.geoJSON(geojson, { color: '#3a86ff', weight: 3 }).addTo(map);
+          console.log('Contorno SUL adicionado.');
+        });
+    }
+    if (!contornoOeste) {
+      console.log('Adicionando contorno OESTE.');
+      fetch('data/geojson/COORD_OESTE_CONTORNO.geojson')
+        .then(r => r.json())
+        .then(geojson => {
+          contornoOeste = L.geoJSON(geojson, { color: '#ff6600', weight: 3 }).addTo(map);
+          console.log('Contorno OESTE adicionado.');
+        });
+    }
+    if (!contornoNorte) {
+      console.log('Adicionando contorno NORTE.');
+      fetch('data/geojson/COORD_NORTE_CONTORNO.geojson')
+        .then(r => r.json())
+        .then(geojson => {
+          contornoNorte = L.geoJSON(geojson, { color: '#00b050', weight: 3 }).addTo(map);
+          console.log('Contorno NORTE adicionado.');
+        });
+    }
+
+    // Remove outros contornos
+    console.log('Removendo outros contornos.');
+    outrosContornos.forEach(layer => map.removeLayer(layer));
+
+    // Garante que os marcadores das grandes regiões sejam exibidos após um pequeno atraso
+    setTimeout(() => {
+      if (typeof mostrarTotalGrandesRegioes === 'function') {
+        console.log('Chamando mostrarTotalGrandesRegioes.');
+        mostrarTotalGrandesRegioes();
+      }
+    }, 500); // Pequeno atraso para garantir que os contornos foram carregados
+  } else {
+    console.log('Zoom > 3. Removendo contornos das grandes regiões.');
+
+    if (contornoSul) {
+      map.removeLayer(contornoSul);
+      contornoSul = null;
+      console.log('Contorno SUL removido.');
+    }
+    if (contornoOeste) {
+      map.removeLayer(contornoOeste);
+      contornoOeste = null;
+      console.log('Contorno OESTE removido.');
+    }
+    if (contornoNorte) {
+      map.removeLayer(contornoNorte);
+      contornoNorte = null;
+      console.log('Contorno NORTE removido.');
+    }
+
+    // Remove marcadores das grandes regiões
+    if (markerTotalGrandesRegioes && markerTotalGrandesRegioes.length) {
+      console.log('Removendo marcadores das grandes regiões.');
+      markerTotalGrandesRegioes.forEach(marker => map.removeLayer(marker));
+      markerTotalGrandesRegioes = [];
+    }
+
+    // Adiciona outros contornos de volta
+    console.log('Adicionando outros contornos de volta.');
+    outrosContornos.forEach(layer => {
+      if (!map.hasLayer(layer)) map.addLayer(layer);
+    });
+  }
+}
+
+function mostrarTotalGrandesRegioes() {
+  // Remove marcadores antigos
+  if (markerTotalGrandesRegioes && markerTotalGrandesRegioes.length) {
+    markerTotalGrandesRegioes.forEach(marker => map.removeLayer(marker));
+  }
+  markerTotalGrandesRegioes = [];
+
+  // Agrupar por COORDENAÇÃO e somar QNT, respeitando filtros
+  const totais = {};
+
+  dadosCSV.forEach(item => {
+    const coord = item.COORDENAÇÃO;
+    if (!coord) return;
+    // Aplique os filtros de ano e mês:
+    if (
+      (filtrosAnosSelecionados.length === 0 || filtrosAnosSelecionados.includes(item.ANO)) &&
+      (filtroMesSelecionado === 'todos' || item.MÊS === filtroMesSelecionado)
+    ) {
+      if (!totais[coord]) totais[coord] = 0;
+      totais[coord] += parseFloat(item.QNT || 0);
+    }
+  });
+
+  Object.keys(totais).forEach(coord => {
+    let centro = centrosCoordenacoes && centrosCoordenacoes[coord]
+      ? centrosCoordenacoes[coord]
+      : [-15, -50]; // fallback
+
+    const cor = coord === 'COORD_SUL' ? '#3a86ff' : coord === 'COORD_OESTE' ? '#ff6600' : '#00b050';
+    const nome = coord.replace('COORD_', '');
+    const total = totais[coord];
+
+    const html = `
+      <span class="regiao-total" style="color:${cor}; font-weight:bold; margin-left:6px; font-size:1.5em; display:inline-block; transform:scale(1) translate(0px, -10px); transform-origin:center center;">
+        ${total}
+      </span>
+    `;
+
+    const marker = L.marker(centro, {
+      icon: L.divIcon({
+        className: 'total-rs-marker',
+        html: html,
+        iconAnchor: [0, 0]
+      })
+    }).addTo(map);
+
+    markerTotalGrandesRegioes.push(marker);
+  });
+}
+
+
+
+
 // Inicializa o ícone do marcador
 const rcIcon = L.icon({
   iconUrl: 'data/rc/marcador_Jeison.svg', // Ícone do RC
@@ -46,13 +185,10 @@ const regioesInfo = Object.values(configuracoesRegioes).map(regiao => ({
 }));
 
 // Inicializa o mapa
-function initMap() {
-  const config = regiaoAtual || {
-    view: [-30.0346, -51.2177],
-    zoom: 6
-  };
-
-  map = L.map('map').setView([-11.140, -53.275], 2);
+function initMap(config) {
+  const view = (config && config.view) ? config.view : [-11.140, -53.275];
+  const zoom = (config && config.zoom) ? config.zoom : 4;
+  map = L.map('map').setView(view, zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
@@ -61,12 +197,8 @@ function initMap() {
 // Carregar a região
 function carregarRegiao(regiaoId) {
   if (!regiaoId || !configuracoesRegioes[regiaoId]) {
-    console.log('carregarRegiao: regiaoId vazio ou inválido, abortando.');
     return;
   }
-  console.log('Carregando região:', regiaoId);
-  if (!regiaoId || !configuracoesRegioes[regiaoId]) return;
-
   regiaoAtual = configuracoesRegioes[regiaoId];
 
   if (map) {
@@ -75,7 +207,7 @@ function carregarRegiao(regiaoId) {
 
   // Reiniciar variáveis
   dadosCSV = [];
-  filtrosAnosSelecionados = []; // Inicializa array vazio para anos selecionados
+  filtrosAnosSelecionados = [];
   filtroMesSelecionado = 'todos';
 
   // Limpar a tabela de vendas
@@ -84,8 +216,8 @@ function carregarRegiao(regiaoId) {
     tabelaContainer.innerHTML = '<p>Selecione uma cidade para visualizar os dados.</p>';
   }
 
-  // Criar novo mapa
-  initMap();
+  // Criar novo mapa usando view/zoom da região
+  initMap(regiaoAtual);
   carregarDadosAPI();
 
   // Carregar dados das rotas planejadas
@@ -106,7 +238,6 @@ function carregarDadosAPI() {
     .then(response => response.json())
     .then(data => {
       if (data.values) {
-        console.log('Dados da API:', data.values); // <-- LOG AQUI
         const headers = data.values[0];
         dadosCSV = data.values.slice(1).map(row => {
           return headers.reduce((obj, header, index) => {
@@ -114,8 +245,6 @@ function carregarDadosAPI() {
             return obj;
           }, {});
         });
-        // LOG: Veja os primeiros itens já convertidos
-        console.log('Primeiros itens do dadosCSV:', dadosCSV.slice(0, 5));
         popularFiltros();
         atualizarVisualizacao();
       } else {
@@ -128,7 +257,6 @@ function carregarDadosAPI() {
 // Função para popular os checkboxes de anos e o dropdown de meses
 function popularFiltros() {
   const anos = [...new Set(dadosCSV.map(item => item.ANO))].sort();
-  console.log('popularFiltros - anos encontrados:', anos);
   const meses = [...new Set(dadosCSV.map(item => item.MÊS))].sort((a, b) => a - b);
 
   let anoDefault = anos.includes('2025') ? '2025' : (anos.length > 0 ? anos[anos.length - 1] : null);
@@ -203,9 +331,11 @@ function atualizarLegendaAnos() {
   });
 }
 
-// Função principal para atualizar toda a visualização
 function atualizarVisualizacao() {
   if (!map) return;
+
+  console.log('atualizarVisualizacao chamada.');
+  console.log('Filtros selecionados:', filtrosAnosSelecionados, 'Mês selecionado:', filtroMesSelecionado);
 
   // Limpar o mapa mantendo apenas a camada base
   map.eachLayer(layer => {
@@ -215,40 +345,30 @@ function atualizarVisualizacao() {
 
   // Se não houver anos selecionados, apenas mostrar o mapa em branco
   if (filtrosAnosSelecionados.length === 0) {
+    console.log('Nenhum ano selecionado. Mostrando mapa em branco.');
     const resumoContainer = document.getElementById('resumo-estado');
     if (resumoContainer) {
       resumoContainer.innerHTML = '<p>Selecione pelo menos um ano para visualizar dados no mapa.</p>';
-    }
-    if (typeof mostrarRotasPlanejadas !== 'undefined' && mostrarRotasPlanejadas && typeof mostrarMarcadoresRotasPlanejadas === 'function') {
-      mostrarMarcadoresRotasPlanejadas();
-    }
-    mostrarTotalMaquinasVendidasPorRegiao();
-    // Limpar gráfico
-    if (document.getElementById('grafico-mensal')) {
-      document.getElementById('grafico-mensal').innerHTML = '';
     }
     return;
   }
 
   if (regiaoAtual) {
+    console.log('Região atual:', regiaoAtual.nome);
     carregarGeoJSONMultiplosAnos();
     gerarGraficoMensalMultiplosAnos();
     mostrarResumoEstadoComparativo();
   } else {
-    // Se não houver região, só mostra os totais gerais
-    mostrarTotalMaquinasVendidasPorRegiao();
-    // Limpar resumo e gráfico e mostrar mensagem opcional
-    const resumoContainer = document.getElementById('resumo-estado');
-    if (resumoContainer) {
-      resumoContainer.innerHTML = '<p>Selecione uma região para ver detalhes do resumo.</p>';
-    }
-    if (document.getElementById('grafico-mensal')) {
-      document.getElementById('grafico-mensal').innerHTML = '';
+    console.log('Nenhuma região selecionada. Mostrando totais gerais.');
+    if (map.getZoom() > 3) {
+      mostrarTotalMaquinasVendidasPorRegiao();
     }
   }
 
-  if (typeof mostrarRotasPlanejadas !== 'undefined' && mostrarRotasPlanejadas && typeof mostrarMarcadoresRotasPlanejadas === 'function') {
-    mostrarMarcadoresRotasPlanejadas();
+  // Garante que os contornos das grandes regiões sejam redesenhados após filtros
+  if (typeof atualizarContornosGrandesRegioes === 'function') {
+    console.log('Chamando atualizarContornosGrandesRegioes.');
+    atualizarContornosGrandesRegioes();
   }
 }
 
@@ -264,9 +384,7 @@ function carregarGeoJSONMultiplosAnos() {
   fetch(caminhoGeoJSON)
     .then(response => response.json())
     .then(geojson => {
-      console.log('GeoJSON carregado:', geojson);
-
-      // Cria marcadores para os RCs específicos da região
+            // Cria marcadores para os RCs específicos da região
       Object.entries(regiaoAtual.cidadesRC).forEach(([codigoIBGE]) => {
         const feature = geojson.features.find(f => f.properties.CD_MUN === codigoIBGE);
         if (feature) {
@@ -566,13 +684,14 @@ function adicionarContornoGeojson(path, style = {}) {
   fetch(path)
     .then(response => response.json())
     .then(geojson => {
-      L.geoJSON(geojson, {
+      const layer = L.geoJSON(geojson, {
         style: Object.assign({
           color: '#3a86ff',
           weight: 3,
           fillOpacity: 0.1
         }, style)
       }).addTo(map);
+      outrosContornos.push(layer);
     })
     .catch(error => {
       console.error('Erro ao carregar contorno:', path, error);
@@ -587,8 +706,12 @@ function carregarTodosContornos() {
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
+  // Adicione estas linhas aqui:
+  atualizarContornosGrandesRegioes();
+  map.on('zoomend', atualizarContornosGrandesRegioes);
+
   // MAPAS DE CONTORNO REGIAO SUL
-  adicionarContornoGeojson('data/geojson/COORD_SUL_CONTORNO.geojson', { color: '#00b050' });
+  //adicionarContornoGeojson('data/geojson/COORD_SUL_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/RS_SUL_CONTORNO.geojson', { color: '#3a86ff' });
   adicionarContornoGeojson('data/geojson/RS_NORTE_CONTORNO.geojson', { color: '#3a86ff' });
   adicionarContornoGeojson('data/geojson/SC_CONTORNO.geojson', { color: '#3a86ff' });
@@ -598,13 +721,13 @@ function carregarTodosContornos() {
   adicionarContornoGeojson('data/geojson/MT_LESTE_CONTORNO.geojson', { color: '#3a86ff' });
 
   // MAPAS DE CONTORNO REGIAO OESTE
-  adicionarContornoGeojson('data/geojson/COORD_OESTE_CONTORNO.geojson', { color: '#00b050' });
+  //adicionarContornoGeojson('data/geojson/COORD_OESTE_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/MT_LESTE_CONTORNO.geojson', { color: '#ff6600' });
   adicionarContornoGeojson('data/geojson/MT_CENTRO_CONTORNO.geojson', { color: '#ff6600' });
   adicionarContornoGeojson('data/geojson/MT_OESTE_RO_CONTORNO.geojson', { color: '#ff6600' });
 
   // MAPAS DE CONTORNO REGIAO NORTE
-  adicionarContornoGeojson('data/geojson/COORD_NORTE_CONTORNO.geojson', { color: '#00b050' });
+  //adicionarContornoGeojson('data/geojson/COORD_NORTE_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/BA_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/ES_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/TO_CONTORNO.geojson', { color: '#00b050' });
@@ -612,7 +735,7 @@ function carregarTodosContornos() {
   adicionarContornoGeojson('data/geojson/GO_MG_NORTE_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/GO_MG_SUL_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/SEALBA_CONTORNO.geojson', { color: '#00b050' });
-  adicionarContornoGeojson('data/geojson/PA_GRAO_CONTORNO.geojson', { color: '#00b050' });
+  //dicionarContornoGeojson('data/geojson/PA_GRAO_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/PA_CONTORNO.geojson', { color: '#00b050' });
   adicionarContornoGeojson('data/geojson/RR_CONTORNO.geojson', { color: '#00b050' });
 
@@ -631,52 +754,43 @@ function carregarTodosContornos() {
     let scale = 1, translateY = 0, translateX = 0;
     let mostrarNome = zoom >= 6;
 
-    if (zoom < 4) {
-      scale = 0.5; translateY = -28; translateX = -28;
-    } else if (zoom < 5) {
-      scale = 0.7; translateY = -18; translateX = -18;
-    } else if (zoom < 7) {
-      scale = 0.9; translateY = -18; translateX = 0;
-    } else if (zoom < 8) {
-      scale = 1; translateY = -10; translateX = 0;
-    } else if (zoom < 9) {
-      scale = 1.1; translateY = -5; translateX = 0;
-    } else {
-      scale = 1; translateY = 0; translateX = 0;
-    }
-
+    // NOVO: Esconde todos os marcadores se zoom <= 3
     if (window.markerTotalRegioes) {
-      window.markerTotalRegioes.forEach(marker => {
-        const el = marker.getElement();
-        if (el) {
-          if (mostrarNome) {
-  el.innerHTML = `
-    <span class="regiao-nome" style="color:${marker._regiaoCor}; font-weight:bold; white-space:nowrap; font-size:1.2em;">
-      ${marker._regiaoNome}
-    </span>
-    <span class="regiao-total" style="color:${marker._regiaoCor}; font-weight:bold; margin-left:6px; font-size:1.5em;">
-      ${marker._regiaoTotal}
-    </span>
-`;
-} else {
-  el.innerHTML = `
-    <span class="regiao-total" style="color:${marker._regiaoCor}; font-weight:bold; font-size:1.5em;">
-      ${marker._regiaoTotal}
-    </span>
-  `;
-}
-          el.querySelectorAll('span').forEach(span => {
-            span.style.display = 'inline-block';
-            span.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
-            span.style.transformOrigin = 'center center';
-            // Log após ajuste de zoom
-            console.log('AJUSTADO', span.className, window.getComputedStyle(span));
-          });
+  window.markerTotalRegioes.forEach(marker => {
+    const el = marker.getElement();
+    if (el) {
+      if (zoom <= 3) {
+        el.style.display = 'none';
+      } else {
+        el.style.display = 'block';
+            // Lógica normal de exibição do nome/total
+            if (mostrarNome) {
+              el.innerHTML = `
+                <span class="regiao-nome" style="color:${marker._regiaoCor}; font-weight:bold; white-space:nowrap; font-size:1.2em;">
+                  ${marker._regiaoNome}
+                </span>
+                <span class="regiao-total" style="color:${marker._regiaoCor}; font-weight:bold; margin-left:6px; font-size:1.5em;">
+                  ${marker._regiaoTotal}
+                </span>
+              `;
+            } else {
+              el.innerHTML = `
+                <span class="regiao-total" style="color:${marker._regiaoCor}; font-weight:bold; font-size:1.5em;">
+                  ${marker._regiaoTotal}
+                </span>
+              `;
+            }
+            el.querySelectorAll('span').forEach(span => {
+              span.style.display = 'inline-block';
+              span.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+              span.style.transformOrigin = 'center center';
+            });
+          }
         }
       });
     }
   }
-} // <-- FECHA carregarTodosContornos
+}
 
 function mostrarTotalMaquinasVendidasPorRegiao() {
   console.log('Chamou mostrarTotalMaquinasVendidasPorRegiao');
@@ -736,18 +850,7 @@ function mostrarTotalMaquinasVendidasPorRegiao() {
       if (el) {
         const nome = el.querySelector('.regiao-nome');
         const total = el.querySelector('.regiao-total');
-        if (nome) {
-          console.log('INICIAL .regiao-nome:', window.getComputedStyle(nome));
-          console.log('INICIAL .regiao-nome:', {
-            fontSize: window.getComputedStyle(nome).fontSize,
-            marginLeft: window.getComputedStyle(nome).marginLeft,
-            transform: window.getComputedStyle(nome).transform
-          });
         }
-        if (total) {
-          console.log('INICIAL .regiao-total:', window.getComputedStyle(total));
-        }
-      }
     }, 200); // Pequeno delay para garantir que o DOM foi atualizado
 
     // Guarde referência para atualizar depois
@@ -774,12 +877,10 @@ function initApp() {
     } else {
       // Carregar dados gerais e só então mostrar contornos e filtros
       carregarDadosGeral(() => {
-  console.log('Dados gerais carregados:', dadosCSV.length, 'itens');
-  carregarTodosContornos();
+    carregarTodosContornos();
   popularFiltros();
   atualizarVisualizacao(); // <-- Adicione esta linha!
-  console.log('Anos disponíveis:', [...new Set(dadosCSV.map(item => item.ANO))]);
-  console.log('Anos selecionados:', filtrosAnosSelecionados);
+  
 });
     }
 
